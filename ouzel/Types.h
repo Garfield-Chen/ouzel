@@ -32,6 +32,9 @@ namespace ouzel
     typedef std::shared_ptr<Texture> TexturePtr;
     typedef std::weak_ptr<Texture> TextureWeakPtr;
     
+    class VideoTexture;
+    typedef std::shared_ptr<VideoTexture> VideoTexturePtr;
+    
     class RenderTarget;
     typedef std::shared_ptr<RenderTarget> RenderTargetPtr;
     typedef std::weak_ptr<RenderTarget> RenderTargetWeakPtr;

@@ -13,6 +13,7 @@
 #include "MeshBuffer.h"
 #include "EventDispatcher.h"
 #include "RenderTarget.h"
+#include "VideoTexture.h"
 
 namespace ouzel
 {
@@ -113,6 +114,18 @@ namespace ouzel
         }
         
         return texture;
+    }
+    
+    VideoTexturePtr Renderer::loadVideoTextureFromFile(const std::string& filename)
+    {
+        VideoTexturePtr videoTexture(new VideoTexture());
+        
+        if (!videoTexture->initFromFile(filename))
+        {
+            videoTexture.reset();
+        }
+        
+        return videoTexture;
     }
     
     RenderTargetPtr Renderer::createRenderTarget(const Size2& size, bool depthBuffer)

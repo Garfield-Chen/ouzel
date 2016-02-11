@@ -387,6 +387,18 @@
 		30DADE9F1C5167BC001A63B4 /* Cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 30DADE9B1C5167BC001A63B4 /* Cache.h */; };
 		30DADEA01C5167BC001A63B4 /* Cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 30DADE9B1C5167BC001A63B4 /* Cache.h */; };
 		30DADEA11C5167BC001A63B4 /* Cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 30DADE9B1C5167BC001A63B4 /* Cache.h */; };
+		30EDFC241C6CA16A008E9753 /* VideoTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30EDFC221C6CA16A008E9753 /* VideoTexture.cpp */; };
+		30EDFC251C6CA16A008E9753 /* VideoTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30EDFC221C6CA16A008E9753 /* VideoTexture.cpp */; };
+		30EDFC261C6CA16A008E9753 /* VideoTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30EDFC221C6CA16A008E9753 /* VideoTexture.cpp */; };
+		30EDFC271C6CA16A008E9753 /* VideoTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 30EDFC231C6CA16A008E9753 /* VideoTexture.h */; };
+		30EDFC281C6CA16A008E9753 /* VideoTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 30EDFC231C6CA16A008E9753 /* VideoTexture.h */; };
+		30EDFC291C6CA16A008E9753 /* VideoTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = 30EDFC231C6CA16A008E9753 /* VideoTexture.h */; };
+		30EDFC2C1C6CA18F008E9753 /* VideoTextureOGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30EDFC2A1C6CA18F008E9753 /* VideoTextureOGL.cpp */; };
+		30EDFC2D1C6CA18F008E9753 /* VideoTextureOGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30EDFC2A1C6CA18F008E9753 /* VideoTextureOGL.cpp */; };
+		30EDFC2E1C6CA18F008E9753 /* VideoTextureOGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30EDFC2A1C6CA18F008E9753 /* VideoTextureOGL.cpp */; };
+		30EDFC2F1C6CA18F008E9753 /* VideoTextureOGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 30EDFC2B1C6CA18F008E9753 /* VideoTextureOGL.h */; };
+		30EDFC301C6CA18F008E9753 /* VideoTextureOGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 30EDFC2B1C6CA18F008E9753 /* VideoTextureOGL.h */; };
+		30EDFC311C6CA18F008E9753 /* VideoTextureOGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 30EDFC2B1C6CA18F008E9753 /* VideoTextureOGL.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -538,6 +550,10 @@
 		30B328831C4E9EAC00040927 /* Ease.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ease.h; sourceTree = "<group>"; };
 		30DADE9A1C5167BC001A63B4 /* Cache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cache.cpp; sourceTree = "<group>"; };
 		30DADE9B1C5167BC001A63B4 /* Cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cache.h; sourceTree = "<group>"; };
+		30EDFC221C6CA16A008E9753 /* VideoTexture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoTexture.cpp; sourceTree = "<group>"; };
+		30EDFC231C6CA16A008E9753 /* VideoTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoTexture.h; sourceTree = "<group>"; };
+		30EDFC2A1C6CA18F008E9753 /* VideoTextureOGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoTextureOGL.cpp; sourceTree = "<group>"; };
+		30EDFC2B1C6CA18F008E9753 /* VideoTextureOGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoTextureOGL.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -646,6 +662,8 @@
 				304A8E471C237C70008B1151 /* Texture.h */,
 				304A8EA01C270833008B1151 /* Vertex.cpp */,
 				304A8EA11C270833008B1151 /* Vertex.h */,
+				30EDFC221C6CA16A008E9753 /* VideoTexture.cpp */,
+				30EDFC231C6CA16A008E9753 /* VideoTexture.h */,
 			);
 			name = graphics;
 			sourceTree = "<group>";
@@ -698,6 +716,8 @@
 				3031A0AE1C3731A2004D3514 /* TexturePSOGLES.h */,
 				303B75E11C2F6FC000FEDE92 /* TextureVSOGL.h */,
 				3031A0AF1C3731A2004D3514 /* TextureVSOGLES.h */,
+				30EDFC2A1C6CA18F008E9753 /* VideoTextureOGL.cpp */,
+				30EDFC2B1C6CA18F008E9753 /* VideoTextureOGL.h */,
 			);
 			name = opengl;
 			sourceTree = "<group>";
@@ -890,6 +910,7 @@
 				303647651C3F218E0024DB5B /* Settings.h in Headers */,
 				303B75E31C2F6FC000FEDE92 /* ColorPSOGL.h in Headers */,
 				3031A0B11C3731A2004D3514 /* ColorPSOGLES.h in Headers */,
+				30EDFC281C6CA16A008E9753 /* VideoTexture.h in Headers */,
 				305B99951C41F06F008589E1 /* Widget.h in Headers */,
 				303B760B1C34A92B00FEDE92 /* Input.h in Headers */,
 				303B75541C2A3CB700FEDE92 /* Rectangle.h in Headers */,
@@ -915,6 +936,7 @@
 				303B75681C2A3CBF00FEDE92 /* Sprite.h in Headers */,
 				303B75501C2A3CB700FEDE92 /* Matrix3.h in Headers */,
 				303B75641C2A3CBF00FEDE92 /* ParticleSystem.h in Headers */,
+				30EDFC301C6CA18F008E9753 /* VideoTextureOGL.h in Headers */,
 				303647201C3E058E0024DB5B /* GamepadApple.h in Headers */,
 				30575AE51C3C91A40009C8A7 /* InputApple.h in Headers */,
 				30B328881C4E9EAC00040927 /* Ease.h in Headers */,
@@ -963,6 +985,7 @@
 				303647661C3F218E0024DB5B /* Settings.h in Headers */,
 				303B76681C355A3B00FEDE92 /* Input.h in Headers */,
 				3031A0B21C3731A2004D3514 /* ColorPSOGLES.h in Headers */,
+				30EDFC291C6CA16A008E9753 /* VideoTexture.h in Headers */,
 				305B99961C41F06F008589E1 /* Widget.h in Headers */,
 				303B76691C355A3B00FEDE92 /* Rectangle.h in Headers */,
 				303B766B1C355A3B00FEDE92 /* Noncopyable.h in Headers */,
@@ -988,6 +1011,7 @@
 				303B767A1C355A3B00FEDE92 /* Matrix3.h in Headers */,
 				303B767B1C355A3B00FEDE92 /* ParticleSystem.h in Headers */,
 				303B76861C355A5800FEDE92 /* AppDelegate.h in Headers */,
+				30EDFC311C6CA18F008E9753 /* VideoTextureOGL.h in Headers */,
 				303647211C3E058E0024DB5B /* GamepadApple.h in Headers */,
 				30575AE61C3C91A40009C8A7 /* InputApple.h in Headers */,
 				30B328891C4E9EAC00040927 /* Ease.h in Headers */,
@@ -1014,6 +1038,7 @@
 				3047F77A1C4D39C500774E3D /* Repeat.h in Headers */,
 				304A8E8F1C26EA8B008B1151 /* ShaderOGL.h in Headers */,
 				3031A0B61C3731A2004D3514 /* TexturePSOGLES.h in Headers */,
+				30EDFC2F1C6CA18F008E9753 /* VideoTextureOGL.h in Headers */,
 				304A8E501C237C70008B1151 /* ouzel.h in Headers */,
 				30575ABF1C39D9850009C8A7 /* NodeContainer.h in Headers */,
 				303647641C3F218E0024DB5B /* Settings.h in Headers */,
@@ -1055,6 +1080,7 @@
 				3047F76A1C4D2C2000774E3D /* Sequence.h in Headers */,
 				304A8E931C26ED32008B1151 /* MeshBuffer.h in Headers */,
 				304A8E8B1C2486C6008B1151 /* RenderTarget.h in Headers */,
+				30EDFC271C6CA16A008E9753 /* VideoTexture.h in Headers */,
 				304A8E6F1C237C70008B1151 /* Utils.h in Headers */,
 				303B75011C28208800FEDE92 /* FileSystem.h in Headers */,
 				303B760A1C34A92B00FEDE92 /* Input.h in Headers */,
@@ -1173,6 +1199,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				303B76301C3559B900FEDE92 /* ViewController.m in Sources */,
+				30EDFC251C6CA16A008E9753 /* VideoTexture.cpp in Sources */,
+				30EDFC2D1C6CA18F008E9753 /* VideoTextureOGL.cpp in Sources */,
 				306B0E601C567D05005C75C1 /* DrawNode.cpp in Sources */,
 				305B99A31C42A97E008589E1 /* BMFont.cpp in Sources */,
 				3047F73F1C4C344A00774E3D /* Animator.cpp in Sources */,
@@ -1239,6 +1267,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				303B76351C355A3B00FEDE92 /* Renderer.cpp in Sources */,
+				30EDFC261C6CA16A008E9753 /* VideoTexture.cpp in Sources */,
+				30EDFC2E1C6CA18F008E9753 /* VideoTextureOGL.cpp in Sources */,
 				306B0E611C567D05005C75C1 /* DrawNode.cpp in Sources */,
 				305B99A41C42A97F008589E1 /* BMFont.cpp in Sources */,
 				3047F7401C4C344A00774E3D /* Animator.cpp in Sources */,
@@ -1305,6 +1335,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				304A8E641C237C70008B1151 /* Renderer.cpp in Sources */,
+				30EDFC241C6CA16A008E9753 /* VideoTexture.cpp in Sources */,
 				30575ABC1C39D9850009C8A7 /* NodeContainer.cpp in Sources */,
 				304A8E9E1C27081B008B1151 /* Color.cpp in Sources */,
 				30575AA61C39D1FF0009C8A7 /* Layer.cpp in Sources */,
@@ -1329,6 +1360,7 @@
 				3047F74E1C4C4FAF00774E3D /* Rotate.cpp in Sources */,
 				304A8E921C26ED32008B1151 /* MeshBuffer.cpp in Sources */,
 				3036471C1C3E058E0024DB5B /* GamepadApple.mm in Sources */,
+				30EDFC2C1C6CA18F008E9753 /* VideoTextureOGL.cpp in Sources */,
 				304A8E851C24814F008B1151 /* TextureOGL.cpp in Sources */,
 				304A8E6C1C237C70008B1151 /* Texture.cpp in Sources */,
 				304A8E611C237C70008B1151 /* Rectangle.cpp in Sources */,

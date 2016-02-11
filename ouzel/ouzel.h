@@ -12,6 +12,7 @@
 #include "Renderer.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "VideoTexture.h"
 #include "Matrix3.h"
 #include "Matrix4.h"
 #include "Vector2.h"

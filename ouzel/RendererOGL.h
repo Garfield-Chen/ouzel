@@ -57,6 +57,7 @@ namespace ouzel
         virtual TexturePtr createTexture(const Size2& size, bool dynamic, bool mipmaps = true) override;
         virtual TexturePtr loadTextureFromFile(const std::string& filename, bool dynamic, bool mipmaps = true) override;
         virtual TexturePtr loadTextureFromData(const void* data, const Size2& size, bool dynamic, bool mipmaps = true) override;
+        virtual VideoTexturePtr loadVideoTextureFromFile(const std::string& filename) override;
         virtual bool activateTexture(const TexturePtr& texture, uint32_t layer) override;
         virtual RenderTargetPtr createRenderTarget(const Size2& size, bool depthBuffer) override;
         virtual bool activateRenderTarget(const RenderTargetPtr& renderTarget) override;

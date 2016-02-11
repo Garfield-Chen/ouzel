@@ -6,6 +6,7 @@
 #include "RenderTargetOGL.h"
 #include "ShaderOGL.h"
 #include "MeshBufferOGL.h"
+#include "VideoTextureOGL.h"
 #include "Engine.h"
 #include "Cache.h"
 #include "Utils.h"
@@ -179,6 +180,18 @@ namespace ouzel
         }
         
         return texture;
+    }
+    
+    VideoTexturePtr RendererOGL::loadVideoTextureFromFile(const std::string& filename)
+    {
+        std::shared_ptr<VideoTextureOGL> videoTexture(new VideoTextureOGL());
+        
+        if (!videoTexture->initFromFile(filename))
+        {
+            videoTexture.reset();
+        }
+        
+        return videoTexture;
     }
     
     bool RendererOGL::activateTexture(const TexturePtr& texture, uint32_t layer)
