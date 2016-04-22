@@ -3,9 +3,7 @@
 
 #pragma once
 
-#include <memory>
 #include <set>
-#include "Types.h"
 #include "NodeContainer.h"
 #include "Size2.h"
 #include "Matrix4.h"
@@ -28,15 +26,15 @@ namespace ouzel
 
             virtual void draw();
 
-            virtual bool addChild(const NodePtr& node) override;
+            virtual bool addChild(Node* node) override;
 
-            void addToDrawQueue(const NodePtr& node);
+            void addToDrawQueue(Node* node);
 
             const CameraPtr& getCamera() const { return _camera; }
             void setCamera(const CameraPtr& camera);
 
-            NodePtr pickNode(const Vector2& position) const;
-            std::set<NodePtr> pickNodes(const Rectangle& rectangle) const;
+            Node* pickNode(const Vector2& position) const;
+            std::set<Node*> pickNodes(const Rectangle& rectangle) const;
 
             int32_t getOrder() const { return _order; }
             void setOrder(int32_t order);
@@ -48,7 +46,7 @@ namespace ouzel
             virtual void removeFromScene();
 
             CameraPtr _camera;
-            std::vector<NodePtr> _drawQueue;
+            std::vector<Node*> _drawQueue;
 
             SceneWeakPtr _scene;
             int32_t _order = 0;

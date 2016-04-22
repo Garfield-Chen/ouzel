@@ -4,7 +4,6 @@
 #pragma once
 
 #include "CompileConfig.h"
-#include "Types.h"
 #include "Engine.h"
 #include "UpdateCallback.h"
 #include "App.h"

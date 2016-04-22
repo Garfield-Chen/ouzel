@@ -4,9 +4,7 @@
 #pragma once
 
 #include <cstdint>
-#include <memory>
 #include <string>
-#include "Types.h"
 #include "Vector2.h"
 #include "Size2.h"
 #include "Input.h"

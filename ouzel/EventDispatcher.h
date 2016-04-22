@@ -4,12 +4,10 @@
 #pragma once
 
 #include <vector>
-#include <memory>
 #include <set>
 #include <mutex>
 #include <queue>
 #include <cstdint>
-#include "Types.h"
 #include "Noncopyable.h"
 #include "Event.h"
 #include "EventHander.h"

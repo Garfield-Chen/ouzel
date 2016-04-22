@@ -16,14 +16,14 @@ namespace ouzel
 
         NodeContainer::~NodeContainer()
         {
-            for (NodePtr node : _children)
+            for (Node* node : _children)
             {
                 node->_parent.reset();
                 node->_layer.reset();
             }
         }
 
-        bool NodeContainer::addChild(const NodePtr& node)
+        bool NodeContainer::addChild(Node* node)
         {
             if (_locked)
             {
@@ -45,7 +45,7 @@ namespace ouzel
             }
         }
 
-        bool NodeContainer::removeChild(const NodePtr& node)
+        bool NodeContainer::removeChild(Node* node)
         {
             if (_locked)
             {
@@ -54,7 +54,7 @@ namespace ouzel
                 return false;
             }
 
-            std::vector<NodePtr>::iterator i = std::find(_children.begin(), _children.end(), node);
+            std::vector<Node*>::iterator i = std::find(_children.begin(), _children.end(), node);
 
             if (i != _children.end())
             {
@@ -87,11 +87,11 @@ namespace ouzel
             unlock();
         }
 
-        bool NodeContainer::hasChild(const NodePtr& node, bool recursive) const
+        bool NodeContainer::hasChild(Node* node, bool recursive) const
         {
-            for (std::vector<NodePtr>::const_iterator i = _children.begin(); i != _children.end(); ++i)
+            for (std::vector<Node*>::const_iterator i = _children.begin(); i != _children.end(); ++i)
             {
-                const NodePtr& child = *i;
+                const Node*& child = *i;
 
                 if (child == node || (recursive && child->hasChild(node, true)))
                 {
@@ -113,7 +113,7 @@ namespace ouzel
             {
                 if (!_nodeAddList.empty())
                 {
-                    for (const NodePtr& node : _nodeAddList)
+                    for (Node* node : _nodeAddList)
                     {
                         addChild(node);
                     }
@@ -122,7 +122,7 @@ namespace ouzel
 
                 if (!_nodeRemoveList.empty())
                 {
-                    for (const NodePtr& node : _nodeRemoveList)
+                    for (Node* node : _nodeRemoveList)
                     {
                         removeChild(node);
                     }

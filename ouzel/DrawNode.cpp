@@ -23,7 +23,7 @@ namespace ouzel
         {
             Node::draw();
 
-            LayerPtr layer = _layer.lock();
+            Layer* layer = _layer.lock();
 
             if (_shader && layer)
             {

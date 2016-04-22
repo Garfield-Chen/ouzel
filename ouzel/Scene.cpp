@@ -26,14 +26,14 @@ namespace ouzel
 
             if (_reorderLayers)
             {
-                std::sort(_layers.begin(), _layers.end(), [](LayerPtr a, LayerPtr b) {
+                std::sort(_layers.begin(), _layers.end(), [](Layer* a, Layer* b) {
                     return a->getOrder() > b->getOrder();
                 });
 
                 _reorderLayers = false;
             }
 
-            for (LayerPtr layer : _layers)
+            for (Layer* layer : _layers)
             {
                 if (!layer->_remove)
                 {
@@ -44,7 +44,7 @@ namespace ouzel
             unlock();
         }
 
-        void Scene::addLayer(const LayerPtr& layer)
+        void Scene::addLayer(Layer* layer)
         {
             if (_locked)
             {
@@ -63,7 +63,7 @@ namespace ouzel
             }
         }
 
-        void Scene::removeLayer(const LayerPtr& layer)
+        void Scene::removeLayer(Layer* layer)
         {
             if (_locked)
             {
@@ -72,7 +72,7 @@ namespace ouzel
             }
             else
             {
-                std::vector<LayerPtr>::iterator i = std::find(_layers.begin(), _layers.end(), layer);
+                std::vector<Layer*>::iterator i = std::find(_layers.begin(), _layers.end(), layer);
 
                 if (i != _layers.end())
                 {
@@ -82,16 +82,16 @@ namespace ouzel
             }
         }
 
-        bool Scene::hasLayer(const LayerPtr& layer) const
+        bool Scene::hasLayer(Layer* layer) const
         {
-            std::vector<LayerPtr>::const_iterator i = std::find(_layers.begin(), _layers.end(), layer);
+            std::vector<Layer*>::const_iterator i = std::find(_layers.begin(), _layers.end(), layer);
 
             return i != _layers.end();
         }
 
         void Scene::recalculateProjection()
         {
-            for (LayerPtr layer : _layers)
+            for (Layer* layer : _layers)
             {
                 if (CameraPtr camera = layer->getCamera())
                 {
@@ -116,7 +116,7 @@ namespace ouzel
             {
                 if (!_layerAddList.empty())
                 {
-                    for (const LayerPtr& layer : _layerAddList)
+                    for (Layer* layer : _layerAddList)
                     {
                         addLayer(layer);
                     }
@@ -125,7 +125,7 @@ namespace ouzel
 
                 if (!_layerRemoveList.empty())
                 {
-                    for (const LayerPtr& layer : _layerRemoveList)
+                    for (Layer* layer : _layerRemoveList)
                     {
                         removeLayer(layer);
                     }
@@ -134,18 +134,18 @@ namespace ouzel
             }
         }
 
-        NodePtr Scene::pickNode(const Vector2& position) const
+        Node* Scene::pickNode(const Vector2& position) const
         {
-            for (std::vector<LayerPtr>::const_reverse_iterator i = _layers.rbegin(); i != _layers.rend(); ++i)
+            for (std::vector<Layer*>::const_reverse_iterator i = _layers.rbegin(); i != _layers.rend(); ++i)
             {
-                LayerPtr layer = *i;
+                Layer* layer = *i;
                 CameraPtr camera = layer->getCamera();
 
                 if (camera)
                 {
                     Vector2 worldPosition = camera->convertScreenToWorld(position);
 
-                    if (NodePtr result = layer->pickNode(worldPosition))
+                    if (Node* result = layer->pickNode(worldPosition))
                     {
                         return result;
                     }
@@ -155,15 +155,15 @@ namespace ouzel
             return nullptr;
         }
 
-        std::set<NodePtr> Scene::pickNodes(const Rectangle& rectangle) const
+        std::set<Node*> Scene::pickNodes(const Rectangle& rectangle) const
         {
-            std::set<NodePtr> result;
+            std::set<Node*> result;
 
-            for (std::vector<LayerPtr>::const_reverse_iterator i = _layers.rbegin(); i != _layers.rend(); ++i)
+            for (std::vector<Layer*>::const_reverse_iterator i = _layers.rbegin(); i != _layers.rend(); ++i)
             {
                 // TODO: use projection
 
-                std::set<NodePtr> nodes = (*i)->pickNodes(rectangle);
+                std::set<Node*> nodes = (*i)->pickNodes(rectangle);
 
                 result.insert(nodes.begin(), nodes.end());
             }

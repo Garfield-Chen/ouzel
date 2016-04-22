@@ -5,7 +5,6 @@
 
 #include <map>
 #include <string>
-#include "Types.h"
 
 namespace ouzel
 {

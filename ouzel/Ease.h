@@ -4,7 +4,6 @@
 #pragma once
 
 #include "Animator.h"
-#include "Types.h"
 
 namespace ouzel
 {
@@ -34,15 +33,15 @@ namespace ouzel
                 BOUNCE
             };
 
-            Ease(const AnimatorPtr& animator, Type type, Func func);
+            Ease(Animator* animator, Type type, Func func);
 
-            virtual void start(const NodePtr& node) override;
+            virtual void start(Node* node) override;
             virtual void reset() override;
 
             virtual void setProgress(float progress) override;
 
         protected:
-            AnimatorPtr _animator;
+            Animator* _animator;
             Type _type;
             Func _func;
         };

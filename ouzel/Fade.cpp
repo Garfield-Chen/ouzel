@@ -14,7 +14,7 @@ namespace ouzel
 
         }
 
-        void Fade::start(const NodePtr& node)
+        void Fade::start(Node* node)
         {
             Animator::start(node);
 
@@ -31,7 +31,7 @@ namespace ouzel
         {
             Animator::setProgress(progress);
 
-            if (NodePtr node = _node.lock())
+            if (Node* node = _node.lock())
             {
                 node->setOpacity(_startOpacity + (_diff * _progress));
             }

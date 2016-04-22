@@ -3,9 +3,7 @@
 
 #pragma once
 
-#include <memory>
 #include <cstdint>
-#include "Types.h"
 #include "Noncopyable.h"
 #include "Vector2.h"
 #include "Rectangle.h"

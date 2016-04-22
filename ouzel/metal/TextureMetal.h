@@ -5,10 +5,10 @@
 
 #ifdef __OBJC__
 #import <Metal/Metal.h>
-typedef id<MTLTexture> MTLTexturePtr;
+typedef id<MTLTexture> MTLTexture*;
 #else
 #include <objc/objc.h>
-typedef id MTLTexturePtr;
+typedef id MTLTexture*;
 #endif
 
 #include "CompileConfig.h"
@@ -33,7 +33,7 @@ namespace ouzel
 
             virtual bool upload(const void* data, const Size2& size) override;
 
-            MTLTexturePtr getTexture() const { return _texture; }
+            MTLTexture* getTexture() const { return _texture; }
 
         protected:
             TextureMetal();
@@ -42,7 +42,7 @@ namespace ouzel
 
             bool uploadData(const void* data, NSUInteger width, NSUInteger height);
 
-            MTLTexturePtr _texture = Nil;
+            MTLTexture* _texture = Nil;
             NSUInteger _mipLevels = 0;
         };
     } // namespace graphics

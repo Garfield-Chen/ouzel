@@ -3,11 +3,9 @@
 
 #pragma once
 
-#include <memory>
 #include <vector>
 #include <set>
 #include <cstdint>
-#include "Types.h"
 #include "Noncopyable.h"
 #include "Rectangle.h"
 
@@ -25,27 +23,27 @@ namespace ouzel
 
             virtual void draw();
 
-            void addLayer(const LayerPtr& layer);
-            void removeLayer(const LayerPtr& layer);
-            bool hasLayer(const LayerPtr& layer) const;
-            const std::vector<LayerPtr>& getLayers() const { return _layers; }
+            void addLayer(Layer* layer);
+            void removeLayer(Layer* layer);
+            bool hasLayer(Layer* layer) const;
+            const std::vector<Layer*>& getLayers() const { return _layers; }
 
             virtual void recalculateProjection();
 
             virtual void reorderLayers();
 
-            NodePtr pickNode(const Vector2& position) const;
-            std::set<NodePtr> pickNodes(const Rectangle& rectangle) const;
+            Node* pickNode(const Vector2& position) const;
+            std::set<Node*> pickNodes(const Rectangle& rectangle) const;
 
         protected:
             void lock();
             void unlock();
 
-            std::vector<LayerPtr> _layers;
+            std::vector<Layer*> _layers;
             bool _reorderLayers = false;
 
-            std::set<LayerPtr> _layerAddList;
-            std::set<LayerPtr> _layerRemoveList;
+            std::set<Layer*> _layerAddList;
+            std::set<Layer*> _layerRemoveList;
             int32_t _locked = 0;
         };
     } // namespace scene

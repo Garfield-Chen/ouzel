@@ -3,7 +3,6 @@
 
 #include <cstring>
 #include <cstdlib>
-#include <memory>
 #include "MathUtils.h"
 
 namespace ouzel

@@ -39,7 +39,7 @@ namespace ouzel
                     calculateTransform();
                 }
 
-                LayerPtr layer = _layer.lock();
+                Layer* layer = _layer.lock();
                 // check if _parent is _layer
                 bool isRoot = !_parent.owner_before(_layer) && !_layer.owner_before(_parent);
 
@@ -54,12 +54,12 @@ namespace ouzel
                 {
                     lock();
 
-                    std::stable_sort(_children.begin(), _children.end(), [](const NodePtr& a, const NodePtr& b) {
+                    std::stable_sort(_children.begin(), _children.end(), [](const Node*& a, const Node*& b) {
                         return a->getZ() > b->getZ();
                     });
 
                     auto i = _children.begin();
-                    NodePtr node;
+                    Node* node;
 
                     for (; i != _children.end(); ++i)
                     {
@@ -110,7 +110,7 @@ namespace ouzel
                 lock();
 
                 auto i = _children.begin();
-                NodePtr node;
+                Node* node;
 
                 for (; i != _children.end(); ++i)
                 {
@@ -153,7 +153,7 @@ namespace ouzel
             }
         }
 
-        bool Node::addChild(const NodePtr& node)
+        bool Node::addChild(Node* node)
         {
             if (NodeContainer::addChild(node))
             {
@@ -170,7 +170,7 @@ namespace ouzel
 
         bool Node::removeFromParent()
         {
-            if (NodeContainerPtr parent = _parent.lock())
+            if (NodeContainer* parent = _parent.lock())
             {
                 parent->removeChild(std::static_pointer_cast<Node>(shared_from_this()));
                 return true;
@@ -237,13 +237,13 @@ namespace ouzel
             _visible = visible;
         }
 
-        void Node::addToLayer(const LayerWeakPtr& layer)
+        void Node::addToLayer(Layer* layer)
         {
             _layer = layer;
 
             if (!layer.expired())
             {
-                for (const NodePtr& child : _children)
+                for (const Node*& child : _children)
                 {
                     child->addToLayer(layer);
                 }
@@ -252,7 +252,7 @@ namespace ouzel
 
         void Node::removeFromLayer()
         {
-            for (const NodePtr& child : _children)
+            for (const Node*& child : _children)
             {
                 child->removeFromLayer();
             }
@@ -378,7 +378,7 @@ namespace ouzel
 
         bool Node::checkVisibility() const
         {
-            if (const LayerPtr& layer = _layer.lock())
+            if (Layer* layer = _layer.lock())
             {
                 if (_boundingBox.isEmpty())
                 {
@@ -391,7 +391,7 @@ namespace ouzel
             return false;
         }
 
-        void Node::animate(const AnimatorPtr& animator)
+        void Node::animate(Animator* animator)
         {
             stopAnimation();
             _currentAnimator = animator;

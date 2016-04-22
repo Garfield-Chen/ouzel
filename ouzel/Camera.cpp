@@ -140,7 +140,7 @@ namespace ouzel
         {
             Vector2 screenPos;
 
-            if (LayerPtr layer = _layer.lock())
+            if (Layer* layer = _layer.lock())
             {
                 auto viewport = sharedEngine->getRenderer()->getSize();
                 Vector4 clipPos;

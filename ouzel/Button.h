@@ -4,7 +4,6 @@
 #pragma once
 
 #include <functional>
-#include "Types.h"
 #include "Widget.h"
 #include "Event.h"
 #include "Color.h"

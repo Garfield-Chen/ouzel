@@ -39,7 +39,7 @@ namespace ouzel
             }
         }
 
-        void Animator::start(const NodePtr& node)
+        void Animator::start(Node* node)
         {
             if (!_running)
             {

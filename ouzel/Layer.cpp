@@ -33,16 +33,16 @@ namespace ouzel
             {
                 lock();
 
-                for (const NodePtr child : _children)
+                for (const Node* child : _children)
                 {
                     child->visit(Matrix4::IDENTITY, false);
                 }
 
-                std::stable_sort(_drawQueue.begin(), _drawQueue.end(), [](const NodePtr& a, const NodePtr& b) {
+                std::stable_sort(_drawQueue.begin(), _drawQueue.end(), [](const Node*& a, const Node*& b) {
                     return a->getZ() > b->getZ();
                 });
 
-                for (const NodePtr& node : _drawQueue)
+                for (Node* node : _drawQueue)
                 {
                     node->process();
                 }
@@ -51,7 +51,7 @@ namespace ouzel
             }
         }
 
-        bool Layer::addChild(const NodePtr& node)
+        bool Layer::addChild(Node* node)
         {
             if (NodeContainer::addChild(node))
             {
@@ -67,7 +67,7 @@ namespace ouzel
             }
         }
 
-        void Layer::addToDrawQueue(const NodePtr& node)
+        void Layer::addToDrawQueue(Node* node)
         {
             _drawQueue.push_back(node);
         }
@@ -83,11 +83,11 @@ namespace ouzel
             }
         }
 
-        NodePtr Layer::pickNode(const Vector2& position) const
+        Node* Layer::pickNode(const Vector2& position) const
         {
-            for (std::vector<NodePtr>::const_reverse_iterator i = _drawQueue.rbegin(); i != _drawQueue.rend(); ++i)
+            for (std::vector<Node*>::const_reverse_iterator i = _drawQueue.rbegin(); i != _drawQueue.rend(); ++i)
             {
-                NodePtr node = *i;
+                Node* node = *i;
 
                 if (node->isVisible() && node->isPickable() && node->pointOn(position))
                 {
@@ -98,13 +98,13 @@ namespace ouzel
             return nullptr;
         }
 
-        std::set<NodePtr> Layer::pickNodes(const Rectangle& rectangle) const
+        std::set<Node*> Layer::pickNodes(const Rectangle& rectangle) const
         {
-            std::set<NodePtr> result;
+            std::set<Node*> result;
 
-            for (std::vector<NodePtr>::const_reverse_iterator i = _drawQueue.rbegin(); i != _drawQueue.rend(); ++i)
+            for (std::vector<Node*>::const_reverse_iterator i = _drawQueue.rbegin(); i != _drawQueue.rend(); ++i)
             {
-                NodePtr node = *i;
+                Node* node = *i;
 
                 if (node->isVisible() && node->isPickable() && node->rectangleOverlaps(rectangle))
                 {

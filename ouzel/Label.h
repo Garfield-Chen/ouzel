@@ -3,12 +3,18 @@
 
 #pragma once
 
-#include <memory>
 #include "Widget.h"
 #include "BMFont.h"
 
 namespace ouzel
 {
+    namespace graphics
+    {
+        class Texture;
+        class MeshBuffer;
+        class Shader;
+    }
+
     namespace gui
     {
         class Label: public Widget
@@ -32,9 +38,9 @@ namespace ouzel
         protected:
             void updateMesh();
 
-            graphics::TexturePtr _texture;
-            graphics::MeshBufferPtr _meshBuffer;
-            graphics::ShaderPtr _shader;
+            graphics::Texture* _texture;
+            graphics::MeshBuffer* _meshBuffer;
+            graphics::Shader* _shader;
             
             BMFont _font;
             Vector2 _textAnchor;

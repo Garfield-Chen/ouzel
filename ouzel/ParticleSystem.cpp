@@ -48,7 +48,7 @@ namespace ouzel
         {
             Node::draw();
 
-            LayerPtr layer = _layer.lock();
+            Layer* layer = _layer.lock();
 
             if (_shader && _texture && layer && _particleCount)
             {
@@ -357,7 +357,7 @@ namespace ouzel
 
             if (particles)
             {
-                if (LayerPtr layer = _layer.lock())
+                if (Layer* layer = _layer.lock())
                 {
                     Vector2 position;
 

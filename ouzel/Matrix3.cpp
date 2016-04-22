@@ -2,7 +2,6 @@
 // This file is part of the Ouzel engine.
 
 #include <cstring>
-#include <memory>
 #include <cmath>
 #include <cassert>
 #include "Matrix3.h"

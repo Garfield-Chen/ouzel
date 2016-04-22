@@ -4,7 +4,6 @@
 #pragma once
 
 #include "Animator.h"
-#include "Types.h"
 
 namespace ouzel
 {
@@ -13,15 +12,15 @@ namespace ouzel
         class Repeat: public Animator
         {
         public:
-            Repeat(const AnimatorPtr& animator, uint32_t count = 0);
+            Repeat(Animator* animator, uint32_t count = 0);
 
             virtual void update(float delta) override;
 
-            virtual void start(const NodePtr& node) override;
+            virtual void start(Node* node) override;
             virtual void reset() override;
 
         protected:
-            AnimatorPtr _animator;
+            Animator* _animator;
             uint32_t _count = 0;
             uint32_t _currentCount = 0;
         };

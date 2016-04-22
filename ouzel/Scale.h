@@ -15,7 +15,7 @@ namespace ouzel
         public:
             Scale(float length, const Vector2& scale, bool relative);
 
-            virtual void start(const NodePtr& node) override;
+            virtual void start(Node* node) override;
 
             virtual void setProgress(float progress) override;
 

@@ -67,110 +67,116 @@ namespace ouzel
             _fullscreen = fullscreen;
         }
 
-        BlendStatePtr Renderer::createBlendState(bool enableBlending,
+        BlendState* Renderer::createBlendState(bool enableBlending,
                                                  BlendState::BlendFactor colorBlendSource, BlendState::BlendFactor colorBlendDest,
                                                  BlendState::BlendOperation colorOperation,
                                                  BlendState::BlendFactor alphaBlendSource, BlendState::BlendFactor alphaBlendDest,
                                                  BlendState::BlendOperation alphaOperation)
         {
-            BlendStatePtr blendState(new BlendState());
+            BlendState* blendState(new BlendState());
             if (!blendState->init(enableBlending,
                                   colorBlendSource, colorBlendDest,
                                   colorOperation,
                                   alphaBlendSource, alphaBlendDest,
                                   alphaOperation))
             {
-                blendState.reset();
+                blendState->release();
+                blendState = nullptr;
             }
 
             return blendState;
         }
 
-        bool Renderer::activateBlendState(BlendStatePtr blendState)
+        bool Renderer::activateBlendState(BlendState* blendState)
         {
             _activeBlendState = blendState;
 
             return true;
         }
 
-        TexturePtr Renderer::createTexture(const Size2& size, bool dynamic, bool mipmaps)
+        Texture* Renderer::createTexture(const Size2& size, bool dynamic, bool mipmaps)
         {
-            TexturePtr texture(new Texture());
+            Texture* texture(new Texture());
             if (!texture->init(size, dynamic, mipmaps))
             {
-                texture.reset();
+                texture->release();
+                texture = nullptr;
             }
 
             return texture;
         }
 
-        bool Renderer::activateTexture(const TexturePtr& texture, uint32_t layer)
+        bool Renderer::activateTexture(Texture* texture, uint32_t layer)
         {
             _activeTextures[layer] = texture;
 
             return true;
         }
 
-        TexturePtr Renderer::loadTextureFromFile(const std::string& filename, bool dynamic, bool mipmaps)
+        Texture* Renderer::loadTextureFromFile(const std::string& filename, bool dynamic, bool mipmaps)
         {
-            TexturePtr texture(new Texture());
+            Texture* texture(new Texture());
 
             if (!texture->initFromFile(filename, dynamic, mipmaps))
             {
-                texture.reset();
+                texture->release();
+                texture = nullptr;
             }
 
             return texture;
         }
 
-        TexturePtr Renderer::loadTextureFromData(const void* data, const Size2& size, bool dynamic, bool mipmaps)
+        Texture* Renderer::loadTextureFromData(const void* data, const Size2& size, bool dynamic, bool mipmaps)
         {
-            TexturePtr texture(new Texture());
+            Texture* texture(new Texture());
 
             if (!texture->initFromData(data, size, dynamic, mipmaps))
             {
-                texture.reset();
+                texture->release();
+                texture = nullptr;
             }
 
             return texture;
         }
 
-        RenderTargetPtr Renderer::createRenderTarget(const Size2& size, bool depthBuffer)
+        RenderTarget* Renderer::createRenderTarget(const Size2& size, bool depthBuffer)
         {
-            RenderTargetPtr renderTarget(new RenderTarget());
+            RenderTarget* renderTarget(new RenderTarget());
 
             if (!renderTarget->init(size, depthBuffer))
             {
-                renderTarget.reset();
+                renderTarget->release();
+                renderTarget = nullptr;
             }
 
             return renderTarget;
         }
 
-        bool Renderer::activateRenderTarget(const RenderTargetPtr& renderTarget)
+        bool Renderer::activateRenderTarget(RenderTarget* renderTarget)
         {
             _activeRenderTarget = renderTarget;
 
             return true;
         }
 
-        ShaderPtr Renderer::loadShaderFromFiles(const std::string& pixelShader,
+        Shader* Renderer::loadShaderFromFiles(const std::string& pixelShader,
                                                 const std::string& vertexShader,
                                                 uint32_t vertexAttributes,
                                                 const std::string& pixelShaderFunction,
                                                 const std::string& vertexShaderFunction)
         {
-            ShaderPtr shader(new Shader());
+            Shader* shader(new Shader());
 
             if (!shader->initFromFiles(pixelShader, vertexShader, vertexAttributes, pixelShaderFunction, vertexShaderFunction))
             {
-                shader.reset();
+                shader->release();
+                shader = nullptr;
             }
 
             return shader;
         }
 
-        ShaderPtr Renderer::loadShaderFromBuffers(const uint8_t* pixelShader,
+        Shader* Renderer::loadShaderFromBuffers(const uint8_t* pixelShader,
                                                   uint32_t pixelShaderSize,
                                                   const uint8_t* vertexShader,
                                                   uint32_t vertexShaderSize,
@@ -178,48 +184,51 @@ namespace ouzel
                                                   const std::string& pixelShaderFunction,
                                                   const std::string& vertexShaderFunction)
         {
-            ShaderPtr shader(new Shader());
+            Shader* shader(new Shader());
 
             if (!shader->initFromBuffers(pixelShader, pixelShaderSize, vertexShader, vertexShaderSize, vertexAttributes, pixelShaderFunction, vertexShaderFunction))
             {
-                shader.reset();
+                shader->release();
+                shader = nullptr;
             }
 
             return shader;
         }
 
-        bool Renderer::activateShader(const ShaderPtr& shader)
+        bool Renderer::activateShader(Shader* shader)
         {
             _activeShader = shader;
 
             return true;
         }
 
-        MeshBufferPtr Renderer::createMeshBuffer()
+        MeshBuffer* Renderer::createMeshBuffer()
         {
-            MeshBufferPtr meshBuffer(new MeshBuffer());
+            MeshBuffer* meshBuffer(new MeshBuffer());
 
             if (!meshBuffer->init())
             {
-                meshBuffer.reset();
+                meshBuffer->release();
+                meshBuffer = nullptr;
             }
 
             return meshBuffer;
         }
 
-        MeshBufferPtr Renderer::createMeshBufferFromData(const void* indices, uint32_t indexSize, uint32_t indexCount, bool dynamicIndexBuffer, const void* vertices, uint32_t vertexAttributes, uint32_t vertexCount, bool dynamicVertexBuffer)
+        MeshBuffer* Renderer::createMeshBufferFromData(const void* indices, uint32_t indexSize, uint32_t indexCount, bool dynamicIndexBuffer, const void* vertices, uint32_t vertexAttributes, uint32_t vertexCount, bool dynamicVertexBuffer)
         {
-            MeshBufferPtr meshBuffer(new MeshBuffer());
+            MeshBuffer* meshBuffer(new MeshBuffer());
 
             if (!meshBuffer->initFromData(indices, indexSize, indexCount, dynamicIndexBuffer, vertices, vertexAttributes, vertexCount, dynamicVertexBuffer))
             {
-                meshBuffer.reset();
+                meshBuffer->release();
+                meshBuffer = nullptr;
             }
 
             return meshBuffer;
         }
 
-        bool Renderer::drawMeshBuffer(const MeshBufferPtr& meshBuffer, uint32_t indexCount, DrawMode drawMode, uint32_t startIndex)
+        bool Renderer::drawMeshBuffer(MeshBuffer* meshBuffer, uint32_t indexCount, DrawMode drawMode, uint32_t startIndex)
         {
             OUZEL_UNUSED(drawMode);
             OUZEL_UNUSED(startIndex);
@@ -262,7 +271,7 @@ namespace ouzel
             return Vector2(x, y);
         }
 
-        bool Renderer::checkVisibility(const Matrix4& transform, const AABB2& boundingBox, const scene::CameraPtr& camera)
+        bool Renderer::checkVisibility(const Matrix4& transform, const AABB2& boundingBox, scene::Camera* camera)
         {
             Rectangle visibleRect(0.0f, 0.0f, _size.width, _size.height);
 

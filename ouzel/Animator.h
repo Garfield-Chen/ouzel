@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "Types.h"
 
 namespace ouzel
 {
@@ -17,7 +16,7 @@ namespace ouzel
 
             virtual void update(float delta);
 
-            virtual void start(const NodePtr& node);
+            virtual void start(Node* node);
 
             virtual void resume();
             virtual void stop(bool resetAnimation = false);

@@ -3,10 +3,8 @@
 
 #pragma once
 
-#include <memory>
 #include <vector>
 #include <set>
-#include "Types.h"
 #include "Noncopyable.h"
 #include "Renderer.h"
 #include "SceneManager.h"
@@ -32,14 +30,14 @@ namespace ouzel
 
         bool init(Settings& settings);
 
-        const EventDispatcherPtr& getEventDispatcher() const { return _eventDispatcher; }
-        const CachePtr& getCache() const { return _cache; }
-        const WindowPtr& getWindow() const { return _window; }
-        const graphics::RendererPtr& getRenderer() const { return _renderer; }
-        const scene::SceneManagerPtr& getSceneManager() const { return _sceneManager; }
-        const FileSystemPtr& getFileSystem() const { return _fileSystem; }
-        const input::InputPtr& getInput() const { return _input; }
-        const LocalizationPtr& getLocalization() const { return _localization; }
+        EventDispatcher* getEventDispatcher() const { return _eventDispatcher; }
+        Cache* getCache() const { return _cache; }
+        Window* getWindow() const { return _window; }
+        graphics::Renderer* getRenderer() const { return _renderer; }
+        scene::SceneManager* getSceneManager() const { return _sceneManager; }
+        FileSystem* getFileSystem() const { return _fileSystem; }
+        input::Input* getInput() const { return _input; }
+        Localization* getLocalization() const { return _localization; }
 
         void exit();
 
@@ -62,22 +60,22 @@ namespace ouzel
 
         AppPtr _app;
 
-        EventDispatcherPtr _eventDispatcher;
-        CachePtr _cache;
-        WindowPtr _window;
-        graphics::RendererPtr _renderer;
-        scene::SceneManagerPtr _sceneManager;
-        FileSystemPtr _fileSystem;
-        input::InputPtr _input;
-        LocalizationPtr _localization;
+        EventDispatcher* _eventDispatcher = nullptr;
+        Cache* _cache = nullptr;
+        Window* _window = nullptr;
+        graphics::Renderer* _renderer = nullptr;
+        scene::SceneManager* _sceneManager = nullptr;
+        FileSystem* _fileSystem = nullptr;
+        input::Input* _input = nullptr;
+        Localization* _localization = nullptr;
 
         float _targetFPS;
         float _currentFPS = 0.0f;
         uint64_t _previousFrameTime;
 
-        std::vector<UpdateCallbackPtr> _updateCallbacks;
-        std::set<UpdateCallbackPtr> _updateCallbackAddList;
-        std::set<UpdateCallbackPtr> _updateCallbackRemoveList;
+        std::vector<UpdateCallback*> _updateCallbacks;
+        std::set<UpdateCallback*> _updateCallbackAddList;
+        std::set<UpdateCallback*> _updateCallbackRemoveList;
 
         int32_t _locked = 0;
         bool _running = false;

@@ -4,7 +4,6 @@
 #pragma once
 
 #include <vector>
-#include <memory>
 #include "Input.h"
 
 #ifdef __OBJC__

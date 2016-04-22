@@ -577,6 +577,7 @@
 		300934291C88964700CC50D3 /* WindowIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowIOS.h; sourceTree = "<group>"; };
 		3009342C1C88978D00CC50D3 /* WindowTVOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WindowTVOS.mm; sourceTree = "<group>"; };
 		3009342D1C88978D00CC50D3 /* WindowTVOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowTVOS.h; sourceTree = "<group>"; };
+		301EB3891CCACAAF00466E92 /* ReferenceCounted.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReferenceCounted.h; sourceTree = "<group>"; };
 		30324E121CB2898E00601A64 /* BlendState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlendState.cpp; sourceTree = "<group>"; };
 		30324E131CB2898E00601A64 /* BlendState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlendState.h; sourceTree = "<group>"; };
 		30324E1A1CB28A4400601A64 /* BlendStateOGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlendStateOGL.cpp; path = opengl/BlendStateOGL.cpp; sourceTree = "<group>"; };
@@ -736,7 +737,6 @@
 		305B99901C41F06F008589E1 /* Widget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Widget.h; sourceTree = "<group>"; };
 		305B999A1C42A695008589E1 /* BMFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BMFont.cpp; sourceTree = "<group>"; };
 		305B999B1C42A695008589E1 /* BMFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMFont.h; sourceTree = "<group>"; };
-		305B99C71C451962008589E1 /* Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
 		306B0E5D1C567D05005C75C1 /* DrawNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawNode.cpp; sourceTree = "<group>"; };
 		306B0E5E1C567D05005C75C1 /* DrawNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawNode.h; sourceTree = "<group>"; };
 		309ACD261C70DA73005325D3 /* ParticleDefinition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParticleDefinition.h; sourceTree = "<group>"; };
@@ -910,10 +910,10 @@
 				304A8E2E1C237C70008B1151 /* Engine.h */,
 				304A8E381C237C70008B1151 /* Noncopyable.h */,
 				303647631C3F218E0024DB5B /* Settings.h */,
-				305B99C71C451962008589E1 /* Types.h */,
 				30C8B6211C6D0E350031B64F /* UpdateCallback.h */,
 				3009341A1C88698500CC50D3 /* Window.cpp */,
 				3009341B1C88698500CC50D3 /* Window.h */,
+				301EB3891CCACAAF00466E92 /* ReferenceCounted.h */,
 			);
 			name = core;
 			sourceTree = "<group>";

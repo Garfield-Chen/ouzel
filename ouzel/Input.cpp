@@ -95,7 +95,7 @@ namespace ouzel
 
             if (scene::ScenePtr scene = sharedEngine->getSceneManager()->getScene())
             {
-                scene::NodePtr node = scene->pickNode(position);
+                scene::Node* node = scene->pickNode(position);
                 mouseDownOnNode(node, position);
             }
         }
@@ -114,7 +114,7 @@ namespace ouzel
 
             if (scene::ScenePtr scene = sharedEngine->getSceneManager()->getScene())
             {
-                scene::NodePtr node = scene->pickNode(position);
+                scene::Node* node = scene->pickNode(position);
                 mouseUpOnNode(node, position);
             }
         }
@@ -132,7 +132,7 @@ namespace ouzel
 
             if (scene::ScenePtr scene = sharedEngine->getSceneManager()->getScene())
             {
-                scene::NodePtr node = scene->pickNode(position);
+                scene::Node* node = scene->pickNode(position);
                 mouseEnterNode(node, position);
             }
 
@@ -193,9 +193,9 @@ namespace ouzel
             sharedEngine->getEventDispatcher()->dispatchEvent(event, shared_from_this());
         }
 
-        void Input::mouseEnterNode(const scene::NodePtr& node, const Vector2& position)
+        void Input::mouseEnterNode(const scene::Node*& node, const Vector2& position)
         {
-            scene::NodePtr mouseOnNode = _mouseOnNode.lock();
+            scene::Node* mouseOnNode = _mouseOnNode.lock();
 
             if (mouseOnNode)
             {
@@ -221,7 +221,7 @@ namespace ouzel
             }
         }
 
-        void Input::mouseLeaveNode(const scene::NodePtr& node, const Vector2& position)
+        void Input::mouseLeaveNode(const scene::Node*& node, const Vector2& position)
         {
             if (node && node->isReceivingInput())
             {
@@ -233,7 +233,7 @@ namespace ouzel
             }
         }
 
-        void Input::mouseDownOnNode(const scene::NodePtr& node, const Vector2& position)
+        void Input::mouseDownOnNode(const scene::Node*& node, const Vector2& position)
         {
             _mouseDownOnNode = node;
 
@@ -247,9 +247,9 @@ namespace ouzel
             }
         }
 
-        void Input::mouseUpOnNode(const scene::NodePtr& node, const Vector2& position)
+        void Input::mouseUpOnNode(const scene::Node*& node, const Vector2& position)
         {
-            scene::NodePtr mouseDownOnNode = _mouseDownOnNode.lock();
+            scene::Node* mouseDownOnNode = _mouseDownOnNode.lock();
 
             if (mouseDownOnNode && mouseDownOnNode->isReceivingInput())
             {
@@ -272,7 +272,7 @@ namespace ouzel
             _mouseDownOnNode.reset();
         }
 
-        void Input::mouseDragNode(const scene::NodePtr& node, const Vector2& position)
+        void Input::mouseDragNode(const scene::Node*& node, const Vector2& position)
         {
             MouseEventPtr enterEvent = std::make_shared<MouseEvent>();
             enterEvent->type = Event::Type::UI_DRAG_NODE;

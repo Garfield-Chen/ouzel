@@ -1,6 +1,7 @@
 // Copyright (C) 2016 Elviss Strazdins
 // This file is part of the Ouzel engine.
 
+#include "ReferenceCounted.h"
 #include "Noncopyable.h"
 
 #pragma once
@@ -11,7 +12,7 @@ namespace ouzel
     {
         class Renderer;
 
-        class BlendState: public Noncopyable
+        class BlendState: public ReferenceCounted, public Noncopyable
         {
             friend Renderer;
         public:

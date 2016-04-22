@@ -248,7 +248,7 @@ namespace ouzel
         {
             Node::draw();
 
-            LayerPtr layer = _layer.lock();
+            Layer* layer = _layer.lock();
 
             if (_texture && layer)
             {
@@ -262,7 +262,7 @@ namespace ouzel
 
                 if (_currentFrame < _frameCount)
                 {
-                    graphics::MeshBufferPtr meshBuffer = _frameMeshBuffers[_currentFrame];
+                    graphics::MeshBuffer* meshBuffer = _frameMeshBuffers[_currentFrame];
 
                     sharedEngine->getRenderer()->drawMeshBuffer(meshBuffer);
                 }
@@ -276,12 +276,12 @@ namespace ouzel
             updateVertexColor();
         }
 
-        void Sprite::setTexture(const graphics::TexturePtr& texture)
+        void Sprite::setTexture(const graphics::Texture*& texture)
         {
             _texture = texture;
         }
 
-        void Sprite::setShader(const graphics::ShaderPtr& shader)
+        void Sprite::setShader(const graphics::Shader*& shader)
         {
             _shader = shader;
         }
@@ -305,7 +305,7 @@ namespace ouzel
                     vertex.color.a = static_cast<uint8_t>(_opacity * _color.a);
                 }
 
-                graphics::MeshBufferPtr meshBuffer = _frameMeshBuffers[i];
+                graphics::MeshBuffer* meshBuffer = _frameMeshBuffers[i];
                 meshBuffer->uploadVertices(_frameVertices[i].data(), static_cast<uint32_t>(_frameVertices[i].size()));
             }
         }

@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include <memory>
 #include <string>
 #include <vector>
 #include "Node.h"
@@ -87,12 +86,12 @@ namespace ouzel
             ParticleDefinition _particleDefinition;
             ParticleDefinition::PositionType _positionType;
 
-            graphics::ShaderPtr _shader;
-            graphics::TexturePtr _texture;
+            graphics::Shader* _shader;
+            graphics::Texture* _texture;
 
             std::vector<Particle> _particles;
 
-            graphics::MeshBufferPtr _mesh;
+            graphics::MeshBuffer* _mesh;
 
             std::vector<uint16_t> _indices;
             std::vector<graphics::VertexPCT> _vertices;

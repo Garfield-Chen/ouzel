@@ -4,6 +4,7 @@
 #pragma once
 
 #include <string>
+#include "ReferenceCounted.h"
 #include "Noncopyable.h"
 #include "Size2.h"
 
@@ -13,7 +14,7 @@ namespace ouzel
     {
         class Renderer;
 
-        class Texture: public Noncopyable
+        class Texture: public ReferenceCounted, public Noncopyable
         {
             friend Renderer;
         public:

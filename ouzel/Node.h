@@ -3,8 +3,7 @@
 
 #pragma once
 
-#include <memory>
-#include "Types.h"
+#include "ReferenceCounted.h"
 #include "NodeContainer.h"
 #include "Vector2.h"
 #include "Matrix4.h"
@@ -16,8 +15,9 @@ namespace ouzel
     namespace scene
     {
         class SceneManager;
+        class Animator;
 
-        class Node: public NodeContainer
+        class Node: public ReferenceCounted, public NodeContainer
         {
             friend SceneManager;
             friend NodeContainer;
@@ -30,9 +30,9 @@ namespace ouzel
             virtual void process();
             virtual void draw();
 
-            virtual bool addChild(const NodePtr& node) override;
-            virtual bool hasParent() const { return !_parent.expired(); }
-            virtual NodeContainerPtr getParent() const { return _parent.lock(); }
+            virtual bool addChild(Node* node) override;
+            virtual bool hasParent() const { return _parent != nullptr; }
+            virtual NodeContainer* getParent() const { return _parent; }
             virtual bool removeFromParent();
 
             virtual void setZ(float z);
@@ -80,8 +80,8 @@ namespace ouzel
 
             virtual bool checkVisibility() const;
 
-            virtual void animate(const AnimatorPtr& animator);
-            virtual AnimatorPtr getAnimator() const { return _currentAnimator; }
+            virtual void animate(Animator* animator);
+            virtual Animator* getAnimator() const { return _currentAnimator; }
             virtual void stopAnimation();
             virtual void removeAnimation();
 
@@ -89,7 +89,7 @@ namespace ouzel
             bool isReceivingInput() const { return _receiveInput; }
 
         protected:
-            virtual void addToLayer(const LayerWeakPtr& layer);
+            virtual void addToLayer(Layer* layer);
             virtual void removeFromLayer();
 
             virtual void calculateLocalTransform() const;
@@ -126,10 +126,10 @@ namespace ouzel
             bool _visible = true;
             bool _receiveInput = false;
 
-            NodeContainerWeakPtr _parent;
-            LayerWeakPtr _layer;
+            NodeContainer* _parent = nullptr;
+            Layer* _layer;
 
-            AnimatorPtr _currentAnimator;
+            Animator* _currentAnimator;
             bool _remove = false;
         };
     } // namespace scene

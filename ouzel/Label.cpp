@@ -57,7 +57,7 @@ namespace ouzel
         {
             Widget::draw();
 
-            scene::LayerPtr layer = _layer.lock();
+            scene::Layer* layer = _layer.lock();
 
             if (_shader && _texture && layer && _meshBuffer)
             {

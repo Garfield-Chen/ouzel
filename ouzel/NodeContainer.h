@@ -5,8 +5,6 @@
 
 #include <vector>
 #include <set>
-#include <memory>
-#include "Types.h"
 #include "Noncopyable.h"
 
 namespace ouzel
@@ -22,20 +20,20 @@ namespace ouzel
             NodeContainer();
             virtual ~NodeContainer();
 
-            virtual bool addChild(const NodePtr& node);
-            virtual bool removeChild(const NodePtr& node);
+            virtual bool addChild(Node* node);
+            virtual bool removeChild(Node* node);
             virtual void removeAllChildren();
-            virtual bool hasChild(const NodePtr& node, bool recursive = false) const;
-            virtual const std::vector<NodePtr>& getChildren() const { return _children; }
+            virtual bool hasChild(Node* node, bool recursive = false) const;
+            virtual const std::vector<Node*>& getChildren() const { return _children; }
 
         protected:
             void lock();
             void unlock();
 
-            std::vector<NodePtr> _children;
+            std::vector<Node*> _children;
 
-            std::set<NodePtr> _nodeAddList;
-            std::set<NodePtr> _nodeRemoveList;
+            std::set<Node*> _nodeAddList;
+            std::set<Node*> _nodeRemoveList;
             int32_t _locked = 0;
         };
     } // namespace scene

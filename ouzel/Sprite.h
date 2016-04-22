@@ -29,11 +29,11 @@ namespace ouzel
 
             virtual void setOpacity(float opacity) override;
 
-            virtual graphics::TexturePtr getTexture() const { return _texture; }
-            virtual void setTexture(const graphics::TexturePtr& texture);
+            virtual graphics::Texture* getTexture() const { return _texture; }
+            virtual void setTexture(const graphics::Texture*& texture);
 
-            virtual graphics::ShaderPtr getShader() const { return _shader; }
-            virtual void setShader(const graphics::ShaderPtr& shader);
+            virtual graphics::Shader* getShader() const { return _shader; }
+            virtual void setShader(const graphics::Shader*& shader);
 
             virtual const Size2& getSize() const { return _size; }
 
@@ -51,15 +51,15 @@ namespace ouzel
 
             void updateVertexColor();
 
-            graphics::TexturePtr _texture;
-            graphics::ShaderPtr _shader;
-            graphics::BlendStatePtr _blendState;
+            graphics::Texture* _texture;
+            graphics::Shader* _shader;
+            graphics::BlendState* _blendState;
 
             Size2 _size;
 
             uint32_t _frameCount = 0;
             std::vector<std::vector<graphics::VertexPCT>> _frameVertices;
-            std::vector<graphics::MeshBufferPtr> _frameMeshBuffers;
+            std::vector<graphics::MeshBuffer*> _frameMeshBuffers;
             graphics::Color _color = graphics::Color(255, 255, 255, 255);
 
             uint32_t _currentFrame = 0;
