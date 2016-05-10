@@ -15,7 +15,14 @@ namespace ouzel
 
         SceneManager::~SceneManager()
         {
-
+            if (nextScene)
+            {
+                nextScene->release();
+            }
+            if (scene)
+            {
+                scene->release();
+            }
         }
 
         void SceneManager::setScene(Scene* newScene)
@@ -24,14 +31,21 @@ namespace ouzel
             {
                 if (locked)
                 {
-                    nextScene = scene;
+                    nextScene = newScene;
+                    nextScene->retain();
                 }
                 else
                 {
+                    if (scene)
+                    {
+                        scene->release();
+                    }
+
                     scene = newScene;
 
                     if (scene)
                     {
+                        scene->retain();
                         scene->recalculateProjection();
                     }
                 }

@@ -405,6 +405,7 @@ namespace ouzel
             if (currentAnimator)
             {
                 currentAnimator->start(this);
+                currentAnimator->retain();
             }
         }
 
@@ -419,7 +420,10 @@ namespace ouzel
 
         void Node::removeAnimation()
         {
-            currentAnimator->release();
+            if (currentAnimator)
+            {
+                currentAnimator->release();
+            }
         }
 
         void Node::calculateLocalTransform() const
@@ -466,6 +470,7 @@ namespace ouzel
         {
             drawables.push_back(drawable);
             drawable->setParentNode(this);
+            drawable->retain();
         }
 
         void Node::removeDrawable(uint32_t index)
@@ -474,6 +479,9 @@ namespace ouzel
             {
                 return;
             }
+
+            Drawable* drawable = drawables[index];
+            drawable->release();
 
             drawables.erase(drawables.begin() + index);
         }
@@ -485,6 +493,7 @@ namespace ouzel
                 if (*i == drawable)
                 {
                     i = drawables.erase(i);
+                    drawable->release();
                 }
                 else
                 {

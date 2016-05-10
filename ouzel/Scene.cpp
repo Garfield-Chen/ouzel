@@ -50,12 +50,14 @@ namespace ouzel
             if (locked)
             {
                 layerAddList.insert(layer);
+                layer->retain();
             }
             else if (!hasLayer(layer) && !layer->getScene())
             {
                 layer->remove = false;
                 layers.push_back(layer);
                 layer->addToScene(this);
+                layer->retain();
 
                 if (Camera* camera = layer->getCamera())
                 {
@@ -70,6 +72,7 @@ namespace ouzel
             {
                 layer->remove = true;
                 layerRemoveList.insert(layer);
+                layer->retain();
             }
             else
             {
@@ -79,6 +82,7 @@ namespace ouzel
                 {
                     layer->removeFromScene();
                     layers.erase(i);
+                    layer->release();
                 }
             }
         }
@@ -91,10 +95,16 @@ namespace ouzel
                 {
                     layer->remove = true;
                     layerRemoveList.insert(layer);
+                    layer->retain();
                 }
             }
             else
             {
+                for (Layer* layer : layers)
+                {
+                    layer->release();
+                }
+
                 layers.clear();
             }
         }
@@ -136,6 +146,7 @@ namespace ouzel
                     for (Layer* layer : layerAddList)
                     {
                         addLayer(layer);
+                        layer->release();
                     }
                     layerAddList.clear();
                 }
@@ -145,6 +156,7 @@ namespace ouzel
                     for (Layer* layer : layerRemoveList)
                     {
                         removeLayer(layer);
+                        layer->release();
                     }
                     layerRemoveList.clear();
                 }

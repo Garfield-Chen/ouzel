@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "Noncopyable.h"
+#include "ReferenceCounted.h"
 #include "Rectangle.h"
 #include "Vertex.h"
 
@@ -19,7 +20,7 @@ namespace ouzel
 
     namespace scene
     {
-        class SpriteFrame: public Noncopyable
+        class SpriteFrame: public Noncopyable, public ReferenceCounted
         {
         public:
             static std::vector<SpriteFrame*> loadSpriteFrames(const std::string& filename, bool mipmaps = true);

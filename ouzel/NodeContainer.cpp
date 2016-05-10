@@ -20,6 +20,7 @@ namespace ouzel
             {
                 node->parent = nullptr;
                 node->layer = nullptr;
+                node->release();
             }
         }
 
@@ -28,6 +29,7 @@ namespace ouzel
             if (locked)
             {
                 nodeAddList.insert(node);
+                node->retain();
                 return false;
             }
 
@@ -36,6 +38,7 @@ namespace ouzel
                 node->remove = false;
                 node->parent = this;
                 children.push_back(node);
+                node->retain();
 
                 return true;
             }
@@ -51,6 +54,7 @@ namespace ouzel
             {
                 node->remove = true;
                 nodeRemoveList.insert(node);
+                node->retain();
                 return false;
             }
 
@@ -62,6 +66,7 @@ namespace ouzel
                 node->parent = nullptr;
                 node->layer = nullptr;
                 children.erase(i);
+                node->release();
 
                 return true;
             }
@@ -73,18 +78,28 @@ namespace ouzel
 
         void NodeContainer::removeAllChildren()
         {
-            lock();
-
-            for (auto& node : children)
+            if (locked)
             {
-                node->removeFromLayer();
-                node->parent = nullptr;
-                node->layer = nullptr;
+                for (Node* node : children)
+                {
+                    node->remove = true;
+                    nodeRemoveList.insert(node);
+                    node->retain();
+                }
+            }
+            else
+            {
+                for (Node* node : children)
+                {
+                    node->removeFromLayer();
+                    node->parent = nullptr;
+                    node->layer = nullptr;
+                    node->release();
+                }
+
+                children.clear();
             }
 
-            children.clear();
-
-            unlock();
         }
 
         bool NodeContainer::hasChild(Node* node, bool recursive) const
@@ -116,6 +131,7 @@ namespace ouzel
                     for (Node* node : nodeAddList)
                     {
                         addChild(node);
+                        node->release();
                     }
                     nodeAddList.clear();
                 }
@@ -125,6 +141,7 @@ namespace ouzel
                     for (Node* node : nodeRemoveList)
                     {
                         removeChild(node);
+                        node->release();
                     }
                     nodeRemoveList.clear();
                 }
