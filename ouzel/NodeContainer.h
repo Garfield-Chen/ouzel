@@ -5,9 +5,8 @@
 
 #include <vector>
 #include <set>
-#include <memory>
-#include "Types.h"
 #include "Noncopyable.h"
+#include "ReferenceCounted.h"
 
 namespace ouzel
 {
@@ -16,26 +15,26 @@ namespace ouzel
         class Layer;
         class Node;
 
-        class NodeContainer: public Noncopyable, public std::enable_shared_from_this<NodeContainer>
+        class NodeContainer: public Noncopyable, public ReferenceCounted
         {
         public:
             NodeContainer();
             virtual ~NodeContainer();
 
-            virtual bool addChild(const NodePtr& node);
-            virtual bool removeChild(const NodePtr& node);
+            virtual bool addChild(Node* node);
+            virtual bool removeChild(Node* node);
             virtual void removeAllChildren();
-            virtual bool hasChild(const NodePtr& node, bool recursive = false) const;
-            virtual const std::vector<NodePtr>& getChildren() const { return children; }
+            virtual bool hasChild(Node* node, bool recursive = false) const;
+            virtual const std::vector<Node*>& getChildren() const { return children; }
 
         protected:
             void lock();
             void unlock();
 
-            std::vector<NodePtr> children;
+            std::vector<Node*> children;
 
-            std::set<NodePtr> nodeAddList;
-            std::set<NodePtr> nodeRemoveList;
+            std::set<Node*> nodeAddList;
+            std::set<Node*> nodeRemoveList;
             int32_t locked = 0;
         };
     } // namespace scene

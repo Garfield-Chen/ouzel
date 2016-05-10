@@ -13,14 +13,15 @@ namespace ouzel
 {
     namespace scene
     {
-        ParticleDefinitionPtr ParticleDefinition::loadParticleDefinition(const std::string& filename)
+        ParticleDefinition* ParticleDefinition::loadParticleDefinition(const std::string& filename)
         {
-            ParticleDefinitionPtr result = std::make_shared<scene::ParticleDefinition>();
+            ParticleDefinition* result = new scene::ParticleDefinition();
 
             File file(filename, File::Mode::READ, false);
 
             if (!file)
             {
+                result->release();
                 log("Failed to open %s", filename.c_str());
                 return nullptr;
             }
@@ -32,6 +33,7 @@ namespace ouzel
 
             if (document.HasParseError())
             {
+                result->release();
                 log("Failed to parse %s", filename.c_str());
                 return nullptr;
             }

@@ -52,8 +52,6 @@ using namespace ouzel;
         [openGLContext setView:self];
         [openGLContext makeCurrentContext];
 
-        std::shared_ptr<graphics::RendererOGL> renderer = std::static_pointer_cast<graphics::RendererOGL>(sharedEngine->getRenderer());
-
         GLint swapInt = 1;
         [openGLContext setValues:&swapInt forParameter:NSOpenGLCPSwapInterval];
 

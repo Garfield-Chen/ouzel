@@ -124,7 +124,7 @@ namespace ouzel
                 return false;
             }
 
-            std::shared_ptr<WindowWin> windowWin = std::static_pointer_cast<WindowWin>(sharedEngine->getWindow());
+            std::shared_ptr<WindowWin> windowWin = static_cast<WindowWin>(sharedEngine->getWindow());
 
             DXGI_SWAP_CHAIN_DESC swapChainDesc;
             memset(&swapChainDesc, 0, sizeof(swapChainDesc));
@@ -229,7 +229,7 @@ namespace ouzel
                 return false;
             }
 
-            ShaderPtr textureShader = loadShaderFromBuffers(TEXTURE_PIXEL_SHADER_D3D11, sizeof(TEXTURE_PIXEL_SHADER_D3D11),
+            Shader* textureShader = loadShaderFromBuffers(TEXTURE_PIXEL_SHADER_D3D11, sizeof(TEXTURE_PIXEL_SHADER_D3D11),
                 TEXTURE_VERTEX_SHADER_D3D11, sizeof(TEXTURE_VERTEX_SHADER_D3D11),
                 VertexPCT::ATTRIBUTES);
 
@@ -243,7 +243,7 @@ namespace ouzel
 
             sharedEngine->getCache()->setShader(SHADER_TEXTURE, textureShader);
 
-            ShaderPtr colorShader = loadShaderFromBuffers(COLOR_PIXEL_SHADER_D3D11, sizeof(COLOR_PIXEL_SHADER_D3D11),
+            Shader* colorShader = loadShaderFromBuffers(COLOR_PIXEL_SHADER_D3D11, sizeof(COLOR_PIXEL_SHADER_D3D11),
                 COLOR_VERTEX_SHADER_D3D11, sizeof(COLOR_VERTEX_SHADER_D3D11),
                 VertexPC::ATTRIBUTES);
 
@@ -257,7 +257,7 @@ namespace ouzel
 
             sharedEngine->getCache()->setShader(SHADER_COLOR, colorShader);
 
-            BlendStatePtr noBlendState = createBlendState(false,
+            BlendState* noBlendState = createBlendState(false,
                                                           BlendState::BlendFactor::ONE, BlendState::BlendFactor::ZERO,
                                                           BlendState::BlendOperation::ADD,
                                                           BlendState::BlendFactor::ONE, BlendState::BlendFactor::ZERO,
@@ -270,7 +270,7 @@ namespace ouzel
 
             sharedEngine->getCache()->setBlendState(BLEND_NO_BLEND, noBlendState);
 
-            BlendStatePtr addBlendState = createBlendState(true,
+            BlendState* addBlendState = createBlendState(true,
                                                            BlendState::BlendFactor::ONE, BlendState::BlendFactor::ONE,
                                                            BlendState::BlendOperation::ADD,
                                                            BlendState::BlendFactor::ONE, BlendState::BlendFactor::ONE,
@@ -283,7 +283,7 @@ namespace ouzel
 
             sharedEngine->getCache()->setBlendState(BLEND_ADD, addBlendState);
 
-            BlendStatePtr multiplyBlendState = createBlendState(true,
+            BlendState* multiplyBlendState = createBlendState(true,
                                                                 BlendState::BlendFactor::DEST_COLOR, BlendState::BlendFactor::ZERO,
                                                                 BlendState::BlendOperation::ADD,
                                                                 BlendState::BlendFactor::DEST_ALPHA, BlendState::BlendFactor::ZERO,
@@ -296,7 +296,7 @@ namespace ouzel
 
             sharedEngine->getCache()->setBlendState(BLEND_MULTIPLY, multiplyBlendState);
 
-            BlendStatePtr alphaBlendState = createBlendState(true,
+            BlendState* alphaBlendState = createBlendState(true,
                                                              BlendState::BlendFactor::SRC_ALPHA, BlendState::BlendFactor::INV_SRC_ALPHA,
                                                              BlendState::BlendOperation::ADD,
                                                              BlendState::BlendFactor::ONE, BlendState::BlendFactor::ZERO,
@@ -333,7 +333,7 @@ namespace ouzel
 
         IDXGIOutput* RendererD3D11::getOutput() const
         {
-            std::shared_ptr<WindowWin> windowWin = std::static_pointer_cast<WindowWin>(sharedEngine->getWindow());
+            std::shared_ptr<WindowWin> windowWin = static_cast<WindowWin>(sharedEngine->getWindow());
 
             HMONITOR monitor = windowWin->getMonitor();
 
@@ -514,7 +514,7 @@ namespace ouzel
             }
         }
 
-        BlendStatePtr RendererD3D11::createBlendState(bool enableBlending,
+        BlendState* RendererD3D11::createBlendState(bool enableBlending,
                                                       BlendState::BlendFactor colorBlendSource, BlendState::BlendFactor colorBlendDest,
                                                       BlendState::BlendOperation colorOperation,
                                                       BlendState::BlendFactor alphaBlendSource, BlendState::BlendFactor alphaBlendDest,
@@ -528,13 +528,13 @@ namespace ouzel
                                   alphaBlendSource, alphaBlendDest,
                                   alphaOperation))
             {
-                blendState.reset();
+                blendState->release();
             }
 
             return blendState;
         }
 
-        bool RendererD3D11::activateBlendState(BlendStatePtr blendState)
+        bool RendererD3D11::activateBlendState(BlendState* blendState)
         {
             if (activeBlendState == blendState)
             {
@@ -548,7 +548,7 @@ namespace ouzel
 
             if (blendState)
             {
-                std::shared_ptr<BlendStateD3D11> blendStateD3D11 = std::static_pointer_cast<BlendStateD3D11>(activeBlendState);
+                std::shared_ptr<BlendStateD3D11> blendStateD3D11 = static_cast<BlendStateD3D11>(activeBlendState);
 
                 context->OMSetBlendState(blendStateD3D11->getBlendState(), NULL, 0xffffffff);
             }
@@ -560,43 +560,43 @@ namespace ouzel
             return true;
         }
 
-        TexturePtr RendererD3D11::createTexture(const Size2& size, bool dynamic, bool mipmaps)
+        Texture* RendererD3D11::createTexture(const Size2& size, bool dynamic, bool mipmaps)
         {
             std::shared_ptr<TextureD3D11> texture(new TextureD3D11());
 
             if (!texture->init(size, dynamic, mipmaps))
             {
-                texture.reset();
+                texture->release();
             }
 
             return texture;
         }
 
-        TexturePtr RendererD3D11::loadTextureFromFile(const std::string& filename, bool dynamic, bool mipmaps)
+        Texture* RendererD3D11::loadTextureFromFile(const std::string& filename, bool dynamic, bool mipmaps)
         {
             std::shared_ptr<TextureD3D11> texture(new TextureD3D11());
 
             if (!texture->initFromFile(filename, dynamic, mipmaps))
             {
-                texture.reset();
+                texture->release();
             }
 
             return texture;
         }
 
-        TexturePtr RendererD3D11::loadTextureFromData(const void* data, const Size2& size, bool dynamic, bool mipmaps)
+        Texture* RendererD3D11::loadTextureFromData(const void* data, const Size2& size, bool dynamic, bool mipmaps)
         {
             std::shared_ptr<TextureD3D11> texture(new TextureD3D11());
 
             if (!texture->initFromData(data, size, dynamic, mipmaps))
             {
-                texture.reset();
+                texture->release();
             }
 
             return texture;
         }
 
-        bool RendererD3D11::activateTexture(const TexturePtr& texture, uint32_t layer)
+        bool RendererD3D11::activateTexture(Texture* texture, uint32_t layer)
         {
             if (activeTextures[layer] == texture)
             {
@@ -610,7 +610,7 @@ namespace ouzel
 
             if (activeTextures[layer])
             {
-                std::shared_ptr<TextureD3D11> textureD3D11 = std::static_pointer_cast<TextureD3D11>(activeTextures[layer]);
+                std::shared_ptr<TextureD3D11> textureD3D11 = static_cast<TextureD3D11>(activeTextures[layer]);
 
                 resourceViews[layer] = textureD3D11->getResourceView();
                 samplerStates[layer] = samplerState;
@@ -624,19 +624,19 @@ namespace ouzel
             return true;
         }
 
-        RenderTargetPtr RendererD3D11::createRenderTarget(const Size2& size, bool depthBuffer)
+        RenderTarget* RendererD3D11::createRenderTarget(const Size2& size, bool depthBuffer)
         {
             std::shared_ptr<RenderTargetD3D11> renderTarget(new RenderTargetD3D11());
 
             if (!renderTarget->init(size, depthBuffer))
             {
-                renderTarget.reset();
+                renderTarget->release();
             }
 
             return renderTarget;
         }
 
-        bool RendererD3D11::activateRenderTarget(const RenderTargetPtr& renderTarget)
+        bool RendererD3D11::activateRenderTarget(RenderTarget* renderTarget)
         {
             if (activeRenderTarget == renderTarget)
             {
@@ -654,7 +654,7 @@ namespace ouzel
 
             if (activeRenderTarget)
             {
-                std::shared_ptr<RenderTargetD3D11> renderTargetD3D11 = std::static_pointer_cast<RenderTargetD3D11>(activeRenderTarget);
+                std::shared_ptr<RenderTargetD3D11> renderTargetD3D11 = static_cast<RenderTargetD3D11>(activeRenderTarget);
 
                 newRenderTargetView = renderTargetD3D11->getRenderTargetView();
                 newClearColor = renderTargetD3D11->getClearColor();
@@ -681,7 +681,7 @@ namespace ouzel
             return true;
         }
 
-        ShaderPtr RendererD3D11::loadShaderFromFiles(const std::string& pixelShader,
+        Shader* RendererD3D11::loadShaderFromFiles(const std::string& pixelShader,
                                                      const std::string& vertexShader,
                                                      uint32_t vertexAttributes,
                                                      const std::string& pixelShaderFunction,
@@ -691,13 +691,13 @@ namespace ouzel
 
             if (!shader->initFromFiles(pixelShader, vertexShader, vertexAttributes, pixelShaderFunction, vertexShaderFunction))
             {
-                shader.reset();
+                shader->release();
             }
 
             return shader;
         }
 
-        ShaderPtr RendererD3D11::loadShaderFromBuffers(const uint8_t* pixelShader,
+        Shader* RendererD3D11::loadShaderFromBuffers(const uint8_t* pixelShader,
                                                        uint32_t pixelShaderSize,
                                                        const uint8_t* vertexShader,
                                                        uint32_t vertexShaderSize,
@@ -709,13 +709,13 @@ namespace ouzel
 
             if (!shader->initFromBuffers(pixelShader, pixelShaderSize, vertexShader, vertexShaderSize, vertexAttributes, pixelShaderFunction, vertexShaderFunction))
             {
-                shader.reset();
+                shader->release();
             }
 
             return shader;
         }
 
-        bool RendererD3D11::activateShader(const ShaderPtr& shader)
+        bool RendererD3D11::activateShader(Shader* shader)
         {
             if (activeShader == shader)
             {
@@ -729,7 +729,7 @@ namespace ouzel
 
             if (activeShader)
             {
-                std::shared_ptr<ShaderD3D11> shaderD3D11 = std::static_pointer_cast<ShaderD3D11>(activeShader);
+                std::shared_ptr<ShaderD3D11> shaderD3D11 = static_cast<ShaderD3D11>(activeShader);
 
                 ID3D11Buffer* pixelShaderConstantBuffers[1] = { shaderD3D11->getPixelShaderConstantBuffer() };
                 context->PSSetConstantBuffers(0, 1, pixelShaderConstantBuffers);
@@ -751,31 +751,31 @@ namespace ouzel
             return true;
         }
 
-        MeshBufferPtr RendererD3D11::createMeshBuffer()
+        MeshBuffer* RendererD3D11::createMeshBuffer()
         {
             std::shared_ptr<MeshBufferD3D11> meshBuffer(new MeshBufferD3D11());
 
             if (!meshBuffer->init())
             {
-                meshBuffer.reset();
+                meshBuffer->release();
             }
 
             return meshBuffer;
         }
 
-        MeshBufferPtr RendererD3D11::createMeshBufferFromData(const void* indices, uint32_t indexSize, uint32_t indexCount, bool dynamicIndexBuffer, const void* vertices, uint32_t vertexAttributes, uint32_t vertexCount, bool dynamicVertexBuffer)
+        MeshBuffer* RendererD3D11::createMeshBufferFromData(const void* indices, uint32_t indexSize, uint32_t indexCount, bool dynamicIndexBuffer, const void* vertices, uint32_t vertexAttributes, uint32_t vertexCount, bool dynamicVertexBuffer)
         {
             std::shared_ptr<MeshBufferD3D11> meshBuffer(new MeshBufferD3D11());
 
             if (!meshBuffer->initFromData(indices, indexSize, indexCount, dynamicIndexBuffer, vertices, vertexAttributes, vertexCount, dynamicVertexBuffer))
             {
-                meshBuffer.reset();
+                meshBuffer->release();
             }
 
             return meshBuffer;
         }
 
-        bool RendererD3D11::drawMeshBuffer(const MeshBufferPtr& meshBuffer, uint32_t indexCount, DrawMode drawMode, uint32_t startIndex)
+        bool RendererD3D11::drawMeshBuffer(MeshBuffer* meshBuffer, uint32_t indexCount, DrawMode drawMode, uint32_t startIndex)
         {
             if (!Renderer::drawMeshBuffer(meshBuffer))
             {
@@ -790,7 +790,7 @@ namespace ouzel
             context->PSSetShaderResources(0, TEXTURE_LAYERS, resourceViews);
             context->PSSetSamplers(0, TEXTURE_LAYERS, samplerStates);
 
-            std::shared_ptr<MeshBufferD3D11> meshBufferD3D11 = std::static_pointer_cast<MeshBufferD3D11>(meshBuffer);
+            std::shared_ptr<MeshBufferD3D11> meshBufferD3D11 = static_cast<MeshBufferD3D11>(meshBuffer);
 
             if (indexCount == 0)
             {

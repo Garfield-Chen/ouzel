@@ -233,7 +233,7 @@ int main(int argc, char* argv[])
 
     XEvent event;
     
-    std::shared_ptr<WindowLinux> windowLinux = std::static_pointer_cast<WindowLinux>(ouzel::sharedEngine->getWindow());
+    std::shared_ptr<WindowLinux> windowLinux = static_cast<WindowLinux>(ouzel::sharedEngine->getWindow());
 
     for (;;)
     {

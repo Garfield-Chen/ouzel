@@ -18,7 +18,7 @@ namespace ouzel
 
         }
 
-        void SceneManager::setScene(const ScenePtr& newScene)
+        void SceneManager::setScene(Scene* newScene)
         {
             if (scene != newScene)
             {
@@ -68,7 +68,7 @@ namespace ouzel
             if (--locked == 0 && nextScene)
             {
                 setScene(nextScene);
-                nextScene.reset();
+                nextScene->release();
             }
         }
     } // namespace scene

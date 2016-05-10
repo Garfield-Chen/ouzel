@@ -52,7 +52,7 @@ namespace ouzel
             glGenBuffers(1, &vertexBufferId);
             glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
 
-            if (std::static_pointer_cast<RendererOGL>(sharedEngine->getRenderer())->checkOpenGLErrors())
+            if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
                 return false;
             }
@@ -77,7 +77,7 @@ namespace ouzel
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexSize * indexCount, newIndices,
                          dynamicIndexBuffer ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 
-            if (std::static_pointer_cast<RendererOGL>(sharedEngine->getRenderer())->checkOpenGLErrors())
+            if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
                 return false;
             }
@@ -95,7 +95,7 @@ namespace ouzel
             glBufferData(GL_ARRAY_BUFFER, vertexSize * vertexCount, newVertices,
                          dynamicVertexBuffer ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 
-            if (std::static_pointer_cast<RendererOGL>(sharedEngine->getRenderer())->checkOpenGLErrors())
+            if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
                 return false;
             }
@@ -139,7 +139,7 @@ namespace ouzel
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexSize * indexCount, indices,
                          dynamicIndexBuffer ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 
-            if (std::static_pointer_cast<RendererOGL>(sharedEngine->getRenderer())->checkOpenGLErrors())
+            if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
                 return false;
             }
@@ -158,7 +158,7 @@ namespace ouzel
             glBufferData(GL_ARRAY_BUFFER, vertexSize * vertexCount, vertices,
                          dynamicVertexBuffer ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 
-            if (std::static_pointer_cast<RendererOGL>(sharedEngine->getRenderer())->checkOpenGLErrors())
+            if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
                 return false;
             }
@@ -233,7 +233,7 @@ namespace ouzel
                 return false;
             }
 
-            if (std::static_pointer_cast<RendererOGL>(sharedEngine->getRenderer())->checkOpenGLErrors())
+            if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
                 return false;
             }

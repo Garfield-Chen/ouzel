@@ -7,12 +7,22 @@
 
 namespace ouzel
 {
+    class GamepadEvent;
+    class UIEvent;
+    class EventHandler;
+
+    namespace scene
+    {
+        class Sprite;
+        class TextDrawable;
+    }
+
     namespace gui
     {
         class CheckBox: public Widget
         {
         public:
-            static std::shared_ptr<Button> create(const std::string& normal, const std::string& selected, const std::string& pressed, const std::string& disabled, const std::string& tick);
+            static CheckBox* create(const std::string& normal, const std::string& selected, const std::string& pressed, const std::string& disabled, const std::string& tick);
 
             CheckBox();
             virtual ~CheckBox();
@@ -25,18 +35,18 @@ namespace ouzel
             virtual bool isChecked() const { return checked; }
 
         protected:
-            bool handleGamepad(const GamepadEventPtr& event, const VoidPtr& sender);
-            bool handleUI(const UIEventPtr& event, const VoidPtr& sender);
+            bool handleGamepad(GamepadEvent* event, void* sender);
+            bool handleUI(UIEvent* event, void* sender);
 
             void updateSprite();
 
-            scene::SpritePtr normalSprite;
-            scene::SpritePtr selectedSprite;
-            scene::SpritePtr pressedSprite;
-            scene::SpritePtr disabledSprite;
-            scene::TextDrawablePtr labelDrawable;
+            scene::Sprite* normalSprite;
+            scene::Sprite* selectedSprite;
+            scene::Sprite* pressedSprite;
+            scene::Sprite* disabledSprite;
+            scene::TextDrawable* labelDrawable;
 
-            EventHandlerPtr eventHandler;
+            EventHandler* eventHandler;
 
             bool checked = false;
         };

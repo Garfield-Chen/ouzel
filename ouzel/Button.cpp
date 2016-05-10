@@ -17,14 +17,14 @@ namespace ouzel
 {
     namespace gui
     {
-        std::shared_ptr<Button> Button::create(const std::string& normal, const std::string& selected, const std::string& pressed, const std::string& disabled,
+        Button* Button::create(const std::string& normal, const std::string& selected, const std::string& pressed, const std::string& disabled,
                                                const std::string& label, const graphics::Color& labelColor, const std::string& font)
         {
-            std::shared_ptr<Button> result = std::make_shared<Button>();
+            Button* result = new Button();
 
             if (!result->init(normal, selected, pressed, disabled, label, labelColor, font))
             {
-                result.reset();
+                result->release();
             }
 
             return result;
@@ -43,7 +43,7 @@ namespace ouzel
         bool Button::init(const std::string& normalImage, const std::string& selectedImage, const std::string& pressedImage, const std::string& disabledImage,
                           const std::string& label, const graphics::Color& labelColor, const std::string& font)
         {
-            eventHandler = std::make_shared<EventHandler>(EventHandler::PRIORITY_MAX + 1);
+            eventHandler = new EventHandler(EventHandler::PRIORITY_MAX + 1);
 
             eventHandler->gamepadHandler = std::bind(&Button::handleGamepad, this, std::placeholders::_1, std::placeholders::_2);
             eventHandler->uiHandler = std::bind(&Button::handleUI, this, std::placeholders::_1, std::placeholders::_2);
@@ -52,7 +52,7 @@ namespace ouzel
 
             if (!normalImage.empty())
             {
-                normalSprite = std::make_shared<scene::Sprite>();
+                normalSprite = new scene::Sprite();
                 if (normalSprite->initFromFile(normalImage, false))
                 {
                     addDrawable(normalSprite);
@@ -61,7 +61,7 @@ namespace ouzel
 
             if (!selectedImage.empty())
             {
-                selectedSprite = std::make_shared<scene::Sprite>();
+                selectedSprite = new scene::Sprite();
                 if (selectedSprite->initFromFile(selectedImage, false))
                 {
                     addDrawable(selectedSprite);
@@ -70,7 +70,7 @@ namespace ouzel
 
             if (!pressedImage.empty())
             {
-                pressedSprite = std::make_shared<scene::Sprite>();
+                pressedSprite = new scene::Sprite();
                 if (pressedSprite->initFromFile(pressedImage, false))
                 {
                     addDrawable(pressedSprite);
@@ -79,7 +79,7 @@ namespace ouzel
 
             if (!disabledImage.empty())
             {
-                disabledSprite = std::make_shared<scene::Sprite>();
+                disabledSprite = new scene::Sprite();
                 if (disabledSprite->initFromFile(disabledImage, false))
                 {
                     addDrawable(disabledSprite);
@@ -113,7 +113,7 @@ namespace ouzel
             updateSprite();
         }
 
-        bool Button::handleGamepad(const GamepadEventPtr& event, const VoidPtr& sender)
+        bool Button::handleGamepad(GamepadEvent* event, void* sender)
         {
             OUZEL_UNUSED(event);
             OUZEL_UNUSED(sender);
@@ -121,11 +121,11 @@ namespace ouzel
             return true;
         }
 
-        bool Button::handleUI(const UIEventPtr& event, const VoidPtr& sender)
+        bool Button::handleUI(UIEvent* event, void* sender)
         {
             if (!enabled) return true;
 
-            if (sender.get() == this)
+            if (sender == this)
             {
                 if (event->type == Event::Type::UI_ENTER_NODE)
                 {

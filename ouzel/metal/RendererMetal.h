@@ -60,18 +60,18 @@ namespace ouzel
             virtual void clear() override;
             virtual void present() override;
 
-            virtual TexturePtr loadTextureFromFile(const std::string& filename, bool dynamic, bool mipmaps = true) override;
-            virtual TexturePtr loadTextureFromData(const void* data, const Size2& size, bool dynamic, bool mipmaps = true) override;
+            virtual Texture* loadTextureFromFile(const std::string& filename, bool dynamic, bool mipmaps = true) override;
+            virtual Texture* loadTextureFromData(const void* data, const Size2& size, bool dynamic, bool mipmaps = true) override;
 
-            virtual RenderTargetPtr createRenderTarget(const Size2& size, bool depthBuffer) override;
-            virtual bool activateRenderTarget(const RenderTargetPtr& renderTarget) override;
+            virtual RenderTarget* createRenderTarget(const Size2& size, bool depthBuffer) override;
+            virtual bool activateRenderTarget(RenderTarget* renderTarget) override;
 
-            virtual ShaderPtr loadShaderFromFiles(const std::string& pixelShader,
+            virtual Shader* loadShaderFromFiles(const std::string& pixelShader,
                                                   const std::string& vertexShader,
                                                   uint32_t vertexAttributes,
                                                   const std::string& pixelShaderFunction = "",
                                                   const std::string& vertexShaderFunction = "") override;
-            virtual ShaderPtr loadShaderFromBuffers(const uint8_t* pixelShader,
+            virtual Shader* loadShaderFromBuffers(const uint8_t* pixelShader,
                                                     uint32_t pixelShaderSize,
                                                     const uint8_t* vertexShader,
                                                     uint32_t vertexShaderSize,
@@ -79,9 +79,9 @@ namespace ouzel
                                                     const std::string& pixelShaderFunction = "",
                                                     const std::string& vertexShaderFunction = "") override;
 
-            virtual MeshBufferPtr createMeshBuffer() override;
-            virtual MeshBufferPtr createMeshBufferFromData(const void* indices, uint32_t indexSize, uint32_t indexCount, bool dynamicIndexBuffer, const void* vertices, uint32_t vertexAttributes, uint32_t vertexCount, bool dynamicVertexBuffer) override;
-            virtual bool drawMeshBuffer(const MeshBufferPtr& meshBuffer, uint32_t indexCount = 0, DrawMode drawMode = DrawMode::TRIANGLE_LIST, uint32_t startIndex = 0) override;
+            virtual MeshBuffer* createMeshBuffer() override;
+            virtual MeshBuffer* createMeshBufferFromData(const void* indices, uint32_t indexSize, uint32_t indexCount, bool dynamicIndexBuffer, const void* vertices, uint32_t vertexAttributes, uint32_t vertexCount, bool dynamicVertexBuffer) override;
+            virtual bool drawMeshBuffer(MeshBuffer* meshBuffer, uint32_t indexCount = 0, DrawMode drawMode = DrawMode::TRIANGLE_LIST, uint32_t startIndex = 0) override;
 
             MTLDevicePtr getDevice() const { return device; }
             MTKViewPtr getMetalView() const { return view; }
@@ -90,8 +90,8 @@ namespace ouzel
             RendererMetal();
 
             void destroy();
-            MTLRenderPipelineStatePtr createPipelineState(const std::shared_ptr<BlendStateMetal>& blendState,
-                                                          const std::shared_ptr<ShaderMetal>& shader);
+            MTLRenderPipelineStatePtr createPipelineState(BlendStateMetal* blendState,
+                                                          ShaderMetal* shader);
 
             MTKViewPtr view = Nil;
 
@@ -111,7 +111,7 @@ namespace ouzel
 
             dispatch_semaphore_t inflightSemaphore;
 
-            std::map<std::pair<std::shared_ptr<BlendStateMetal>, std::shared_ptr<ShaderMetal>>, MTLRenderPipelineStatePtr> pipelineStates;
+            std::map<std::pair<BlendStateMetal*, ShaderMetal*>, MTLRenderPipelineStatePtr> pipelineStates;
         };
     } // namespace graphics
 } // namespace ouzel

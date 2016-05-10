@@ -4,7 +4,6 @@
 #pragma once
 
 #include <vector>
-#include "Types.h"
 #include "Drawable.h"
 #include "Renderer.h"
 #include "Color.h"
@@ -32,10 +31,10 @@ namespace ouzel
             struct DrawCommand
             {
                 graphics::Renderer::DrawMode mode;
-                graphics::MeshBufferPtr mesh;
+                graphics::MeshBuffer* mesh;
             };
 
-            graphics::ShaderPtr shader;
+            graphics::Shader* shader;
             std::vector<DrawCommand> drawCommands;
         };
     } // namespace scene

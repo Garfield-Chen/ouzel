@@ -7,7 +7,7 @@ namespace ouzel
 {
     namespace scene
     {
-        Parallel::Parallel(const std::vector<AnimatorPtr>& pAnimators):
+        Parallel::Parallel(const std::vector<Animator*>& pAnimators):
             Animator(0.0f), animators(pAnimators)
         {
             for (auto& animator : animators)
@@ -19,7 +19,7 @@ namespace ouzel
             }
         }
 
-        void Parallel::start(const NodePtr& targetNode)
+        void Parallel::start(Node* targetNode)
         {
             Animator::start(targetNode);
 

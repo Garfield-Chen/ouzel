@@ -12,13 +12,14 @@ namespace ouzel
         Animator::Animator(float pLength):
             length(pLength)
         {
-            updateCallback = std::make_shared<UpdateCallback>();
+            updateCallback = new UpdateCallback();
             updateCallback->callback = std::bind(&Animator::update, this, std::placeholders::_1);
         }
 
         Animator::~Animator()
         {
             sharedEngine->unscheduleUpdate(updateCallback);
+            updateCallback->release();
         }
 
         void Animator::update(float delta)
@@ -43,7 +44,7 @@ namespace ouzel
             }
         }
 
-        void Animator::start(const NodePtr& targetNode)
+        void Animator::start(Node* targetNode)
         {
             if (!running)
             {

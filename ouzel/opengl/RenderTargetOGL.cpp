@@ -53,7 +53,7 @@ namespace ouzel
 
             RendererOGL::bindFrameBuffer(frameBufferId);
 
-            std::shared_ptr<TextureOGL> textureOGL(new TextureOGL());
+            TextureOGL* textureOGL = new TextureOGL();
 
             if (!textureOGL->init(size, false, false, true))
             {

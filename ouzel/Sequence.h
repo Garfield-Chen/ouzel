@@ -5,7 +5,6 @@
 
 #include <vector>
 #include "Animator.h"
-#include "Types.h"
 
 namespace ouzel
 {
@@ -14,15 +13,15 @@ namespace ouzel
         class Sequence: public Animator
         {
         public:
-            Sequence(const std::vector<AnimatorPtr>& pAnimators);
+            Sequence(const std::vector<Animator*>& pAnimators);
 
-            virtual void start(const NodePtr& node) override;
+            virtual void start(Node* node) override;
             virtual void reset() override;
 
         protected:
             virtual void updateProgress() override;
 
-            std::vector<AnimatorPtr> animators;
+            std::vector<Animator*> animators;
         };
     } // namespace scene
 } // namespace ouzel

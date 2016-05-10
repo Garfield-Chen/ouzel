@@ -4,35 +4,42 @@
 #pragma once
 
 #include "Drawable.h"
-#include "Types.h"
 #include "Size2.h"
 #include "MeshBuffer.h"
 #include "Rectangle.h"
-#include "SpriteFrame.h"
 
 namespace ouzel
 {
+    class UpdateCallback;
+
+    namespace graphics
+    {
+        class Shader;
+        class BlendState;
+    }
+    
     namespace scene
     {
         class SceneManager;
+        class SpriteFrame;
 
         class Sprite: public Drawable
         {
         public:
-            static std::shared_ptr<Sprite> createFromSpriteFrames(const std::vector<SpriteFramePtr>& spriteFrames);
-            static std::shared_ptr<Sprite> createFromFile(const std::string& filename, bool mipmaps = true);
+            static Sprite* createFromSpriteFrames(const std::vector<SpriteFrame*>& spriteFrames);
+            static Sprite* createFromFile(const std::string& filename, bool mipmaps = true);
 
             Sprite();
             virtual ~Sprite();
 
-            virtual bool initFromSpriteFrames(const std::vector<SpriteFramePtr>& spriteFrames);
+            virtual bool initFromSpriteFrames(const std::vector<SpriteFrame*>& spriteFrames);
             virtual bool initFromFile(const std::string& filename, bool mipmaps = true);
 
             virtual void update(float delta);
             virtual void draw(const Matrix4& projectionMatrix, const Matrix4& transformMatrix, const graphics::Color& drawColor) override;
 
-            virtual graphics::ShaderPtr getShader() const { return shader; }
-            virtual void setShader(const graphics::ShaderPtr& newShader);
+            virtual graphics::Shader* getShader() const { return shader; }
+            virtual void setShader(graphics::Shader* newShader);
 
             virtual const Size2& getSize() const { return size; }
 
@@ -42,12 +49,12 @@ namespace ouzel
             virtual bool isPlaying() const { return playing; }
             
         protected:
-            graphics::ShaderPtr shader;
-            graphics::BlendStatePtr blendState;
+            graphics::Shader* shader;
+            graphics::BlendState* blendState;
 
             Size2 size;
 
-            std::vector<SpriteFramePtr> frames;
+            std::vector<SpriteFrame*> frames;
 
             uint32_t currentFrame = 0;
             float frameInterval = 0.0f;
@@ -55,7 +62,7 @@ namespace ouzel
             bool repeat = false;
             float timeSinceLastFrame = 0.0f;
 
-            UpdateCallbackPtr updateCallback;
+            UpdateCallback* updateCallback;
         };
     } // namespace scene
 } // namespace ouzel

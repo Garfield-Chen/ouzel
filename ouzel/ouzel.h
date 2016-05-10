@@ -4,7 +4,6 @@
 #pragma once
 
 #include "CompileConfig.h"
-#include "Types.h"
 #include "Engine.h"
 #include "UpdateCallback.h"
 #include "Settings.h"
@@ -32,6 +31,7 @@
 #include "Camera.h"
 #include "Drawable.h"
 #include "Sprite.h"
+#include "SpriteFrame.h"
 #include "ParticleSystem.h"
 #include "DebugDrawable.h"
 #include "EventHander.h"

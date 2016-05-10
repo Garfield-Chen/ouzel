@@ -62,7 +62,7 @@ namespace ouzel
             //glEnable(GL_DEPTH_TEST);
             glClearColor(clearColor.getR(), clearColor.getG(), clearColor.getB(), clearColor.getA());
 
-            ShaderPtr textureShader = loadShaderFromBuffers(TEXTURE_PIXEL_SHADER_OGL, sizeof(TEXTURE_PIXEL_SHADER_OGL), TEXTURE_VERTEX_SHADER_OGL, sizeof(TEXTURE_VERTEX_SHADER_OGL), VertexPCT::ATTRIBUTES);
+            Shader* textureShader = loadShaderFromBuffers(TEXTURE_PIXEL_SHADER_OGL, sizeof(TEXTURE_PIXEL_SHADER_OGL), TEXTURE_VERTEX_SHADER_OGL, sizeof(TEXTURE_VERTEX_SHADER_OGL), VertexPCT::ATTRIBUTES);
 
             if (!textureShader)
             {
@@ -74,7 +74,7 @@ namespace ouzel
 
             sharedEngine->getCache()->setShader(SHADER_TEXTURE, textureShader);
 
-            ShaderPtr colorShader = loadShaderFromBuffers(COLOR_PIXEL_SHADER_OGL, sizeof(COLOR_PIXEL_SHADER_OGL), COLOR_VERTEX_SHADER_OGL, sizeof(COLOR_VERTEX_SHADER_OGL), VertexPC::ATTRIBUTES);
+            Shader* colorShader = loadShaderFromBuffers(COLOR_PIXEL_SHADER_OGL, sizeof(COLOR_PIXEL_SHADER_OGL), COLOR_VERTEX_SHADER_OGL, sizeof(COLOR_VERTEX_SHADER_OGL), VertexPC::ATTRIBUTES);
 
             if (!colorShader)
             {
@@ -86,7 +86,7 @@ namespace ouzel
 
             sharedEngine->getCache()->setShader(SHADER_COLOR, colorShader);
 
-            BlendStatePtr noBlendState = createBlendState(false,
+            BlendState* noBlendState = createBlendState(false,
                                                           BlendState::BlendFactor::ONE, BlendState::BlendFactor::ZERO,
                                                           BlendState::BlendOperation::ADD,
                                                           BlendState::BlendFactor::ONE, BlendState::BlendFactor::ZERO,
@@ -99,7 +99,7 @@ namespace ouzel
 
             sharedEngine->getCache()->setBlendState(BLEND_NO_BLEND, noBlendState);
 
-            BlendStatePtr addBlendState = createBlendState(true,
+            BlendState* addBlendState = createBlendState(true,
                                                            BlendState::BlendFactor::ONE, BlendState::BlendFactor::ONE,
                                                            BlendState::BlendOperation::ADD,
                                                            BlendState::BlendFactor::ONE, BlendState::BlendFactor::ONE,
@@ -112,7 +112,7 @@ namespace ouzel
 
             sharedEngine->getCache()->setBlendState(BLEND_ADD, addBlendState);
 
-            BlendStatePtr multiplyBlendState = createBlendState(true,
+            BlendState* multiplyBlendState = createBlendState(true,
                                                                 BlendState::BlendFactor::DEST_COLOR, BlendState::BlendFactor::ZERO,
                                                                 BlendState::BlendOperation::ADD,
                                                                 BlendState::BlendFactor::DEST_ALPHA, BlendState::BlendFactor::ZERO,
@@ -125,7 +125,7 @@ namespace ouzel
 
             sharedEngine->getCache()->setBlendState(BLEND_MULTIPLY, multiplyBlendState);
 
-            BlendStatePtr alphaBlendState = createBlendState(true,
+            BlendState* alphaBlendState = createBlendState(true,
                                                              BlendState::BlendFactor::SRC_ALPHA, BlendState::BlendFactor::INV_SRC_ALPHA,
                                                              BlendState::BlendOperation::ADD,
                                                              BlendState::BlendFactor::ONE, BlendState::BlendFactor::ZERO,
@@ -215,13 +215,13 @@ namespace ouzel
             checkOpenGLErrors();
         }
 
-        BlendStatePtr RendererOGL::createBlendState(bool enableBlending,
+        BlendState* RendererOGL::createBlendState(bool enableBlending,
                                                     BlendState::BlendFactor colorBlendSource, BlendState::BlendFactor colorBlendDest,
                                                     BlendState::BlendOperation colorOperation,
                                                     BlendState::BlendFactor alphaBlendSource, BlendState::BlendFactor alphaBlendDest,
                                                     BlendState::BlendOperation alphaOperation)
         {
-            std::shared_ptr<BlendStateOGL> blendState(new BlendStateOGL());
+            BlendStateOGL* blendState = new BlendStateOGL();
 
             if (!blendState->init(enableBlending,
                                   colorBlendSource, colorBlendDest,
@@ -229,13 +229,14 @@ namespace ouzel
                                   alphaBlendSource, alphaBlendDest,
                                   alphaOperation))
             {
-                blendState.reset();
+                blendState->release();
+                blendState = nullptr;
             }
 
             return blendState;
         }
 
-        bool RendererOGL::activateBlendState(BlendStatePtr blendState)
+        bool RendererOGL::activateBlendState(BlendState* blendState)
         {
             if (activeBlendState == blendState)
             {
@@ -249,7 +250,7 @@ namespace ouzel
 
             if (activeBlendState)
             {
-                std::shared_ptr<BlendStateOGL> blendStateOGL = std::static_pointer_cast<BlendStateOGL>(activeBlendState);
+                BlendStateOGL* blendStateOGL = static_cast<BlendStateOGL*>(activeBlendState);
 
                 if (blendStateOGL->isBlendingEnabled())
                 {
@@ -283,39 +284,41 @@ namespace ouzel
             return true;
         }
 
-        TexturePtr RendererOGL::createTexture(const Size2& size, bool dynamic, bool mipmaps)
+        Texture* RendererOGL::createTexture(const Size2& size, bool dynamic, bool mipmaps)
         {
-            std::shared_ptr<TextureOGL> texture(new TextureOGL());
+            TextureOGL* texture = new TextureOGL();
             texture->init(size, dynamic, mipmaps);
 
             return texture;
         }
 
-        TexturePtr RendererOGL::loadTextureFromFile(const std::string& filename, bool dynamic, bool mipmaps)
+        Texture* RendererOGL::loadTextureFromFile(const std::string& filename, bool dynamic, bool mipmaps)
         {
-            std::shared_ptr<TextureOGL> texture(new TextureOGL());
+            TextureOGL* texture = new TextureOGL();
 
             if (!texture->initFromFile(filename, dynamic, mipmaps))
             {
-                texture.reset();
+                texture->release();
+                texture = nullptr;
             }
 
             return texture;
         }
 
-        TexturePtr RendererOGL::loadTextureFromData(const void* data, const Size2& size, bool dynamic, bool mipmaps)
+        Texture* RendererOGL::loadTextureFromData(const void* data, const Size2& size, bool dynamic, bool mipmaps)
         {
-            std::shared_ptr<TextureOGL> texture(new TextureOGL());
+            TextureOGL* texture = new TextureOGL();
 
             if (!texture->initFromData(data, size, dynamic, mipmaps))
             {
-                texture.reset();
+                texture->release();
+                texture = nullptr;
             }
 
             return texture;
         }
 
-        bool RendererOGL::activateTexture(const TexturePtr& texture, uint32_t layer)
+        bool RendererOGL::activateTexture(Texture* texture, uint32_t layer)
         {
             if (activeTextures[layer] == texture)
             {
@@ -329,7 +332,7 @@ namespace ouzel
 
             if (activeTextures[layer])
             {
-                std::shared_ptr<TextureOGL> textureOGL = std::static_pointer_cast<TextureOGL>(activeTextures[layer]);
+                TextureOGL* textureOGL = static_cast<TextureOGL*>(activeTextures[layer]);
 
                 bindTexture(textureOGL->getTextureId(), layer);
             }
@@ -341,19 +344,20 @@ namespace ouzel
             return true;
         }
 
-        RenderTargetPtr RendererOGL::createRenderTarget(const Size2& size, bool depthBuffer)
+        RenderTarget* RendererOGL::createRenderTarget(const Size2& size, bool depthBuffer)
         {
-            std::shared_ptr<RenderTargetOGL> renderTarget(new RenderTargetOGL());
+            RenderTargetOGL* renderTarget = new RenderTargetOGL();
 
             if (!renderTarget->init(size, depthBuffer))
             {
-                renderTarget.reset();
+                renderTarget->release();
+                renderTarget = nullptr;
             }
 
             return renderTarget;
         }
 
-        bool RendererOGL::activateRenderTarget(const RenderTargetPtr& renderTarget)
+        bool RendererOGL::activateRenderTarget(RenderTarget* renderTarget)
         {
             if (activeRenderTarget == renderTarget)
             {
@@ -371,7 +375,7 @@ namespace ouzel
 
             if (activeRenderTarget)
             {
-                std::shared_ptr<RenderTargetOGL> renderTargetOGL = std::static_pointer_cast<RenderTargetOGL>(activeRenderTarget);
+                RenderTargetOGL* renderTargetOGL = static_cast<RenderTargetOGL*>(activeRenderTarget);
                 newFrameBuffer = renderTargetOGL->getFrameBufferId();
                 newViewport = renderTargetOGL->getViewport();
                 newClearColor = renderTargetOGL->getClearColor();
@@ -403,23 +407,24 @@ namespace ouzel
             return true;
         }
 
-        ShaderPtr RendererOGL::loadShaderFromFiles(const std::string& pixelShader,
+        Shader* RendererOGL::loadShaderFromFiles(const std::string& pixelShader,
                                                    const std::string& vertexShader,
                                                    uint32_t vertexAttributes,
                                                    const std::string& pixelShaderFunction,
                                                    const std::string& vertexShaderFunction)
         {
-            std::shared_ptr<ShaderOGL> shader(new ShaderOGL());
+            ShaderOGL* shader = new ShaderOGL();
 
             if (!shader->initFromFiles(pixelShader, vertexShader, vertexAttributes, pixelShaderFunction, vertexShaderFunction))
             {
-                shader.reset();
+                shader->release();
+                shader= nullptr;
             }
 
             return shader;
         }
 
-        ShaderPtr RendererOGL::loadShaderFromBuffers(const uint8_t* pixelShader,
+        Shader* RendererOGL::loadShaderFromBuffers(const uint8_t* pixelShader,
                                                      uint32_t pixelShaderSize,
                                                      const uint8_t* vertexShader,
                                                      uint32_t vertexShaderSize,
@@ -427,17 +432,18 @@ namespace ouzel
                                                      const std::string& pixelShaderFunction,
                                                      const std::string& vertexShaderFunction)
         {
-            std::shared_ptr<ShaderOGL> shader(new ShaderOGL());
+            ShaderOGL* shader = new ShaderOGL();
 
             if (!shader->initFromBuffers(pixelShader, pixelShaderSize, vertexShader, vertexShaderSize, vertexAttributes, pixelShaderFunction, vertexShaderFunction))
             {
-                shader.reset();
+                shader->release();
+                shader = nullptr;
             }
 
             return shader;
         }
 
-        bool RendererOGL::activateShader(const ShaderPtr& shader)
+        bool RendererOGL::activateShader(Shader* shader)
         {
             if (activeShader == shader)
             {
@@ -451,7 +457,7 @@ namespace ouzel
 
             if (activeShader)
             {
-                std::shared_ptr<ShaderOGL> shaderOGL = std::static_pointer_cast<ShaderOGL>(activeShader);
+                ShaderOGL* shaderOGL = static_cast<ShaderOGL*>(activeShader);
 
                 bindProgram(shaderOGL->getProgramId());
             }
@@ -463,31 +469,33 @@ namespace ouzel
             return true;
         }
 
-        MeshBufferPtr RendererOGL::createMeshBuffer()
+        MeshBuffer* RendererOGL::createMeshBuffer()
         {
-            std::shared_ptr<MeshBufferOGL> meshBuffer(new MeshBufferOGL());
+            MeshBufferOGL* meshBuffer = new MeshBufferOGL();
 
             if (!meshBuffer->init())
             {
-                meshBuffer.reset();
+                meshBuffer->release();
+                meshBuffer = nullptr;
             }
 
             return meshBuffer;
         }
 
-        MeshBufferPtr RendererOGL::createMeshBufferFromData(const void* indices, uint32_t indexSize, uint32_t indexCount, bool dynamicIndexBuffer, const void* vertices, uint32_t vertexAttributes, uint32_t vertexCount, bool dynamicVertexBuffer)
+        MeshBuffer* RendererOGL::createMeshBufferFromData(const void* indices, uint32_t indexSize, uint32_t indexCount, bool dynamicIndexBuffer, const void* vertices, uint32_t vertexAttributes, uint32_t vertexCount, bool dynamicVertexBuffer)
         {
-            std::shared_ptr<MeshBufferOGL> meshBuffer(new MeshBufferOGL());
+            MeshBufferOGL* meshBuffer = new MeshBufferOGL();
 
             if (!meshBuffer->initFromData(indices, indexSize, indexCount, dynamicIndexBuffer, vertices, vertexAttributes, vertexCount, dynamicVertexBuffer))
             {
-                meshBuffer.reset();
+                meshBuffer->release();
+                meshBuffer = nullptr;
             }
 
             return meshBuffer;
         }
 
-        bool RendererOGL::drawMeshBuffer(const MeshBufferPtr& meshBuffer, uint32_t indexCount, DrawMode drawMode, uint32_t startIndex)
+        bool RendererOGL::drawMeshBuffer(MeshBuffer* meshBuffer, uint32_t indexCount, DrawMode drawMode, uint32_t startIndex)
         {
             if (!Renderer::drawMeshBuffer(meshBuffer))
             {
@@ -501,7 +509,7 @@ namespace ouzel
 
             if (activeRenderTarget)
             {
-                std::shared_ptr<RenderTargetOGL> renderTargetOGL = std::static_pointer_cast<RenderTargetOGL>(activeRenderTarget);
+                RenderTargetOGL* renderTargetOGL = static_cast<RenderTargetOGL*>(activeRenderTarget);
 
                 bindFrameBuffer(renderTargetOGL->getFrameBufferId());
             }
@@ -514,7 +522,7 @@ namespace ouzel
             {
                 if (activeTextures[layer])
                 {
-                    std::shared_ptr<TextureOGL> textureOGL = std::static_pointer_cast<TextureOGL>(activeTextures[layer]);
+                    TextureOGL* textureOGL = static_cast<TextureOGL*>(activeTextures[layer]);
 
                     bindTexture(textureOGL->getTextureId(), layer);
                 }
@@ -524,10 +532,10 @@ namespace ouzel
                 }
             }
 
-            std::shared_ptr<ShaderOGL> shaderOGL = std::static_pointer_cast<ShaderOGL>(activeShader);
+            ShaderOGL* shaderOGL = static_cast<ShaderOGL*>(activeShader);
             bindProgram(shaderOGL->getProgramId());
 
-            std::shared_ptr<MeshBufferOGL> meshBufferOGL = std::static_pointer_cast<MeshBufferOGL>(meshBuffer);
+            MeshBufferOGL* meshBufferOGL = static_cast<MeshBufferOGL*>(meshBuffer);
 
             if (indexCount == 0)
             {

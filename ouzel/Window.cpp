@@ -45,7 +45,7 @@ namespace ouzel
             size = newSize;
             sharedEngine->getRenderer()->setSize(size);
 
-            WindowEventPtr event = std::make_shared<WindowEvent>();
+            WindowEvent* event = new WindowEvent();
             event->type = Event::Type::WINDOW_SIZE_CHANGE;
             event->size = size;
             event->title = title;
@@ -63,7 +63,7 @@ namespace ouzel
 
             sharedEngine->getRenderer()->setFullscreen(fullscreen);
 
-            WindowEventPtr event = std::make_shared<WindowEvent>();
+            WindowEvent* event = new WindowEvent();
             event->type = Event::Type::WINDOW_FULLSCREEN_CHANGE;
             event->size = size;
             event->title = title;
@@ -79,7 +79,7 @@ namespace ouzel
         {
             title = newTitle;
 
-            WindowEventPtr event = std::make_shared<WindowEvent>();
+            WindowEvent* event = new WindowEvent();
             event->type = Event::Type::WINDOW_TITLE_CHANGE;
             event->size = size;
             event->title = title;

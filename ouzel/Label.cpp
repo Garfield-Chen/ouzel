@@ -15,13 +15,14 @@ namespace ouzel
 {
     namespace gui
     {
-        std::shared_ptr<Label> Label::create(const std::string& font, const std::string& text, const Vector2& textAnchor)
+        Label* Label::create(const std::string& font, const std::string& text, const Vector2& textAnchor)
         {
-            std::shared_ptr<Label> result = std::make_shared<Label>();
+            Label* result = new Label();
 
             if (!result->init(font, text, textAnchor))
             {
-                result.reset();
+                result->release();
+                result = nullptr;
             }
 
             return result;

@@ -43,7 +43,7 @@ namespace ouzel
                 return false;
             }
 
-            std::shared_ptr<TextureMetal> textureMetal(new TextureMetal());
+            TextureMetal* textureMetal = new TextureMetal();
 
             if (!textureMetal->init(size, false, false, true))
             {
@@ -63,7 +63,7 @@ namespace ouzel
             renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
             renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(clearColor.getR(), clearColor.getG(), clearColor.getB(), clearColor.getA());
 
-            std::shared_ptr<RendererMetal> rendererMetal = std::static_pointer_cast<RendererMetal>(sharedEngine->getRenderer());
+            RendererMetal* rendererMetal = static_cast<RendererMetal*>(sharedEngine->getRenderer());
 
             if (rendererMetal->getSampleCount() > 1)
             {

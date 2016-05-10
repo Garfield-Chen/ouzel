@@ -3,14 +3,19 @@
 
 #pragma once
 
-#include <memory>
+#include <cstdint>
 #include "Noncopyable.h"
-#include "Types.h"
 #include "Vector2.h"
 
 namespace ouzel
 {
     class Engine;
+
+    namespace scene
+    {
+        class Node;
+    }
+
     namespace input
     {
         enum class KeyboardKey
@@ -212,7 +217,7 @@ namespace ouzel
             BUTTON_COUNT
         };
 
-        class Input: public Noncopyable, public std::enable_shared_from_this<Input>
+        class Input: public Noncopyable
         {
             friend Engine;
         public:
@@ -246,18 +251,18 @@ namespace ouzel
         protected:
             Input();
 
-            void mouseEnterNode(const scene::NodePtr& node, const Vector2& position);
-            void mouseLeaveNode(const scene::NodePtr& node, const Vector2& position);
-            void mouseDownOnNode(const scene::NodePtr& node, const Vector2& position);
-            void mouseUpOnNode(const scene::NodePtr& node, const Vector2& position);
-            void mouseDragNode(const scene::NodePtr& node, const Vector2& position);
+            void mouseEnterNode(scene::Node* node, const Vector2& position);
+            void mouseLeaveNode(scene::Node* node, const Vector2& position);
+            void mouseDownOnNode(scene::Node* node, const Vector2& position);
+            void mouseUpOnNode(scene::Node* node, const Vector2& position);
+            void mouseDragNode(scene::Node* node, const Vector2& position);
 
             Vector2 cursorPosition;
             bool keyboardKeyStates[static_cast<uint32_t>(KeyboardKey::KEY_COUNT)];
             bool mouseButtonStates[static_cast<uint32_t>(MouseButton::BUTTON_COUNT)];
 
-            scene::NodeWeakPtr mouseNode;
-            scene::NodeWeakPtr mouseDownNode;
+            scene::Node* mouseNode = nullptr;
+            scene::Node* mouseDownNode = nullptr;
         };
     } // namespace input
 } // namespace ouzel

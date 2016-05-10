@@ -5,23 +5,28 @@
 
 #include <string>
 #include <vector>
-#include "Types.h"
 #include "Rectangle.h"
 #include "Vertex.h"
 
 namespace ouzel
 {
+    namespace graphics
+    {
+        class Texture;
+        class MeshBuffer;
+    }
+
     namespace scene
     {
         class SpriteFrame
         {
         public:
-            static std::vector<SpriteFramePtr> loadSpriteFrames(const std::string& filename, bool mipmaps = true);
-            static SpriteFramePtr create(const Rectangle& rectangle, const graphics::TexturePtr& texture, bool rotated, const Size2& sourceSize, const Vector2& sourceOffset, const Vector2& pivot);
+            static std::vector<SpriteFrame*> loadSpriteFrames(const std::string& filename, bool mipmaps = true);
+            static SpriteFrame* create(const Rectangle& rectangle, graphics::Texture* texture, bool rotated, const Size2& sourceSize, const Vector2& sourceOffset, const Vector2& pivot);
 
             SpriteFrame(Rectangle pRectangle,
-                        graphics::MeshBufferPtr pMeshBuffer,
-                        graphics::TexturePtr pTexture):
+                        graphics::MeshBuffer* pMeshBuffer,
+                        graphics::Texture* pTexture):
                 rectangle(pRectangle),
                 meshBuffer(pMeshBuffer),
                 texture(pTexture)
@@ -29,13 +34,13 @@ namespace ouzel
             }
 
             const Rectangle& getRectangle() const { return rectangle; }
-            const graphics::MeshBufferPtr& getMeshBuffer() const { return meshBuffer; }
-            const graphics::TexturePtr& getRexture() const { return texture; }
+            graphics::MeshBuffer* getMeshBuffer() const { return meshBuffer; }
+            graphics::Texture* getRexture() const { return texture; }
 
         protected:
             Rectangle rectangle;
-            graphics::MeshBufferPtr meshBuffer;
-            graphics::TexturePtr texture;
+            graphics::MeshBuffer* meshBuffer;
+            graphics::Texture* texture;
         };
     } // scene
 } // ouzel

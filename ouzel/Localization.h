@@ -5,10 +5,11 @@
 
 #include <map>
 #include <string>
-#include "Types.h"
 
 namespace ouzel
 {
+    class Language;
+
     class Localization
     {
     public:
@@ -17,7 +18,7 @@ namespace ouzel
         std::string getString(const std::string& str);
 
     protected:
-        std::map<std::string, LanguagePtr> languages;
-        LanguagePtr currentLanguage;
+        std::map<std::string, Language*> languages;
+        Language* currentLanguage;
     };
 }

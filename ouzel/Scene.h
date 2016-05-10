@@ -3,19 +3,21 @@
 
 #pragma once
 
-#include <memory>
 #include <vector>
 #include <set>
 #include <cstdint>
-#include "Types.h"
 #include "Noncopyable.h"
+#include "ReferenceCounted.h"
 #include "Rectangle.h"
 
 namespace ouzel
 {
     namespace scene
     {
-        class Scene: public Noncopyable, public std::enable_shared_from_this<Scene>
+        class Layer;
+        class Node;
+
+        class Scene: public Noncopyable, public ReferenceCounted
         {
         public:
             Scene();
@@ -23,28 +25,28 @@ namespace ouzel
 
             virtual void draw();
 
-            void addLayer(const LayerPtr& layer);
-            void removeLayer(const LayerPtr& layer);
+            void addLayer(Layer* layer);
+            void removeLayer(Layer* layer);
             void removeAllLayers();
-            bool hasLayer(const LayerPtr& layer) const;
-            const std::vector<LayerPtr>& getLayers() const { return layers; }
+            bool hasLayer(Layer* layer) const;
+            const std::vector<Layer*>& getLayers() const { return layers; }
 
             virtual void recalculateProjection();
 
             virtual void reorderLayers();
 
-            NodePtr pickNode(const Vector2& position) const;
-            std::set<NodePtr> pickNodes(const std::vector<Vector2>& edges) const;
+            Node* pickNode(const Vector2& position) const;
+            std::set<Node*> pickNodes(const std::vector<Vector2>& edges) const;
 
         protected:
             void lock();
             void unlock();
 
-            std::vector<LayerPtr> layers;
+            std::vector<Layer*> layers;
             bool reorder = false;
 
-            std::set<LayerPtr> layerAddList;
-            std::set<LayerPtr> layerRemoveList;
+            std::set<Layer*> layerAddList;
+            std::set<Layer*> layerRemoveList;
             int32_t locked = 0;
         };
     } // namespace scene

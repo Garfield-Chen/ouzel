@@ -4,7 +4,6 @@
 #pragma once
 
 #include <vector>
-#include <memory>
 #include "Input.h"
 
 #ifdef __OBJC__
@@ -41,7 +40,7 @@ namespace ouzel
             InputApple();
 
             ConnectDelegatePtr connectDelegate = nullptr;
-            std::vector<std::shared_ptr<GamepadApple>> gamepads;
+            std::vector<GamepadApple*> gamepads;
 
             bool discovering = false;
         };

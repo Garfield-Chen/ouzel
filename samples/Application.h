@@ -10,24 +10,24 @@ public:
 
     void begin();
 
-    bool handleKeyboard(const ouzel::KeyboardEventPtr& event, const ouzel::VoidPtr& sender) const;
-    bool handleMouse(const ouzel::MouseEventPtr& event, const ouzel::VoidPtr& sender) const;
-    bool handleTouch(const ouzel::TouchEventPtr& event, const ouzel::VoidPtr& sender) const;
-    bool handleGamepad(const ouzel::GamepadEventPtr& event, const ouzel::VoidPtr& sender) const;
-    bool handleUI(const ouzel::UIEventPtr& event, const ouzel::VoidPtr& sender) const;
+    bool handleKeyboard(ouzel::KeyboardEvent* event, void* sender) const;
+    bool handleMouse(ouzel::MouseEvent* event, void* sender) const;
+    bool handleTouch(ouzel::TouchEvent* event, void* sender) const;
+    bool handleGamepad(ouzel::GamepadEvent* event, void* sender) const;
+    bool handleUI(ouzel::UIEvent* event, void* sender) const;
 
 protected:
-    ouzel::scene::LayerPtr rtLayer;
-    ouzel::scene::LayerPtr layer;
-    ouzel::scene::LayerPtr uiLayer;
+    ouzel::scene::Layer* rtLayer;
+    ouzel::scene::Layer* layer;
+    ouzel::scene::Layer* uiLayer;
 
-    ouzel::scene::NodePtr character;
-    ouzel::scene::NodePtr witch;
-    ouzel::scene::NodePtr flame;
+    ouzel::scene::Node* character;
+    ouzel::scene::Node* witch;
+    ouzel::scene::Node* flame;
 
-    ouzel::gui::ButtonPtr button;
+    ouzel::gui::Button* button;
 
-    ouzel::EventHandlerPtr eventHandler;
+    ouzel::EventHandler* eventHandler;
 
-    ouzel::graphics::RenderTargetPtr renderTarget;
+    ouzel::graphics::RenderTarget* renderTarget;
 };

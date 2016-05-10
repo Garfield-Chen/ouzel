@@ -3,11 +3,14 @@
 
 #pragma once
 
+#include "Noncopyable.h"
+#include "ReferenceCounted.h"
+
 namespace ouzel
 {
     class Egnine;
 
-    class UpdateCallback
+    class UpdateCallback: public Noncopyable, public ReferenceCounted
     {
         friend Engine;
     public:

@@ -11,13 +11,14 @@ namespace ouzel
 {
     namespace scene
     {
-        std::shared_ptr<TextDrawable> TextDrawable::create(const std::string& font, const std::string& text, const Vector2& textAnchor)
+        TextDrawable* TextDrawable::create(const std::string& font, const std::string& text, const Vector2& textAnchor)
         {
-            std::shared_ptr<TextDrawable> result = std::make_shared<TextDrawable>();
+            TextDrawable* result = new TextDrawable();
 
             if (!result->init(font, text, textAnchor))
             {
-                result.reset();
+                result->release();
+                result = nullptr;
             }
 
             return result;
@@ -75,7 +76,7 @@ namespace ouzel
 
             if (text.empty())
             {
-                meshBuffer.reset();
+                meshBuffer->release();
             }
             else
             {

@@ -4,16 +4,16 @@
 #pragma once
 
 #include <string>
-#include "Types.h"
+#include "ReferenceCounted.h"
 #include "Vector2.h"
 
 namespace ouzel
 {
     namespace scene
     {
-        struct ParticleDefinition
+        struct ParticleDefinition: public ReferenceCounted
         {
-            static ParticleDefinitionPtr loadParticleDefinition(const std::string& filename);
+            static ParticleDefinition* loadParticleDefinition(const std::string& filename);
 
             enum class EmitterType
             {

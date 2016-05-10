@@ -4,7 +4,6 @@
 #pragma once
 
 #include <functional>
-#include "Types.h"
 #include "Widget.h"
 #include "Event.h"
 #include "Color.h"
@@ -13,12 +12,18 @@ namespace ouzel
 {
     class EventHandler;
 
+    namespace scene
+    {
+        class Sprite;
+        class TextDrawable;
+    }
+
     namespace gui
     {
         class Button: public Widget
         {
         public:
-            static std::shared_ptr<Button> create(const std::string& normal, const std::string& selected, const std::string& pressed, const std::string& disabled,
+            static Button* create(const std::string& normal, const std::string& selected, const std::string& pressed, const std::string& disabled,
                                                   const std::string& label = "", const graphics::Color& labelColor = graphics::Color(255, 255, 255, 255), const std::string& font = "");
 
             Button();
@@ -30,18 +35,18 @@ namespace ouzel
             virtual void setEnabled(bool enabled) override;
 
         protected:
-            bool handleGamepad(const GamepadEventPtr& event, const VoidPtr& sender);
-            bool handleUI(const UIEventPtr& event, const VoidPtr& sender);
+            bool handleGamepad(GamepadEvent* event, void* sender);
+            bool handleUI(UIEvent* event, void* sender);
 
             void updateSprite();
 
-            scene::SpritePtr normalSprite;
-            scene::SpritePtr selectedSprite;
-            scene::SpritePtr pressedSprite;
-            scene::SpritePtr disabledSprite;
-            scene::TextDrawablePtr labelDrawable;
+            scene::Sprite* normalSprite = nullptr;
+            scene::Sprite* selectedSprite = nullptr;
+            scene::Sprite* pressedSprite = nullptr;
+            scene::Sprite* disabledSprite = nullptr;
+            scene::TextDrawable* labelDrawable = nullptr;
 
-            EventHandlerPtr eventHandler;
+            EventHandler* eventHandler = nullptr;
 
             bool selected = false;
             bool pointerOver = false;

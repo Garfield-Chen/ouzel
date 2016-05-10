@@ -6,8 +6,6 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
-#include <memory>
-#include "Types.h"
 #include "Noncopyable.h"
 #include "Rectangle.h"
 #include "Matrix4.h"
@@ -21,6 +19,12 @@
 namespace ouzel
 {
     class Engine;
+    class Window;
+
+    namespace scene
+    {
+        class Camera;
+    }
 
     namespace graphics
     {
@@ -33,6 +37,8 @@ namespace ouzel
         const std::string BLEND_ALPHA = "blendAlpha";
 
         class MeshBuffer;
+        class Texture;
+        class RenderTarget;
 
         class Renderer: public Noncopyable
         {
@@ -75,43 +81,43 @@ namespace ouzel
 
             virtual std::vector<Size2> getSupportedResolutions() const;
 
-            virtual BlendStatePtr createBlendState(bool enableBlending,
+            virtual BlendState* createBlendState(bool enableBlending,
                                                    BlendState::BlendFactor colorBlendSource, BlendState::BlendFactor colorBlendDest,
                                                    BlendState::BlendOperation colorOperation,
                                                    BlendState::BlendFactor alphaBlendSource, BlendState::BlendFactor alphaBlendDest,
                                                    BlendState::BlendOperation alphaOperation);
-            virtual bool activateBlendState(BlendStatePtr blendState);
+            virtual bool activateBlendState(BlendState* blendState);
 
-            virtual TexturePtr createTexture(const Size2& textureSize, bool dynamic, bool mipmaps = true);
-            virtual TexturePtr loadTextureFromFile(const std::string& filename, bool dynamic = false, bool mipmaps = true);
-            virtual TexturePtr loadTextureFromData(const void* data, const Size2& textureSize, bool dynamic = false, bool mipmaps = true);
-            virtual bool activateTexture(const TexturePtr& texture, uint32_t layer);
-            virtual TexturePtr getActiveTexture(uint32_t layer) const { return activeTextures[layer]; }
-            virtual RenderTargetPtr createRenderTarget(const Size2& renderTargetSize, bool depthBuffer);
-            virtual bool activateRenderTarget(const RenderTargetPtr& renderTarget);
+            virtual Texture* createTexture(const Size2& textureSize, bool dynamic, bool mipmaps = true);
+            virtual Texture* loadTextureFromFile(const std::string& filename, bool dynamic = false, bool mipmaps = true);
+            virtual Texture* loadTextureFromData(const void* data, const Size2& textureSize, bool dynamic = false, bool mipmaps = true);
+            virtual bool activateTexture(Texture* texture, uint32_t layer);
+            virtual Texture* getActiveTexture(uint32_t layer) const { return activeTextures[layer]; }
+            virtual RenderTarget* createRenderTarget(const Size2& renderTargetSize, bool depthBuffer);
+            virtual bool activateRenderTarget(RenderTarget* renderTarget);
 
-            virtual ShaderPtr loadShaderFromFiles(const std::string& pixelShader,
+            virtual Shader* loadShaderFromFiles(const std::string& pixelShader,
                                                   const std::string& vertexShader,
                                                   uint32_t vertexAttributes,
                                                   const std::string& pixelShaderFunction = "",
                                                   const std::string& vertexShaderFunction = "");
-            virtual ShaderPtr loadShaderFromBuffers(const uint8_t* pixelShader,
+            virtual Shader* loadShaderFromBuffers(const uint8_t* pixelShader,
                                                     uint32_t pixelShaderSize,
                                                     const uint8_t* vertexShader,
                                                     uint32_t vertexShaderSize,
                                                     uint32_t vertexAttributes,
                                                     const std::string& pixelShaderFunction = "",
                                                     const std::string& vertexShaderFunction = "");
-            virtual bool activateShader(const ShaderPtr& shader);
-            virtual ShaderPtr getActiveShader() const { return activeShader; }
+            virtual bool activateShader(Shader* shader);
+            virtual Shader* getActiveShader() const { return activeShader; }
 
-            virtual MeshBufferPtr createMeshBuffer();
-            virtual MeshBufferPtr createMeshBufferFromData(const void* indices, uint32_t indexSize, uint32_t indexCount, bool dynamicIndexBuffer, const void* vertices, uint32_t vertexAttributes, uint32_t vertexCount, bool dynamicVertexBuffer);
-            virtual bool drawMeshBuffer(const MeshBufferPtr& meshBuffer, uint32_t indexCount = 0, DrawMode drawMode = DrawMode::TRIANGLE_LIST, uint32_t startIndex = 0);
+            virtual MeshBuffer* createMeshBuffer();
+            virtual MeshBuffer* createMeshBufferFromData(const void* indices, uint32_t indexSize, uint32_t indexCount, bool dynamicIndexBuffer, const void* vertices, uint32_t vertexAttributes, uint32_t vertexCount, bool dynamicVertexBuffer);
+            virtual bool drawMeshBuffer(MeshBuffer* meshBuffer, uint32_t indexCount = 0, DrawMode drawMode = DrawMode::TRIANGLE_LIST, uint32_t startIndex = 0);
 
             Vector2 viewToScreenLocation(const Vector2& position);
             Vector2 screenToViewLocation(const Vector2& position);
-            bool checkVisibility(const Matrix4& transform, const AABB2& boundingBox, const scene::CameraPtr& camera);
+            bool checkVisibility(const Matrix4& transform, const AABB2& boundingBox, scene::Camera* camera);
 
             virtual bool saveScreenshot(const std::string& filename);
 
@@ -131,10 +137,10 @@ namespace ouzel
 
             Color clearColor;
 
-            BlendStatePtr activeBlendState;
-            TexturePtr activeTextures[TEXTURE_LAYERS];
-            ShaderPtr activeShader;
-            RenderTargetPtr activeRenderTarget;
+            BlendState* activeBlendState;
+            Texture* activeTextures[TEXTURE_LAYERS];
+            Shader* activeShader;
+            RenderTarget* activeRenderTarget;
 
             uint32_t drawCallCount = 0;
         };

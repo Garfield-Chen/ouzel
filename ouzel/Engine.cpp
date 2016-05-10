@@ -106,44 +106,44 @@ namespace ouzel
         }
 
 #if defined(OUZEL_PLATFORM_OSX)
-        window.reset(new WindowOSX(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title));
+        window = new WindowOSX(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title);
 #elif defined(OUZEL_PLATFORM_IOS)
-        window.reset(new WindowIOS(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title));
+        window = new WindowIOS(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title);
 #elif defined(OUZEL_PLATFORM_TVOS)
-        window.reset(new WindowTVOS(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title));
+        window = new WindowTVOS(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title);
 #elif defined(OUZEL_PLATFORM_ANDROID)
-        window.reset(new WindowAndroid(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title));
+        window = new WindowAndroid(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title);
 #elif defined(OUZEL_PLATFORM_LINUX)
-        window.reset(new WindowLinux(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title));
+        window = new WindowLinux(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title);
 #elif defined(OUZEL_PLATFORM_WINDOWS)
-        window.reset(new WindowWin(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title));
+        window = new WindowWin(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title);
 #endif
 
-        eventDispatcher.reset(new EventDispatcher());
-        cache.reset(new Cache());
-        fileSystem.reset(new FileSystem());
-        sceneManager.reset(new scene::SceneManager());
+        eventDispatcher = new EventDispatcher();
+        cache = new Cache();
+        fileSystem = new FileSystem();
+        sceneManager = new scene::SceneManager();
 
 #if defined(OUZEL_PLATFORM_OSX) || defined(OUZEL_PLATFORM_IOS) || defined(OUZEL_PLATFORM_TVOS)
-        input.reset(new input::InputApple());
+        input = new input::InputApple();
 #elif defined(OUZEL_PLATFORM_WINDOWS)
-        input.reset(new input::InputWin());
+        input = new input::InputWin();
 #else
-        input.reset(new input::Input());
+        input = new input::Input();
 #endif
 
-        localization.reset(new Localization());
+        localization = new Localization();
 
         switch (settings.driver)
         {
             case graphics::Renderer::Driver::NONE:
                 log("Using NULL render driver");
-                renderer.reset(new graphics::Renderer());
+                renderer = new graphics::Renderer();
                 break;
 #if defined(OUZEL_SUPPORTS_OPENGL) || defined(OUZEL_SUPPORTS_OPENGLES)
             case graphics::Renderer::Driver::OPENGL:
                 log("Using OpenGL render driver");
-                renderer.reset(new graphics::RendererOGL());
+                renderer = new graphics::RendererOGL();
                 break;
 #endif
 #if defined(OUZEL_SUPPORTS_DIRECT3D11)
@@ -155,7 +155,7 @@ namespace ouzel
 #if defined(OUZEL_SUPPORTS_METAL)
             case graphics::Renderer::Driver::METAL:
                 log("Using Metal render driver");
-                renderer.reset(new graphics::RendererMetal());
+                renderer = new graphics::RendererMetal();
                 break;
 #endif
             default:
@@ -200,7 +200,7 @@ namespace ouzel
         eventDispatcher->update();
 
         lock();
-        for (const UpdateCallbackPtr& updateCallback : updateCallbacks)
+        for (UpdateCallback* updateCallback : updateCallbacks)
         {
             if (!updateCallback->remove && updateCallback->callback)
             {
@@ -216,7 +216,7 @@ namespace ouzel
         return active;
     }
 
-    void Engine::scheduleUpdate(const UpdateCallbackPtr& callback)
+    void Engine::scheduleUpdate(UpdateCallback* callback)
     {
         if (locked)
         {
@@ -224,7 +224,7 @@ namespace ouzel
         }
         else
         {
-            std::vector<UpdateCallbackPtr>::iterator i = std::find(updateCallbacks.begin(), updateCallbacks.end(), callback);
+            std::vector<UpdateCallback*>::iterator i = std::find(updateCallbacks.begin(), updateCallbacks.end(), callback);
 
             if (i == updateCallbacks.end())
             {
@@ -234,7 +234,7 @@ namespace ouzel
         }
     }
 
-    void Engine::unscheduleUpdate(const UpdateCallbackPtr& callback)
+    void Engine::unscheduleUpdate(UpdateCallback* callback)
     {
         if (locked)
         {
@@ -243,7 +243,7 @@ namespace ouzel
         }
         else
         {
-            std::vector<UpdateCallbackPtr>::iterator i = std::find(updateCallbacks.begin(), updateCallbacks.end(), callback);
+            std::vector<UpdateCallback*>::iterator i = std::find(updateCallbacks.begin(), updateCallbacks.end(), callback);
 
             if (i != updateCallbacks.end())
             {
@@ -263,7 +263,7 @@ namespace ouzel
         {
             if (!updateCallbackAddList.empty())
             {
-                for (const UpdateCallbackPtr& updateCallback : updateCallbackAddList)
+                for (UpdateCallback* updateCallback : updateCallbackAddList)
                 {
                     scheduleUpdate(updateCallback);
                 }
@@ -272,7 +272,7 @@ namespace ouzel
 
             if (!updateCallbackRemoveList.empty())
             {
-                for (const UpdateCallbackPtr& updateCallback : updateCallbackRemoveList)
+                for (UpdateCallback* updateCallback : updateCallbackRemoveList)
                 {
                     unscheduleUpdate(updateCallback);
                 }

@@ -5,18 +5,22 @@
 
 #include <string>
 #include "Drawable.h"
-#include "Types.h"
 #include "Color.h"
 #include "BMFont.h"
 
 namespace ouzel
 {
+    namespace graphics
+    {
+        class Shader;
+    }
+
     namespace scene
     {
         class TextDrawable: public Drawable
         {
         public:
-            static std::shared_ptr<TextDrawable> create(const std::string& font, const std::string& text, const Vector2& textAnchor = Vector2(0.5f, 0.5f));
+            static TextDrawable* create(const std::string& font, const std::string& text, const Vector2& textAnchor = Vector2(0.5f, 0.5f));
 
             TextDrawable();
             virtual ~TextDrawable();
@@ -34,9 +38,9 @@ namespace ouzel
         protected:
             void updateMesh();
 
-            graphics::TexturePtr texture;
-            graphics::MeshBufferPtr meshBuffer;
-            graphics::ShaderPtr shader;
+            graphics::Texture* texture;
+            graphics::MeshBuffer* meshBuffer;
+            graphics::Shader* shader;
 
             BMFont font;
             Vector2 textAnchor;

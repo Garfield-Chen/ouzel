@@ -19,13 +19,14 @@ namespace ouzel
 {
     namespace scene
     {
-        std::shared_ptr<ParticleSystem> ParticleSystem::createFromFile(const std::string& filename)
+        ParticleSystem* ParticleSystem::createFromFile(const std::string& filename)
         {
-            std::shared_ptr<ParticleSystem> result = std::make_shared<ParticleSystem>();
+            ParticleSystem* result = new ParticleSystem();
 
             if (!result->initFromFile(filename))
             {
-                result.reset();
+                result->release();
+                result = nullptr;
             }
 
             return result;
@@ -35,7 +36,7 @@ namespace ouzel
         {
             shader = sharedEngine->getCache()->getShader(graphics::SHADER_TEXTURE);
 
-            updateCallback = std::make_shared<UpdateCallback>();
+            updateCallback = new UpdateCallback();
             updateCallback->callback = std::bind(&ParticleSystem::update, this, std::placeholders::_1);
         }
 
@@ -191,9 +192,9 @@ namespace ouzel
 
                 if (positionType == ParticleDefinition::PositionType::FREE || positionType == ParticleDefinition::PositionType::RELATIVE)
                 {
-                    if (NodePtr parent = parentNode.lock())
+                    if (parentNode)
                     {
-                        const Matrix4& inverseTransform = parent->getInverseTransform();
+                        const Matrix4& inverseTransform = parentNode->getInverseTransform();
 
                         for (uint32_t i = 0; i < particleCount; i++)
                         {
@@ -217,7 +218,7 @@ namespace ouzel
 
         bool ParticleSystem::initFromFile(const std::string& filename)
         {
-            ParticleDefinitionPtr newParticleDefinition = sharedEngine->getCache()->getParticleDefinition(filename);
+            ParticleDefinition* newParticleDefinition = sharedEngine->getCache()->getParticleDefinition(filename);
 
             if (!newParticleDefinition)
             {
@@ -297,7 +298,7 @@ namespace ouzel
 
         void ParticleSystem::updateParticleMesh()
         {
-            if (NodePtr parent = parentNode.lock())
+            if (parentNode)
             {
                 for (uint32_t counter = particleCount; counter > 0; --counter)
                 {
@@ -311,7 +312,7 @@ namespace ouzel
                     }
                     else if (positionType == ParticleDefinition::PositionType::RELATIVE)
                     {
-                        position = parent->getPosition() + particles[i].position;
+                        position = parentNode->getPosition() + particles[i].position;
                     }
 
                     float size_2 = particles[i].size / 2.0f;
@@ -358,12 +359,11 @@ namespace ouzel
 
             if (count)
             {
-                LayerPtr layer;
-                NodePtr parent = parentNode.lock();
+                Layer* layer = nullptr;
 
-                if (parent)
+                if (parentNode)
                 {
-                    layer = parent->getLayer();
+                    layer = parentNode->getLayer();
                 }
 
                 if (layer)
@@ -372,11 +372,11 @@ namespace ouzel
 
                     if (positionType == ParticleDefinition::PositionType::FREE)
                     {
-                        position = parent->convertLocalToWorld(Vector2::ZERO);
+                        position = parentNode->convertLocalToWorld(Vector2::ZERO);
                     }
                     else if (positionType == ParticleDefinition::PositionType::RELATIVE)
                     {
-                        position = parent->convertLocalToWorld(Vector2::ZERO) - parent->getPosition();
+                        position = parentNode->convertLocalToWorld(Vector2::ZERO) - parentNode->getPosition();
                     }
 
                     for (uint32_t i = particleCount; i < particleCount + count; ++i)

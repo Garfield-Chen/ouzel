@@ -8,7 +8,7 @@ namespace ouzel
 {
     void Localization::addLanguage(const std::string& name, const std::string& filename)
     {
-        LanguagePtr language = Language::createFromFile(filename);
+        Language* language = Language::createFromFile(filename);
 
         if (language)
         {
@@ -26,7 +26,7 @@ namespace ouzel
         }
         else
         {
-            currentLanguage.reset();
+            currentLanguage->release();
         }
     }
 

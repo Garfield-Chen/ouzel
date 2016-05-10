@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include "Noncopyable.h"
+#include "ReferenceCounted.h"
 #include "Event.h"
 
 namespace ouzel
@@ -17,7 +18,7 @@ namespace ouzel
             float value;
         };
 
-        class Gamepad: public Noncopyable, public std::enable_shared_from_this<Gamepad>
+        class Gamepad: public Noncopyable, public ReferenceCounted
         {
         public:
             enum class Motor

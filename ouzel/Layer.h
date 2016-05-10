@@ -3,9 +3,7 @@
 
 #pragma once
 
-#include <memory>
 #include <set>
-#include "Types.h"
 #include "NodeContainer.h"
 #include "Size2.h"
 #include "Matrix4.h"
@@ -14,6 +12,11 @@
 
 namespace ouzel
 {
+    namespace graphics
+    {
+        class RenderTarget;
+    }
+
     namespace scene
     {
         class Camera;
@@ -28,36 +31,36 @@ namespace ouzel
 
             virtual void draw();
 
-            virtual bool addChild(const NodePtr& node) override;
+            virtual bool addChild(Node* node) override;
 
-            void addToDrawQueue(const NodePtr& node);
+            void addToDrawQueue(Node* node);
 
-            const CameraPtr& getCamera() const { return camera; }
-            void setCamera(const CameraPtr& newCamera);
+            Camera* getCamera() const { return camera; }
+            void setCamera(Camera* newCamera);
 
-            NodePtr pickNode(const Vector2& position) const;
-            std::set<NodePtr> pickNodes(const std::vector<Vector2>& edges) const;
+            Node* pickNode(const Vector2& position) const;
+            std::set<Node*> pickNodes(const std::vector<Vector2>& edges) const;
 
             int32_t getOrder() const { return order; }
             void setOrder(int32_t newOrder);
 
-            ScenePtr getScene() const { return scene.lock(); }
+            Scene* getScene() const { return scene; }
 
-            void setRenderTarget(const graphics::RenderTargetPtr& newRenderTarget);
-            const graphics::RenderTargetPtr& getRenderTarget() const { return renderTarget; }
+            void setRenderTarget(graphics::RenderTarget* newRenderTarget);
+            graphics::RenderTarget* getRenderTarget() const { return renderTarget; }
 
         protected:
-            virtual void addToScene(const ScenePtr& newScene);
+            virtual void addToScene(Scene* newScene);
             virtual void removeFromScene();
 
-            CameraPtr camera;
-            std::vector<NodePtr> drawQueue;
+            Camera* camera = nullptr;
+            std::vector<Node*> drawQueue;
 
-            SceneWeakPtr scene;
+            Scene* scene = nullptr;
             int32_t order = 0;
             bool remove = false;
 
-            graphics::RenderTargetPtr renderTarget;
+            graphics::RenderTarget* renderTarget = nullptr;
         };
     } // namespace scene
 } // namespace ouzel

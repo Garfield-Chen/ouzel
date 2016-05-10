@@ -3,13 +3,18 @@
 
 #pragma once
 
-#include "Types.h"
+#include "Noncopyable.h"
+#include "ReferenceCounted.h"
 
 namespace ouzel
 {
+    class UpdateCallback;
+
     namespace scene
     {
-        class Animator
+        class Node;
+
+        class Animator: public Noncopyable, public ReferenceCounted
         {
         public:
             Animator(float pLength);
@@ -17,7 +22,7 @@ namespace ouzel
 
             virtual void update(float delta);
 
-            virtual void start(const NodePtr& targetNode);
+            virtual void start(Node* targetNode);
 
             virtual void resume();
             virtual void stop(bool resetAnimation = false);
@@ -41,9 +46,9 @@ namespace ouzel
             bool done = false;
             bool running = false;
 
-            NodeWeakPtr node;
+            Node* node = nullptr;
 
-            UpdateCallbackPtr updateCallback;
+            UpdateCallback* updateCallback = nullptr;
         };
     } // namespace scene
 } // namespace ouzel

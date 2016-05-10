@@ -5,7 +5,6 @@
 
 #include <vector>
 #include "Animator.h"
-#include "Types.h"
 
 namespace ouzel
 {
@@ -14,15 +13,15 @@ namespace ouzel
         class Parallel: public Animator
         {
         public:
-            Parallel(const std::vector<AnimatorPtr>& pAnimators);
+            Parallel(const std::vector<Animator*>& pAnimators);
 
-            virtual void start(const NodePtr& targetNode) override;
+            virtual void start(Node* targetNode) override;
             virtual void reset() override;
 
         protected:
             virtual void updateProgress() override;
 
-            std::vector<AnimatorPtr> animators;
+            std::vector<Animator*> animators;
         };
     } // namespace scene
 } // namespace ouzel

@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include <memory>
-#include "Types.h"
 #include "NodeContainer.h"
 #include "Vector2.h"
 #include "Matrix4.h"
@@ -17,6 +15,8 @@ namespace ouzel
     namespace scene
     {
         class SceneManager;
+        class Animator;
+        class Drawable;
 
         class Node: public NodeContainer
         {
@@ -31,9 +31,9 @@ namespace ouzel
             virtual void process();
             virtual void draw();
 
-            virtual bool addChild(const NodePtr& node) override;
-            virtual bool hasParent() const { return !parent.expired(); }
-            virtual NodeContainerPtr getParent() const { return parent.lock(); }
+            virtual bool addChild(Node* node) override;
+            virtual bool hasParent() const { return parent != nullptr; }
+            virtual NodeContainer* getParent() const { return parent; }
             virtual bool removeFromParent();
 
             virtual void setZ(float newZ);
@@ -82,24 +82,24 @@ namespace ouzel
 
             virtual bool checkVisibility() const;
 
-            virtual void animate(const AnimatorPtr& animator);
-            virtual AnimatorPtr getAnimator() const { return currentAnimator; }
+            virtual void animate(Animator* animator);
+            virtual Animator* getAnimator() const { return currentAnimator; }
             virtual void stopAnimation();
             virtual void removeAnimation();
 
             void setReceiveInput(bool newReceiveInput) { receiveInput = newReceiveInput; }
             bool isReceivingInput() const { return receiveInput; }
 
-            const std::vector<DrawablePtr> getDrawables() const { return drawables; }
-            void addDrawable(DrawablePtr drawable);
+            const std::vector<Drawable*> getDrawables() const { return drawables; }
+            void addDrawable(Drawable* drawable);
             void removeDrawable(uint32_t index);
-            void removeDrawable(DrawablePtr drawable);
+            void removeDrawable(Drawable* drawable);
             void removeAllDrawables();
 
-            LayerPtr getLayer() const { return layer.lock(); }
+            Layer* getLayer() const { return layer; }
 
         protected:
-            virtual void addToLayer(const LayerWeakPtr& newLayer);
+            virtual void addToLayer(Layer* newLayer);
             virtual void removeFromLayer();
 
             virtual void calculateLocalTransform() const;
@@ -135,13 +135,13 @@ namespace ouzel
             bool visible = true;
             bool receiveInput = false;
 
-            NodeContainerWeakPtr parent;
-            LayerWeakPtr layer;
+            NodeContainer* parent = nullptr;
+            Layer* layer = nullptr;
 
-            AnimatorPtr currentAnimator;
+            Animator* currentAnimator = nullptr;
             bool remove = false;
 
-            std::vector<DrawablePtr> drawables;
+            std::vector<Drawable*> drawables;
         };
     } // namespace scene
 } // namespace ouzel

@@ -41,7 +41,7 @@ namespace ouzel
 
             glGenTextures(1, &textureId);
 
-            if (std::static_pointer_cast<RendererOGL>(sharedEngine->getRenderer())->checkOpenGLErrors())
+            if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
                 return false;
             }
@@ -68,7 +68,7 @@ namespace ouzel
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-            if (std::static_pointer_cast<RendererOGL>(sharedEngine->getRenderer())->checkOpenGLErrors())
+            if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
                 return false;
             }
@@ -88,10 +88,10 @@ namespace ouzel
 
             RendererOGL::bindTexture(textureId, 0);
 
-            glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, newWidth, newHeight, 0,
+            glTexImage2D(GL_TEXTURE_2D, static_cast<GLint>(level), GL_RGBA, newWidth, newHeight, 0,
                          GL_RGBA, GL_UNSIGNED_BYTE, data);
 
-            if (std::static_pointer_cast<RendererOGL>(sharedEngine->getRenderer())->checkOpenGLErrors())
+            if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
                 return false;
             }

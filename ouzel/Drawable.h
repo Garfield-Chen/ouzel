@@ -5,7 +5,7 @@
 
 #include <vector>
 #include "Noncopyable.h"
-#include "Types.h"
+#include "ReferenceCounted.h"
 #include "AABB2.h"
 #include "Matrix4.h"
 #include "Color.h"
@@ -14,7 +14,9 @@ namespace ouzel
 {
     namespace scene
     {
-        class Drawable: public ouzel::Noncopyable
+        class Node;
+        
+        class Drawable: public ouzel::Noncopyable, public ReferenceCounted
         {
         public:
             virtual ~Drawable();
@@ -29,14 +31,14 @@ namespace ouzel
             bool isVisible() const { return visible; }
             virtual void setVisible(bool newVisible) { visible = newVisible; }
 
-            void setParentNode(const NodePtr newParentNode) { parentNode = newParentNode; }
-            NodePtr getParentNode() const { return parentNode.lock(); }
+            void setParentNode(Node* newParentNode) { parentNode = newParentNode; }
+            Node* getParentNode() const { return parentNode; }
 
         protected:
             AABB2 boundingBox;
             bool visible = true;
 
-            NodeWeakPtr parentNode;
+            Node* parentNode;
         };
     } // namespace scene
 } // namespace ouzel

@@ -14,7 +14,7 @@ namespace ouzel
 
         }
 
-        void Rotate::start(const NodePtr& targetNode)
+        void Rotate::start(Node* targetNode)
         {
             Animator::start(targetNode);
 
@@ -31,9 +31,9 @@ namespace ouzel
         {
             Animator::updateProgress();
 
-            if (NodePtr targetNode = node.lock())
+            if (node)
             {
-                targetNode->setRotation(startRotation + (diff * progress));
+                node->setRotation(startRotation + (diff * progress));
             }
         }
     } // namespace scene

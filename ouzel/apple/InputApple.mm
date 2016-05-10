@@ -25,13 +25,13 @@
 
 -(void)handleControllerConnected:(NSNotification*)notification
 {
-    std::shared_ptr<ouzel::input::InputApple> inputApple = std::static_pointer_cast<ouzel::input::InputApple>(ouzel::sharedEngine->getInput());
+    ouzel::input::InputApple* inputApple = static_cast<ouzel::input::InputApple*>(ouzel::sharedEngine->getInput());
     inputApple->handleGamepadConnected(notification.object);
 }
 
 -(void)handleControllerDisconnected:(NSNotification*)notification
 {
-    std::shared_ptr<ouzel::input::InputApple> inputApple = std::static_pointer_cast<ouzel::input::InputApple>(ouzel::sharedEngine->getInput());
+    ouzel::input::InputApple* inputApple = static_cast<ouzel::input::InputApple*>(ouzel::sharedEngine->getInput());
     inputApple->handleGamepadDisconnected(notification.object);
 }
 
@@ -131,10 +131,10 @@ namespace ouzel
 
         void InputApple::handleGamepadConnected(id controller)
         {
-            std::shared_ptr<GamepadApple> gamepad(new GamepadApple(controller));
+            GamepadApple* gamepad = new GamepadApple(controller);
             gamepads.push_back(gamepad);
 
-            GamepadEventPtr event = std::make_shared<GamepadEvent>();
+            GamepadEvent* event = new GamepadEvent();
             event->type = Event::Type::GAMEPAD_CONNECT;
             event->gamepad = gamepad;
 
@@ -143,13 +143,13 @@ namespace ouzel
 
         void InputApple::handleGamepadDisconnected(id controller)
         {
-            std::vector<std::shared_ptr<GamepadApple>>::iterator i = std::find_if(gamepads.begin(), gamepads.end(), [controller](const std::shared_ptr<GamepadApple>& p) {
+            std::vector<GamepadApple*>::iterator i = std::find_if(gamepads.begin(), gamepads.end(), [controller](const GamepadApple* p) {
                 return p->getController() == controller;
             });
 
             if (i != gamepads.end())
             {
-                GamepadEventPtr event = std::make_shared<GamepadEvent>();
+                GamepadEvent* event = new GamepadEvent();
                 event->type = Event::Type::GAMEPAD_DISCONNECT;
                 event->gamepad = *i;
 

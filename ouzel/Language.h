@@ -5,14 +5,15 @@
 
 #include <map>
 #include <string>
-#include "Types.h"
+#include "Noncopyable.h"
+#include "ReferenceCounted.h"
 
 namespace ouzel
 {
-    class Language
+    class Language: public Noncopyable, public ReferenceCounted
     {
     public:
-        static LanguagePtr createFromFile(const std::string& filename);
+        static Language* createFromFile(const std::string& filename);
 
         bool initFromFile(const std::string& filename);
 

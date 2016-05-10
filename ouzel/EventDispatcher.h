@@ -4,12 +4,10 @@
 #pragma once
 
 #include <vector>
-#include <memory>
 #include <set>
 #include <mutex>
 #include <queue>
 #include <cstdint>
-#include "Types.h"
 #include "Noncopyable.h"
 #include "Event.h"
 #include "EventHander.h"
@@ -26,30 +24,30 @@ namespace ouzel
 
         void update();
 
-        void addEventHandler(const EventHandlerPtr& eventHandler);
-        void removeEventHandler(const EventHandlerPtr& eventHandler);
+        void addEventHandler(EventHandler* eventHandler);
+        void removeEventHandler(EventHandler* eventHandler);
 
-        void dispatchEvent(const EventPtr& event, const VoidPtr& sender);
+        void dispatchEvent(Event* event, void* sender);
 
     protected:
         EventDispatcher();
 
-        void dispatchKeyboardEvent(const KeyboardEventPtr& event, const VoidPtr& sender);
-        void dispatchMouseEvent(const MouseEventPtr& event, const VoidPtr& sender);
-        void dispatchTouchEvent(const TouchEventPtr& event, const VoidPtr& sender);
-        void dispatchGamepadEvent(const GamepadEventPtr& event, const VoidPtr& sender);
-        void dispatchWindowEvent(const WindowEventPtr& event, const VoidPtr& sender);
-        void dispatchSystemEvent(const SystemEventPtr& event, const VoidPtr& sender);
-        void dispatchUIEvent(const UIEventPtr& event, const VoidPtr& sender);
+        void dispatchKeyboardEvent(KeyboardEvent* event, void* sender);
+        void dispatchMouseEvent(MouseEvent* event, void* sender);
+        void dispatchTouchEvent(TouchEvent* event, void* sender);
+        void dispatchGamepadEvent(GamepadEvent* event, void* sender);
+        void dispatchWindowEvent(WindowEvent* event, void* sender);
+        void dispatchSystemEvent(SystemEvent* event, void* sender);
+        void dispatchUIEvent(UIEvent* event, void* sender);
 
         void lock();
         void unlock();
 
-        std::vector<EventHandlerPtr> eventHandlers;
-        std::set<EventHandlerPtr> eventHandlerAddList;
-        std::set<EventHandlerPtr> eventHandlerRemoveList;
+        std::vector<EventHandler*> eventHandlers;
+        std::set<EventHandler*> eventHandlerAddList;
+        std::set<EventHandler*> eventHandlerRemoveList;
 
-        std::queue<std::pair<EventPtr, VoidPtr>> eventQueue;
+        std::queue<std::pair<Event*, void*>> eventQueue;
         std::mutex mutex;
         int32_t locked = 0;
     };

@@ -4,9 +4,8 @@
 #pragma once
 
 #include <algorithm>
-#include <memory>
-#include "Types.h"
 #include "Noncopyable.h"
+#include "ReferenceCounted.h"
 #include "Size2.h"
 #include "Color.h"
 
@@ -17,7 +16,7 @@ namespace ouzel
         class Renderer;
         class Texture;
 
-        class RenderTarget: public Noncopyable
+        class RenderTarget: public Noncopyable, public ReferenceCounted
         {
             friend Renderer;
         public:
@@ -28,7 +27,7 @@ namespace ouzel
             virtual void setClearColor(Color color) { clearColor = color; }
             virtual Color getClearColor() const { return clearColor; }
 
-            TexturePtr getTexture() const { return texture; }
+            Texture* getTexture() const { return texture; }
 
         protected:
             RenderTarget();
@@ -37,7 +36,7 @@ namespace ouzel
             bool depthBuffer = false;
 
             Color clearColor;
-            TexturePtr texture;
+            Texture* texture;
         };
     } // namespace graphics
 } // namespace ouzel

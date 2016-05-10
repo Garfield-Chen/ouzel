@@ -496,6 +496,9 @@
 		30B328871C4E9EAC00040927 /* Ease.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B328831C4E9EAC00040927 /* Ease.h */; };
 		30B328881C4E9EAC00040927 /* Ease.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B328831C4E9EAC00040927 /* Ease.h */; };
 		30B328891C4E9EAC00040927 /* Ease.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B328831C4E9EAC00040927 /* Ease.h */; };
+		30B492B51CE2517C0021E170 /* ReferenceCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B492B41CE2517C0021E170 /* ReferenceCounted.h */; };
+		30B492B61CE2517C0021E170 /* ReferenceCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B492B41CE2517C0021E170 /* ReferenceCounted.h */; };
+		30B492B71CE2517C0021E170 /* ReferenceCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 30B492B41CE2517C0021E170 /* ReferenceCounted.h */; };
 		30C56C5B1CAA88F8007AEF8F /* CheckBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30C56C591CAA88F8007AEF8F /* CheckBox.cpp */; };
 		30C56C5C1CAA88F8007AEF8F /* CheckBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30C56C591CAA88F8007AEF8F /* CheckBox.cpp */; };
 		30C56C5D1CAA88F8007AEF8F /* CheckBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30C56C591CAA88F8007AEF8F /* CheckBox.cpp */; };
@@ -760,7 +763,6 @@
 		305B99901C41F06F008589E1 /* Widget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Widget.h; sourceTree = "<group>"; };
 		305B999A1C42A695008589E1 /* BMFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BMFont.cpp; sourceTree = "<group>"; };
 		305B999B1C42A695008589E1 /* BMFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMFont.h; sourceTree = "<group>"; };
-		305B99C71C451962008589E1 /* Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
 		306B0E5D1C567D05005C75C1 /* DebugDrawable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebugDrawable.cpp; sourceTree = "<group>"; };
 		306B0E5E1C567D05005C75C1 /* DebugDrawable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugDrawable.h; sourceTree = "<group>"; };
 		309ACD261C70DA73005325D3 /* ParticleDefinition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParticleDefinition.h; sourceTree = "<group>"; };
@@ -772,6 +774,7 @@
 		30AFE1301CB5D61500478AA2 /* MetalView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetalView.h; sourceTree = "<group>"; };
 		30B328821C4E9EAC00040927 /* Ease.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Ease.cpp; sourceTree = "<group>"; };
 		30B328831C4E9EAC00040927 /* Ease.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ease.h; sourceTree = "<group>"; };
+		30B492B41CE2517C0021E170 /* ReferenceCounted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReferenceCounted.h; sourceTree = "<group>"; };
 		30C56C591CAA88F8007AEF8F /* CheckBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CheckBox.cpp; sourceTree = "<group>"; };
 		30C56C5A1CAA88F8007AEF8F /* CheckBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckBox.h; sourceTree = "<group>"; };
 		30C56C631CAB3F2D007AEF8F /* RadioButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RadioButton.cpp; sourceTree = "<group>"; };
@@ -939,8 +942,8 @@
 				304A8E2D1C237C70008B1151 /* Engine.cpp */,
 				304A8E2E1C237C70008B1151 /* Engine.h */,
 				304A8E381C237C70008B1151 /* Noncopyable.h */,
+				30B492B41CE2517C0021E170 /* ReferenceCounted.h */,
 				303647631C3F218E0024DB5B /* Settings.h */,
-				305B99C71C451962008589E1 /* Types.h */,
 				30C8B6211C6D0E350031B64F /* UpdateCallback.h */,
 				3009341A1C88698500CC50D3 /* Window.cpp */,
 				3009341B1C88698500CC50D3 /* Window.h */,
@@ -1273,6 +1276,7 @@
 				303B75411C2A3C9200FEDE92 /* Image.h in Headers */,
 				30A9C1351CAE80570084C4BF /* Localization.h in Headers */,
 				304B27CF1C9A063300BA162D /* TexturePSOGLES.h in Headers */,
+				30B492B61CE2517C0021E170 /* ReferenceCounted.h in Headers */,
 				303B75451C2A3C9200FEDE92 /* Renderer.h in Headers */,
 				30C56C991CAC3ECE007AEF8F /* SlideBar.h in Headers */,
 				30575ADC1C3B48740009C8A7 /* EventDispatcher.h in Headers */,
@@ -1387,6 +1391,7 @@
 				303B76711C355A3B00FEDE92 /* Image.h in Headers */,
 				303B76721C355A3B00FEDE92 /* Renderer.h in Headers */,
 				30A9C1361CAE80570084C4BF /* Localization.h in Headers */,
+				30B492B71CE2517C0021E170 /* ReferenceCounted.h in Headers */,
 				304B27D01C9A063300BA162D /* TexturePSOGLES.h in Headers */,
 				303B76731C355A3B00FEDE92 /* Size2.h in Headers */,
 				30C56C9A1CAC3ECE007AEF8F /* SlideBar.h in Headers */,
@@ -1498,6 +1503,7 @@
 				30D0FB5B1CC2C99600477DB0 /* TexturePSTVOS.h in Headers */,
 				304B27A11C9A063300BA162D /* ColorPSOGL.h in Headers */,
 				303B75811C2B17DC00FEDE92 /* Event.h in Headers */,
+				30B492B51CE2517C0021E170 /* ReferenceCounted.h in Headers */,
 				300934271C88950500CC50D3 /* WindowOSX.h in Headers */,
 				305B998C1C41EFFA008589E1 /* Menu.h in Headers */,
 				304B27A41C9A063300BA162D /* ColorPSOGLES.h in Headers */,

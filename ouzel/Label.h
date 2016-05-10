@@ -5,17 +5,21 @@
 
 #include <string>
 #include "Widget.h"
-#include "Types.h"
 #include "Color.h"
 
 namespace ouzel
 {
+    namespace scene
+    {
+        class TextDrawable;
+    }
+
     namespace gui
     {
         class Label: public Widget
         {
         public:
-            static std::shared_ptr<Label> create(const std::string& font, const std::string& text, const Vector2& textAnchor = Vector2(0.5f, 0.5f));
+            static Label* create(const std::string& font, const std::string& text, const Vector2& textAnchor = Vector2(0.5f, 0.5f));
 
             Label();
             virtual ~Label();
@@ -32,7 +36,7 @@ namespace ouzel
             std::string text;
             graphics::Color color = graphics::Color(255, 255, 255, 255);
 
-            scene::TextDrawablePtr textDrawable;
+            scene::TextDrawable* textDrawable;
         };
     } // namespace gui
 } // namespace ouzel

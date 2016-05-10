@@ -3,9 +3,7 @@
 
 #pragma once
 
-#include <memory>
 #include <cstdint>
-#include "Types.h"
 #include "Noncopyable.h"
 #include "Vector2.h"
 #include "Rectangle.h"
@@ -16,6 +14,8 @@ namespace ouzel
     
     namespace scene
     {
+        class Scene;
+
         class SceneManager: public Noncopyable
         {
             friend Engine;
@@ -24,8 +24,8 @@ namespace ouzel
 
             void draw();
 
-            void setScene(const ScenePtr& newScene);
-            const ScenePtr& getScene() const { return scene; }
+            void setScene(Scene* newScene);
+            Scene* getScene() const { return scene; }
 
             virtual void recalculateProjection();
 
@@ -35,9 +35,9 @@ namespace ouzel
             void lock();
             void unlock();
 
-            ScenePtr scene;
+            Scene* scene = nullptr;
 
-            ScenePtr nextScene;
+            Scene* nextScene = nullptr;
             int32_t locked = 0;
         };
     } // namespace scene

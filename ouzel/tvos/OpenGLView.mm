@@ -65,7 +65,7 @@ using namespace ouzel;
         [displayLink setFrameInterval:1.0f];
         [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 
-        std::shared_ptr<graphics::RendererOGL> renderer = std::static_pointer_cast<graphics::RendererOGL>(sharedEngine->getRenderer());
+        graphics::RendererOGL* renderer = static_cast<graphics::RendererOGL*>(sharedEngine->getRenderer());
         renderer->setFrameBuffer(frameBuffer);
     }
 

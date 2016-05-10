@@ -41,9 +41,9 @@ namespace ouzel
         {
             Size2 screenSize;
 
-            if (LayerPtr currentLayer = layer.lock())
+            if (layer)
             {
-                if (const graphics::RenderTargetPtr& renderTarget = currentLayer->getRenderTarget())
+                if (graphics::RenderTarget* renderTarget = layer->getRenderTarget())
                 {
                     screenSize = renderTarget->getTexture()->getSize();
                 }

@@ -27,14 +27,14 @@ namespace ouzel
 
             if (reorder)
             {
-                std::sort(layers.begin(), layers.end(), [](LayerPtr a, LayerPtr b) {
+                std::sort(layers.begin(), layers.end(), [](Layer* a, Layer* b) {
                     return a->getOrder() > b->getOrder();
                 });
 
                 reorder = false;
             }
 
-            for (LayerPtr layer : layers)
+            for (Layer* layer : layers)
             {
                 if (!layer->remove)
                 {
@@ -45,7 +45,7 @@ namespace ouzel
             unlock();
         }
 
-        void Scene::addLayer(const LayerPtr& layer)
+        void Scene::addLayer(Layer* layer)
         {
             if (locked)
             {
@@ -55,16 +55,16 @@ namespace ouzel
             {
                 layer->remove = false;
                 layers.push_back(layer);
-                layer->addToScene(shared_from_this());
+                layer->addToScene(this);
 
-                if (CameraPtr camera = layer->getCamera())
+                if (Camera* camera = layer->getCamera())
                 {
                     camera->recalculateProjection();
                 }
             }
         }
 
-        void Scene::removeLayer(const LayerPtr& layer)
+        void Scene::removeLayer(Layer* layer)
         {
             if (locked)
             {
@@ -73,7 +73,7 @@ namespace ouzel
             }
             else
             {
-                std::vector<LayerPtr>::iterator i = std::find(layers.begin(), layers.end(), layer);
+                std::vector<Layer*>::iterator i = std::find(layers.begin(), layers.end(), layer);
 
                 if (i != layers.end())
                 {
@@ -87,7 +87,7 @@ namespace ouzel
         {
             if (locked)
             {
-                for (const LayerPtr& layer : layers)
+                for (Layer* layer : layers)
                 {
                     layer->remove = true;
                     layerRemoveList.insert(layer);
@@ -99,18 +99,18 @@ namespace ouzel
             }
         }
 
-        bool Scene::hasLayer(const LayerPtr& layer) const
+        bool Scene::hasLayer(Layer* layer) const
         {
-            std::vector<LayerPtr>::const_iterator i = std::find(layers.begin(), layers.end(), layer);
+            std::vector<Layer*>::const_iterator i = std::find(layers.begin(), layers.end(), layer);
 
             return i != layers.end();
         }
 
         void Scene::recalculateProjection()
         {
-            for (LayerPtr layer : layers)
+            for (Layer* layer : layers)
             {
-                if (CameraPtr camera = layer->getCamera())
+                if (Camera* camera = layer->getCamera())
                 {
                     camera->recalculateProjection();
                 }
@@ -133,7 +133,7 @@ namespace ouzel
             {
                 if (!layerAddList.empty())
                 {
-                    for (const LayerPtr& layer : layerAddList)
+                    for (Layer* layer : layerAddList)
                     {
                         addLayer(layer);
                     }
@@ -142,7 +142,7 @@ namespace ouzel
 
                 if (!layerRemoveList.empty())
                 {
-                    for (const LayerPtr& layer : layerRemoveList)
+                    for (Layer* layer : layerRemoveList)
                     {
                         removeLayer(layer);
                     }
@@ -151,18 +151,18 @@ namespace ouzel
             }
         }
 
-        NodePtr Scene::pickNode(const Vector2& position) const
+        Node* Scene::pickNode(const Vector2& position) const
         {
-            for (std::vector<LayerPtr>::const_reverse_iterator i = layers.rbegin(); i != layers.rend(); ++i)
+            for (std::vector<Layer*>::const_reverse_iterator i = layers.rbegin(); i != layers.rend(); ++i)
             {
-                LayerPtr layer = *i;
-                CameraPtr camera = layer->getCamera();
+                Layer* layer = *i;
+                Camera* camera = layer->getCamera();
 
                 if (camera)
                 {
                     Vector2 worldPosition = camera->convertScreenToWorld(position);
 
-                    if (NodePtr result = layer->pickNode(worldPosition))
+                    if (Node* result = layer->pickNode(worldPosition))
                     {
                         return result;
                     }
@@ -172,13 +172,13 @@ namespace ouzel
             return nullptr;
         }
 
-        std::set<NodePtr> Scene::pickNodes(const std::vector<Vector2>& edges) const
+        std::set<Node*> Scene::pickNodes(const std::vector<Vector2>& edges) const
         {
-            std::set<NodePtr> result;
+            std::set<Node*> result;
 
-            for (std::vector<LayerPtr>::const_reverse_iterator i = layers.rbegin(); i != layers.rend(); ++i)
+            for (std::vector<Layer*>::const_reverse_iterator i = layers.rbegin(); i != layers.rend(); ++i)
             {
-                std::set<NodePtr> nodes = (*i)->pickNodes(edges);
+                std::set<Node*> nodes = (*i)->pickNodes(edges);
 
                 result.insert(nodes.begin(), nodes.end());
             }

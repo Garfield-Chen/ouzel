@@ -1,7 +1,6 @@
 // Copyright (C) 2016 Elviss Strazdins
 // This file is part of the Ouzel engine.
 
-#include <memory>
 #include "BlendStateD3D11.h"
 #include "RendererD3D11.h"
 #include "Engine.h"
@@ -47,7 +46,7 @@ namespace ouzel
 
             destroy();
 
-            std::shared_ptr<RendererD3D11> rendererD3D11 = std::static_pointer_cast<RendererD3D11>(sharedEngine->getRenderer());
+            std::shared_ptr<RendererD3D11> rendererD3D11 = static_cast<RendererD3D11>(sharedEngine->getRenderer());
 
             // Blending state
             D3D11_BLEND_DESC blendStateDesc = { FALSE, FALSE }; // alpha to coverage, independent blend

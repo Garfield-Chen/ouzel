@@ -21,13 +21,14 @@ namespace ouzel
         uint32_t translationOffset;
     };
 
-    LanguagePtr Language::createFromFile(const std::string& filename)
+    Language* Language::createFromFile(const std::string& filename)
     {
-        std::shared_ptr<Language> result = std::make_shared<Language>();
+        Language* result = new Language();
 
         if (!result->initFromFile(filename))
         {
-            result.reset();
+            result->release();
+            result = nullptr;
         }
 
         return result;

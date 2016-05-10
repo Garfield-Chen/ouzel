@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 #include "Noncopyable.h"
+#include "ReferenceCounted.h"
 #include "Size2.h"
 
 namespace ouzel
@@ -15,7 +16,7 @@ namespace ouzel
     {
         class Renderer;
 
-        class Texture: public Noncopyable
+        class Texture: public Noncopyable, public ReferenceCounted
         {
             friend Renderer;
         public:

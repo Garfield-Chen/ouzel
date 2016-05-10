@@ -17,30 +17,33 @@
 #include "File.h"
 #include "Layer.h"
 #include "Cache.h"
+#include "SpriteFrame.h"
 
 namespace ouzel
 {
     namespace scene
     {
-        std::shared_ptr<Sprite> Sprite::createFromSpriteFrames(const std::vector<SpriteFramePtr>& spriteFrames)
+        Sprite* Sprite::createFromSpriteFrames(const std::vector<SpriteFrame*>& spriteFrames)
         {
-            std::shared_ptr<Sprite> result = std::make_shared<Sprite>();
+            Sprite* result = new Sprite();
 
             if (!result->initFromSpriteFrames(spriteFrames))
             {
-                result.reset();
+                result->release();
+                result = nullptr;
             }
 
             return result;
         }
 
-        std::shared_ptr<Sprite> Sprite::createFromFile(const std::string& filename, bool mipmaps)
+        Sprite* Sprite::createFromFile(const std::string& filename, bool mipmaps)
         {
-            std::shared_ptr<Sprite> result = std::make_shared<Sprite>();
+            Sprite* result = new Sprite();
 
             if (!result->initFromFile(filename, mipmaps))
             {
-                result.reset();
+                result->release();
+                result = nullptr;
             }
 
             return result;
@@ -48,7 +51,7 @@ namespace ouzel
 
         Sprite::Sprite()
         {
-            updateCallback = std::make_shared<UpdateCallback>();
+            updateCallback = new UpdateCallback();
             updateCallback->callback = std::bind(&Sprite::update, this, std::placeholders::_1);
         }
 
@@ -57,14 +60,14 @@ namespace ouzel
             sharedEngine->unscheduleUpdate(updateCallback);
         }
 
-        bool Sprite::initFromSpriteFrames(const std::vector<SpriteFramePtr>& spriteFrames)
+        bool Sprite::initFromSpriteFrames(const std::vector<SpriteFrame*>& spriteFrames)
         {
             size.width = size.height = 0.0f;
             boundingBox.reset();
 
             frames = spriteFrames;
 
-            for (const SpriteFramePtr& frame : frames)
+            for (SpriteFrame* frame : frames)
             {
                 boundingBox.insertPoint(frame->getRectangle().bottomLeft());
                 boundingBox.insertPoint(frame->getRectangle().topRight());
@@ -105,7 +108,7 @@ namespace ouzel
 
             frames = sharedEngine->getCache()->getSpriteFrames(filename, mipmaps);
 
-            for (const SpriteFramePtr& frame : frames)
+            for (SpriteFrame* frame : frames)
             {
                 boundingBox.insertPoint(frame->getRectangle().bottomLeft());
                 boundingBox.insertPoint(frame->getRectangle().topRight());
@@ -186,7 +189,7 @@ namespace ouzel
             }
         }
 
-        void Sprite::setShader(const graphics::ShaderPtr& newShader)
+        void Sprite::setShader(graphics::Shader* newShader)
         {
             shader = newShader;
         }

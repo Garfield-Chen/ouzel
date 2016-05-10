@@ -19,13 +19,13 @@ namespace ouzel
 
         EventHandler(int32_t pPriority = 0): priority(pPriority) { }
 
-        std::function<bool(const KeyboardEventPtr&, const VoidPtr&)> keyboardHandler;
-        std::function<bool(const MouseEventPtr&, const VoidPtr&)> mouseHandler;
-        std::function<bool(const TouchEventPtr&, const VoidPtr&)> touchHandler;
-        std::function<bool(const GamepadEventPtr&, const VoidPtr&)> gamepadHandler;
-        std::function<bool(const WindowEventPtr&, const VoidPtr&)> windowHandler;
-        std::function<bool(const SystemEventPtr&, const VoidPtr&)> systemHandler;
-        std::function<bool(const UIEventPtr&, const VoidPtr&)> uiHandler;
+        std::function<bool(KeyboardEvent*, void*)> keyboardHandler;
+        std::function<bool(MouseEvent*, void*)> mouseHandler;
+        std::function<bool(TouchEvent*, void*)> touchHandler;
+        std::function<bool(GamepadEvent*, void*)> gamepadHandler;
+        std::function<bool(WindowEvent*, void*)> windowHandler;
+        std::function<bool(SystemEvent*, void*)> systemHandler;
+        std::function<bool(UIEvent*, void*)> uiHandler;
 
     protected:
         int32_t priority;

@@ -49,7 +49,7 @@
 
     if (ouzel::sharedEngine)
     {
-        ouzel::SystemEventPtr event = std::make_shared<ouzel::SystemEvent>();
+        ouzel::SystemEvent* event = new ouzel::SystemEvent();
         event->type = ouzel::Event::Type::OPEN_FILE;
         event->filename = [filename cStringUsingEncoding:NSUTF8StringEncoding];
 

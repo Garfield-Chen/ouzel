@@ -8,13 +8,13 @@ namespace ouzel
 {
     namespace scene
     {
-        Sequence::Sequence(const std::vector<AnimatorPtr>& pAnimators):
-            Animator(std::accumulate(pAnimators.begin(), pAnimators.end(), 0.0f, [](float a, const AnimatorPtr& b) { return a + b->getLength(); })), animators(pAnimators)
+        Sequence::Sequence(const std::vector<Animator*>& pAnimators):
+            Animator(std::accumulate(pAnimators.begin(), pAnimators.end(), 0.0f, [](float a, Animator* b) { return a + b->getLength(); })), animators(pAnimators)
         {
 
         }
 
-        void Sequence::start(const NodePtr& node)
+        void Sequence::start(Node* node)
         {
             Animator::start(node);
 

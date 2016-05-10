@@ -20,7 +20,7 @@ namespace ouzel
 
         bool CheckBox::init(const std::string& normal, const std::string& selected, const std::string& pressed, const std::string& disabled, const std::string& tick)
         {
-            eventHandler = std::make_shared<EventHandler>(EventHandler::PRIORITY_MAX + 1);
+            eventHandler = new EventHandler(EventHandler::PRIORITY_MAX + 1);
 
             eventHandler->gamepadHandler = std::bind(&CheckBox::handleGamepad, this, std::placeholders::_1, std::placeholders::_2);
             eventHandler->uiHandler = std::bind(&CheckBox::handleUI, this, std::placeholders::_1, std::placeholders::_2);
@@ -40,12 +40,12 @@ namespace ouzel
             checked = newChecked;
         }
 
-        bool CheckBox::handleGamepad(const GamepadEventPtr& event, const VoidPtr& sender)
+        bool CheckBox::handleGamepad(GamepadEvent* event, void* sender)
         {
             return true;
         }
 
-        bool CheckBox::handleUI(const UIEventPtr& event, const VoidPtr& sender)
+        bool CheckBox::handleUI(UIEvent* event, void* sender)
         {
             return true;
         }

@@ -3,11 +3,9 @@
 
 #pragma once
 
-#include <memory>
 #include <string>
 #include <vector>
 #include "Drawable.h"
-#include "Types.h"
 #include "ParticleDefinition.h"
 #include "Vector2.h"
 #include "Color.h"
@@ -15,6 +13,15 @@
 
 namespace ouzel
 {
+    class UpdateCallback;
+
+    namespace graphics
+    {
+        class Shader;
+        class Texture;
+        class MeshBuffer;
+    }
+
     namespace scene
     {
         class SceneManager;
@@ -56,7 +63,7 @@ namespace ouzel
         class ParticleSystem: public Drawable
         {
         public:
-            static std::shared_ptr<ParticleSystem> createFromFile(const std::string& filename);
+            static ParticleSystem* createFromFile(const std::string& filename);
 
             ParticleSystem();
             virtual ~ParticleSystem();
@@ -85,12 +92,12 @@ namespace ouzel
             ParticleDefinition particleDefinition;
             ParticleDefinition::PositionType positionType;
 
-            graphics::ShaderPtr shader;
-            graphics::TexturePtr texture;
+            graphics::Shader* shader;
+            graphics::Texture* texture;
 
             std::vector<Particle> particles;
 
-            graphics::MeshBufferPtr mesh;
+            graphics::MeshBuffer* mesh;
 
             std::vector<uint16_t> indices;
             std::vector<graphics::VertexPCT> vertices;
@@ -105,7 +112,7 @@ namespace ouzel
 
             bool needsMeshUpdate = false;
 
-            UpdateCallbackPtr updateCallback;
+            UpdateCallback* updateCallback;
         };
     } // namespace scene
 } // namespace ouzel

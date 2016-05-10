@@ -3,10 +3,8 @@
 
 #pragma once
 
-#include <memory>
 #include <vector>
 #include <map>
-#include "Types.h"
 #include "Color.h"
 #include "Texture.h"
 #include "MeshBuffer.h"
@@ -44,7 +42,7 @@ namespace ouzel
 
         void getVertices(const std::string& text, const graphics::Color& color, const Vector2& anchor, std::vector<uint16_t>& indices, std::vector<graphics::VertexPCT>& vertices);
 
-        const graphics::TexturePtr& getTexture() const { return texture; }
+        graphics::Texture* getTexture() const { return texture; }
 
     protected:
         bool parseFont(const std::string& filename);
@@ -60,6 +58,6 @@ namespace ouzel
         uint16_t kernCount = 0;
         std::map<int32_t, CharDescriptor> chars;
         std::map<std::pair<int32_t, int32_t>, KerningInfo> kern;
-        graphics::TexturePtr texture;
+        graphics::Texture* texture;
     };
 }

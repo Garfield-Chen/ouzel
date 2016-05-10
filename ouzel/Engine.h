@@ -3,10 +3,8 @@
 
 #pragma once
 
-#include <memory>
 #include <vector>
 #include <set>
-#include "Types.h"
 #include "Noncopyable.h"
 #include "Renderer.h"
 #include "SceneManager.h"
@@ -22,6 +20,9 @@ namespace ouzel
 {
     extern Engine* sharedEngine;
 
+    class Cache;
+    class Localization;
+
     class Engine: public Noncopyable
     {
     public:
@@ -32,14 +33,14 @@ namespace ouzel
 
         bool init(Settings& settings);
 
-        const EventDispatcherPtr& getEventDispatcher() const { return eventDispatcher; }
-        const CachePtr& getCache() const { return cache; }
-        const WindowPtr& getWindow() const { return window; }
-        const graphics::RendererPtr& getRenderer() const { return renderer; }
-        const scene::SceneManagerPtr& getSceneManager() const { return sceneManager; }
-        const FileSystemPtr& getFileSystem() const { return fileSystem; }
-        const input::InputPtr& getInput() const { return input; }
-        const LocalizationPtr& getLocalization() const { return localization; }
+        EventDispatcher* getEventDispatcher() const { return eventDispatcher; }
+        Cache* getCache() const { return cache; }
+        Window* getWindow() const { return window; }
+        graphics::Renderer* getRenderer() const { return renderer; }
+        scene::SceneManager* getSceneManager() const { return sceneManager; }
+        FileSystem* getFileSystem() const { return fileSystem; }
+        input::Input* getInput() const { return input; }
+        Localization* getLocalization() const { return localization; }
 
         void exit();
 
@@ -50,29 +51,29 @@ namespace ouzel
         float getTargetFPS() const { return targetFPS; }
         float getFPS() const { return currentFPS; }
 
-        void scheduleUpdate(const UpdateCallbackPtr& callback);
-        void unscheduleUpdate(const UpdateCallbackPtr& callback);
+        void scheduleUpdate(UpdateCallback* callback);
+        void unscheduleUpdate(UpdateCallback* callback);
 
     protected:
         void lock();
         void unlock();
 
-        EventDispatcherPtr eventDispatcher;
-        input::InputPtr input;
-        CachePtr cache;
-        WindowPtr window;
-        FileSystemPtr fileSystem;
-        LocalizationPtr localization;
-        graphics::RendererPtr renderer;
-        scene::SceneManagerPtr sceneManager;
+        EventDispatcher* eventDispatcher = nullptr;
+        input::Input* input = nullptr;
+        Cache* cache = nullptr;
+        Window* window = nullptr;
+        FileSystem* fileSystem = nullptr;
+        Localization* localization = nullptr;
+        graphics::Renderer* renderer = nullptr;
+        scene::SceneManager* sceneManager = nullptr;
 
         float targetFPS;
         float currentFPS = 0.0f;
         uint64_t previousFrameTime;
 
-        std::vector<UpdateCallbackPtr> updateCallbacks;
-        std::set<UpdateCallbackPtr> updateCallbackAddList;
-        std::set<UpdateCallbackPtr> updateCallbackRemoveList;
+        std::vector<UpdateCallback*> updateCallbacks;
+        std::set<UpdateCallback*> updateCallbackAddList;
+        std::set<UpdateCallback*> updateCallbackRemoveList;
 
         int32_t locked = 0;
         bool running = false;

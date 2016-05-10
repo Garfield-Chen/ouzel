@@ -5,7 +5,6 @@
 
 #include <vector>
 #include "Animator.h"
-#include "Types.h"
 #include "Vector2.h"
 
 namespace ouzel
@@ -17,7 +16,7 @@ namespace ouzel
         public:
             Shake(float pLength, const Vector2& pDistance, float pTimeScale);
 
-            void start(const NodePtr& targetNode) override;
+            void start(Node* targetNode) override;
 
         protected:
             virtual void updateProgress() override;

@@ -28,11 +28,11 @@ namespace ouzel
 
     void Cache::preloadTexture(const std::string& filename, bool dynamic, bool mipmaps)
     {
-        std::unordered_map<std::string, graphics::TexturePtr>::const_iterator i = textures.find(filename);
+        std::unordered_map<std::string, graphics::Texture*>::const_iterator i = textures.find(filename);
 
         if (i == textures.end())
         {
-            graphics::TexturePtr texture = sharedEngine->getRenderer()->loadTextureFromFile(filename, dynamic, mipmaps);
+            graphics::Texture* texture = sharedEngine->getRenderer()->loadTextureFromFile(filename, dynamic, mipmaps);
 
             if (texture)
             {
@@ -41,11 +41,11 @@ namespace ouzel
         }
     }
 
-    graphics::TexturePtr Cache::getTexture(const std::string& filename, bool dynamic, bool mipmaps) const
+    graphics::Texture* Cache::getTexture(const std::string& filename, bool dynamic, bool mipmaps) const
     {
-        graphics::TexturePtr result;
+        graphics::Texture* result;
 
-        std::unordered_map<std::string, graphics::TexturePtr>::const_iterator i = textures.find(filename);
+        std::unordered_map<std::string, graphics::Texture*>::const_iterator i = textures.find(filename);
 
         if (i != textures.end())
         {
@@ -64,7 +64,7 @@ namespace ouzel
         return result;
     }
 
-    void Cache::setTexture(const std::string& filename, const graphics::TexturePtr& texture)
+    void Cache::setTexture(const std::string& filename, graphics::Texture* texture)
     {
         textures[filename] = texture;
     }
@@ -78,7 +78,7 @@ namespace ouzel
     {
         std::string extension = sharedEngine->getFileSystem()->getExtension(filename);
 
-        std::vector<scene::SpriteFramePtr> frames;
+        std::vector<scene::SpriteFrame*> frames;
 
         if (extension == "json")
         {
@@ -86,7 +86,7 @@ namespace ouzel
         }
         else
         {
-            graphics::TexturePtr texture = sharedEngine->getCache()->getTexture(filename, false, mipmaps);
+            graphics::Texture* texture = sharedEngine->getCache()->getTexture(filename, false, mipmaps);
 
             if (!texture)
             {
@@ -95,16 +95,16 @@ namespace ouzel
 
             Rectangle rectangle(0, 0, texture->getSize().width, texture->getSize().height);
 
-            scene::SpriteFramePtr frame = scene::SpriteFrame::create(rectangle, texture, false, texture->getSize(), Vector2(), Vector2(0.5f, 0.5f));
+            scene::SpriteFrame* frame = scene::SpriteFrame::create(rectangle, texture, false, texture->getSize(), Vector2(), Vector2(0.5f, 0.5f));
             frames.push_back(frame);
         }
 
         spriteFrames[filename] = frames;
     }
 
-    std::vector<scene::SpriteFramePtr> Cache::getSpriteFrames(const std::string& filename, bool mipmaps) const
+    std::vector<scene::SpriteFrame*> Cache::getSpriteFrames(const std::string& filename, bool mipmaps) const
     {
-        std::unordered_map<std::string, std::vector<scene::SpriteFramePtr>>::const_iterator i = spriteFrames.find(filename);
+        std::unordered_map<std::string, std::vector<scene::SpriteFrame*>>::const_iterator i = spriteFrames.find(filename);
 
         if (i != spriteFrames.end())
         {
@@ -114,7 +114,7 @@ namespace ouzel
         {
             std::string extension = sharedEngine->getFileSystem()->getExtension(filename);
 
-            std::vector<scene::SpriteFramePtr> frames;
+            std::vector<scene::SpriteFrame*> frames;
 
             if (extension == "json")
             {
@@ -122,7 +122,7 @@ namespace ouzel
             }
             else
             {
-                graphics::TexturePtr texture = sharedEngine->getCache()->getTexture(filename, false, mipmaps);
+                graphics::Texture* texture = sharedEngine->getCache()->getTexture(filename, false, mipmaps);
 
                 if (!texture)
                 {
@@ -131,7 +131,7 @@ namespace ouzel
 
                 Rectangle rectangle(0.0f, 0.0f, texture->getSize().width, texture->getSize().height);
 
-                scene::SpriteFramePtr frame = scene::SpriteFrame::create(rectangle, texture, false, texture->getSize(), Vector2(), Vector2(0.5f, 0.5f));
+                scene::SpriteFrame* frame = scene::SpriteFrame::create(rectangle, texture, false, texture->getSize(), Vector2(), Vector2(0.5f, 0.5f));
                 frames.push_back(frame);
             }
 
@@ -139,7 +139,7 @@ namespace ouzel
         }
     }
 
-    void Cache::setSpriteFrames(const std::string& filename, const std::vector<scene::SpriteFramePtr>& frames)
+    void Cache::setSpriteFrames(const std::string& filename, const std::vector<scene::SpriteFrame*>& frames)
     {
         spriteFrames[filename] = frames;
     }
@@ -149,9 +149,9 @@ namespace ouzel
         spriteFrames.clear();
     }
 
-    graphics::ShaderPtr Cache::getShader(const std::string& shaderName) const
+    graphics::Shader* Cache::getShader(const std::string& shaderName) const
     {
-        std::unordered_map<std::string, graphics::ShaderPtr>::const_iterator i = shaders.find(shaderName);
+        std::unordered_map<std::string, graphics::Shader*>::const_iterator i = shaders.find(shaderName);
 
         if (i != shaders.end())
         {
@@ -163,18 +163,18 @@ namespace ouzel
         }
     }
 
-    void Cache::setShader(const std::string& shaderName, const graphics::ShaderPtr& shader)
+    void Cache::setShader(const std::string& shaderName, graphics::Shader* shader)
     {
         shaders[shaderName] = shader;
     }
 
     void Cache::preloadParticleDefinition(const std::string& filename)
     {
-        std::unordered_map<std::string, scene::ParticleDefinitionPtr>::const_iterator i = particleDefinitions.find(filename);
+        std::unordered_map<std::string, scene::ParticleDefinition*>::const_iterator i = particleDefinitions.find(filename);
 
         if (i == particleDefinitions.end())
         {
-            scene::ParticleDefinitionPtr result = scene::ParticleDefinition::loadParticleDefinition(filename);
+            scene::ParticleDefinition* result = scene::ParticleDefinition::loadParticleDefinition(filename);
 
             if (result)
             {
@@ -183,11 +183,11 @@ namespace ouzel
         }
     }
 
-    scene::ParticleDefinitionPtr Cache::getParticleDefinition(const std::string& filename) const
+    scene::ParticleDefinition* Cache::getParticleDefinition(const std::string& filename) const
     {
-        scene::ParticleDefinitionPtr result;
+        scene::ParticleDefinition* result;
 
-        std::unordered_map<std::string, scene::ParticleDefinitionPtr>::const_iterator i = particleDefinitions.find(filename);
+        std::unordered_map<std::string, scene::ParticleDefinition*>::const_iterator i = particleDefinitions.find(filename);
 
         if (i != particleDefinitions.end())
         {
@@ -207,9 +207,9 @@ namespace ouzel
     }
     
 
-    graphics::BlendStatePtr Cache::getBlendState(const std::string& blendStateName) const
+    graphics::BlendState* Cache::getBlendState(const std::string& blendStateName) const
     {
-        std::unordered_map<std::string, graphics::BlendStatePtr>::const_iterator i = blendStates.find(blendStateName);
+        std::unordered_map<std::string, graphics::BlendState*>::const_iterator i = blendStates.find(blendStateName);
 
         if (i != blendStates.end())
         {
@@ -221,7 +221,7 @@ namespace ouzel
         }
     }
 
-    void Cache::setBlendState(const std::string& blendStateName, const graphics::BlendStatePtr& blendState)
+    void Cache::setBlendState(const std::string& blendStateName, graphics::BlendState* blendState)
     {
         blendStates[blendStateName] = blendState;
     }

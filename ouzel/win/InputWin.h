@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include <memory>
 #include <xinput.h>
 #include "Input.h"
 

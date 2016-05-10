@@ -141,11 +141,11 @@ namespace ouzel
                 return false;
             }
 #ifdef OUZEL_PLATFORM_OSX
-            std::shared_ptr<WindowOSX> window = std::static_pointer_cast<WindowOSX>(sharedEngine->getWindow());
+            WindowOSX* window = static_cast<WindowOSX*>(sharedEngine->getWindow());
 #elif OUZEL_PLATFORM_TVOS
-            std::shared_ptr<WindowTVOS> window = std::static_pointer_cast<WindowTVOS>(sharedEngine->getWindow());
+            WindowTVOS* window = static_cast<WindowTVOS*>(sharedEngine->getWindow());
 #elif OUZEL_PLATFORM_IOS
-            std::shared_ptr<WindowIOS> window = std::static_pointer_cast<WindowIOS>(sharedEngine->getWindow());
+            WindowIOS* window = static_cast<WindowIOS*>(sharedEngine->getWindow());
 #endif
             view = static_cast<MTKView*>(window->getNativeView());
             view.device = device;
@@ -188,7 +188,7 @@ namespace ouzel
                 return false;
             }
 
-            ShaderPtr textureShader = loadShaderFromBuffers(TEXTURE_PIXEL_SHADER_METAL, sizeof(TEXTURE_PIXEL_SHADER_METAL), TEXTURE_VERTEX_SHADER_METAL, sizeof(TEXTURE_VERTEX_SHADER_METAL), VertexPCT::ATTRIBUTES, "main_ps", "main_vs");
+            Shader* textureShader = loadShaderFromBuffers(TEXTURE_PIXEL_SHADER_METAL, sizeof(TEXTURE_PIXEL_SHADER_METAL), TEXTURE_VERTEX_SHADER_METAL, sizeof(TEXTURE_VERTEX_SHADER_METAL), VertexPCT::ATTRIBUTES, "main_ps", "main_vs");
 
             if (!textureShader)
             {
@@ -200,7 +200,7 @@ namespace ouzel
 
             sharedEngine->getCache()->setShader(SHADER_TEXTURE, textureShader);
 
-            ShaderPtr colorShader = loadShaderFromBuffers(COLOR_PIXEL_SHADER_METAL, sizeof(COLOR_PIXEL_SHADER_METAL), COLOR_VERTEX_SHADER_METAL, sizeof(COLOR_VERTEX_SHADER_METAL), VertexPC::ATTRIBUTES, "main_ps", "main_vs");
+            Shader* colorShader = loadShaderFromBuffers(COLOR_PIXEL_SHADER_METAL, sizeof(COLOR_PIXEL_SHADER_METAL), COLOR_VERTEX_SHADER_METAL, sizeof(COLOR_VERTEX_SHADER_METAL), VertexPC::ATTRIBUTES, "main_ps", "main_vs");
 
             if (!colorShader)
             {
@@ -212,7 +212,7 @@ namespace ouzel
 
             sharedEngine->getCache()->setShader(SHADER_COLOR, colorShader);
 
-            BlendStatePtr noBlendState = createBlendState(false,
+            BlendState* noBlendState = createBlendState(false,
                                                           BlendState::BlendFactor::ONE, BlendState::BlendFactor::ZERO,
                                                           BlendState::BlendOperation::ADD,
                                                           BlendState::BlendFactor::ONE, BlendState::BlendFactor::ZERO,
@@ -225,7 +225,7 @@ namespace ouzel
 
             sharedEngine->getCache()->setBlendState(BLEND_NO_BLEND, noBlendState);
 
-            BlendStatePtr addBlendState = createBlendState(true,
+            BlendState* addBlendState = createBlendState(true,
                                                            BlendState::BlendFactor::ONE, BlendState::BlendFactor::ONE,
                                                            BlendState::BlendOperation::ADD,
                                                            BlendState::BlendFactor::ONE, BlendState::BlendFactor::ONE,
@@ -238,7 +238,7 @@ namespace ouzel
 
             sharedEngine->getCache()->setBlendState(BLEND_ADD, addBlendState);
 
-            BlendStatePtr multiplyBlendState = createBlendState(true,
+            BlendState* multiplyBlendState = createBlendState(true,
                                                                 BlendState::BlendFactor::DEST_COLOR, BlendState::BlendFactor::ZERO,
                                                                 BlendState::BlendOperation::ADD,
                                                                 BlendState::BlendFactor::DEST_ALPHA, BlendState::BlendFactor::ZERO,
@@ -251,7 +251,7 @@ namespace ouzel
 
             sharedEngine->getCache()->setBlendState(BLEND_MULTIPLY, multiplyBlendState);
 
-            BlendStatePtr alphaBlendState = createBlendState(true,
+            BlendState* alphaBlendState = createBlendState(true,
                                                              BlendState::BlendFactor::SRC_ALPHA, BlendState::BlendFactor::INV_SRC_ALPHA,
                                                              BlendState::BlendOperation::ADD,
                                                              BlendState::BlendFactor::ONE, BlendState::BlendFactor::ZERO,
@@ -264,13 +264,13 @@ namespace ouzel
 
             sharedEngine->getCache()->setBlendState(BLEND_ALPHA, alphaBlendState);
 
-            for (ShaderPtr shader : {textureShader, colorShader})
+            for (Shader* shader : {textureShader, colorShader})
             {
-                std::shared_ptr<ShaderMetal> shaderMetal = std::static_pointer_cast<ShaderMetal>(shader);
+                ShaderMetal* shaderMetal = static_cast<ShaderMetal*>(shader);
 
-                for (BlendStatePtr blendState : {noBlendState, alphaBlendState})
+                for (BlendState* blendState : {noBlendState, alphaBlendState})
                 {
-                    std::shared_ptr<BlendStateMetal> blendStateMetal = std::static_pointer_cast<BlendStateMetal>(blendState);
+                    BlendStateMetal* blendStateMetal = static_cast<BlendStateMetal*>(blendState);
 
                     if (!createPipelineState(blendStateMetal, shaderMetal))
                     {
@@ -378,43 +378,46 @@ namespace ouzel
             }
         }
 
-        TexturePtr RendererMetal::loadTextureFromFile(const std::string& filename, bool dynamic, bool mipmaps)
+        Texture* RendererMetal::loadTextureFromFile(const std::string& filename, bool dynamic, bool mipmaps)
         {
-            std::shared_ptr<TextureMetal> texture(new TextureMetal());
+            TextureMetal* texture = new TextureMetal();
 
             if (!texture->initFromFile(filename, dynamic, mipmaps))
             {
-                texture.reset();
+                texture->release();
+                texture = nullptr;
             }
 
             return texture;
         }
 
-        TexturePtr RendererMetal::loadTextureFromData(const void* data, const Size2& size, bool dynamic, bool mipmaps)
+        Texture* RendererMetal::loadTextureFromData(const void* data, const Size2& size, bool dynamic, bool mipmaps)
         {
-            std::shared_ptr<TextureMetal> texture(new TextureMetal());
+            TextureMetal* texture = new TextureMetal();
 
             if (!texture->initFromData(data, size, dynamic, mipmaps))
             {
-                texture.reset();
+                texture->release();
+                texture = nullptr;
             }
 
             return texture;
         }
 
-        RenderTargetPtr RendererMetal::createRenderTarget(const Size2& size, bool depthBuffer)
+        RenderTarget* RendererMetal::createRenderTarget(const Size2& size, bool depthBuffer)
         {
-            std::shared_ptr<RenderTargetMetal> renderTarget(new RenderTargetMetal());
+            RenderTargetMetal* renderTarget = new RenderTargetMetal();
 
             if (!renderTarget->init(size, depthBuffer))
             {
-                renderTarget.reset();
+                renderTarget->release();
+                renderTarget = nullptr;
             }
 
             return renderTarget;
         }
 
-        bool RendererMetal::activateRenderTarget(const RenderTargetPtr& renderTarget)
+        bool RendererMetal::activateRenderTarget(RenderTarget* renderTarget)
         {
             if (!Renderer::activateRenderTarget(renderTarget))
             {
@@ -425,7 +428,7 @@ namespace ouzel
 
             if (activeRenderTarget)
             {
-                std::shared_ptr<RenderTargetMetal> renderTargetMetal = std::static_pointer_cast<RenderTargetMetal>(activeRenderTarget);
+                RenderTargetMetal* renderTargetMetal = static_cast<RenderTargetMetal*>(activeRenderTarget);
 
                 newRenderPassDescriptor = renderTargetMetal->getRenderPassDescriptor();
             }
@@ -466,23 +469,24 @@ namespace ouzel
             return true;
         }
 
-        ShaderPtr RendererMetal::loadShaderFromFiles(const std::string& pixelShader,
+        Shader* RendererMetal::loadShaderFromFiles(const std::string& pixelShader,
                                                      const std::string& vertexShader,
                                                      uint32_t vertexAttributes,
                                                      const std::string& pixelShaderFunction,
                                                      const std::string& vertexShaderFunction)
         {
-            std::shared_ptr<ShaderMetal> shader(new ShaderMetal());
+            ShaderMetal* shader = new ShaderMetal();
 
             if (!shader->initFromFiles(pixelShader, vertexShader, vertexAttributes, pixelShaderFunction, vertexShaderFunction))
             {
-                shader.reset();
+                shader->release();
+                shader = nullptr;
             }
 
             return shader;
         }
 
-        ShaderPtr RendererMetal::loadShaderFromBuffers(const uint8_t* pixelShader,
+        Shader* RendererMetal::loadShaderFromBuffers(const uint8_t* pixelShader,
                                                        uint32_t pixelShaderSize,
                                                        const uint8_t* vertexShader,
                                                        uint32_t vertexShaderSize,
@@ -490,41 +494,44 @@ namespace ouzel
                                                        const std::string& pixelShaderFunction,
                                                        const std::string& vertexShaderFunction)
         {
-            std::shared_ptr<ShaderMetal> shader(new ShaderMetal());
+            ShaderMetal* shader = new ShaderMetal();
 
             if (!shader->initFromBuffers(pixelShader, pixelShaderSize, vertexShader, vertexShaderSize, vertexAttributes, pixelShaderFunction, vertexShaderFunction))
             {
-                shader.reset();
+                shader->release();
+                shader = nullptr;
             }
 
             return shader;
         }
 
-        MeshBufferPtr RendererMetal::createMeshBuffer()
+        MeshBuffer* RendererMetal::createMeshBuffer()
         {
-            std::shared_ptr<MeshBufferMetal> meshBuffer(new MeshBufferMetal());
+            MeshBufferMetal* meshBuffer = new MeshBufferMetal();
 
             if (!meshBuffer->init())
             {
-                meshBuffer.reset();
+                meshBuffer->release();
+                meshBuffer = nullptr;
             }
 
             return meshBuffer;
         }
 
-        MeshBufferPtr RendererMetal::createMeshBufferFromData(const void* indices, uint32_t indexSize, uint32_t indexCount, bool dynamicIndexBuffer, const void* vertices, uint32_t vertexAttributes, uint32_t vertexCount, bool dynamicVertexBuffer)
+        MeshBuffer* RendererMetal::createMeshBufferFromData(const void* indices, uint32_t indexSize, uint32_t indexCount, bool dynamicIndexBuffer, const void* vertices, uint32_t vertexAttributes, uint32_t vertexCount, bool dynamicVertexBuffer)
         {
-            std::shared_ptr<MeshBufferMetal> meshBuffer(new MeshBufferMetal());
+            MeshBufferMetal* meshBuffer = new MeshBufferMetal();
 
             if (!meshBuffer->initFromData(indices, indexSize, indexCount, dynamicIndexBuffer, vertices, vertexAttributes, vertexCount, dynamicVertexBuffer))
             {
-                meshBuffer.reset();
+                meshBuffer->release();
+                meshBuffer = nullptr;
             }
 
             return meshBuffer;
         }
 
-        bool RendererMetal::drawMeshBuffer(const MeshBufferPtr& meshBuffer, uint32_t indexCount, DrawMode drawMode, uint32_t startIndex)
+        bool RendererMetal::drawMeshBuffer(MeshBuffer* meshBuffer, uint32_t indexCount, DrawMode drawMode, uint32_t startIndex)
         {
             if (!Renderer::drawMeshBuffer(meshBuffer, indexCount, drawMode))
             {
@@ -548,11 +555,11 @@ namespace ouzel
                 return false;
             }
 
-            std::shared_ptr<MeshBufferMetal> meshBufferMetal = std::static_pointer_cast<MeshBufferMetal>(meshBuffer);
+            MeshBufferMetal* meshBufferMetal = static_cast<MeshBufferMetal*>(meshBuffer);
 
             [currentRenderCommandEncoder setVertexBuffer:meshBufferMetal->getVertexBuffer() offset:0 atIndex:0];
 
-            std::shared_ptr<ShaderMetal> shaderMetal = std::static_pointer_cast<ShaderMetal>(activeShader);
+            ShaderMetal* shaderMetal = static_cast<ShaderMetal*>(activeShader);
             [currentRenderCommandEncoder setFragmentBuffer:shaderMetal->getPixelShaderConstantBuffer()
                                                     offset:shaderMetal->getPixelShaderConstantBufferOffset()
                                                    atIndex:1];
@@ -560,7 +567,7 @@ namespace ouzel
                                                   offset:shaderMetal->getVertexShaderConstantBufferOffset()
                                                  atIndex:1];
 
-            std::shared_ptr<BlendStateMetal> blendStateMetal = std::static_pointer_cast<BlendStateMetal>(activeBlendState);
+            BlendStateMetal* blendStateMetal = static_cast<BlendStateMetal*>(activeBlendState);
 
             auto pipelineStateIterator = pipelineStates.find(std::make_pair(blendStateMetal, shaderMetal));
 
@@ -584,7 +591,7 @@ namespace ouzel
             {
                 if (activeTextures[layer])
                 {
-                    std::shared_ptr<TextureMetal> textureMetal = std::static_pointer_cast<TextureMetal>(activeTextures[layer]);
+                    TextureMetal* textureMetal = static_cast<TextureMetal*>(activeTextures[layer]);
                     
                     [currentRenderCommandEncoder setFragmentTexture:textureMetal->getTexture() atIndex:layer];
                 }
@@ -624,8 +631,8 @@ namespace ouzel
             return true;
         }
 
-        MTLRenderPipelineStatePtr RendererMetal::createPipelineState(const std::shared_ptr<BlendStateMetal>& blendState,
-                                                                     const std::shared_ptr<ShaderMetal>& shader)
+        MTLRenderPipelineStatePtr RendererMetal::createPipelineState(BlendStateMetal* blendState,
+                                                                     ShaderMetal* shader)
         {
             MTLRenderPipelineDescriptor* pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
             pipelineStateDescriptor.sampleCount = view.sampleCount;

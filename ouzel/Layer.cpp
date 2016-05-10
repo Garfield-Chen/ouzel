@@ -35,16 +35,16 @@ namespace ouzel
                 
                 lock();
 
-                for (const NodePtr& child : children)
+                for (Node* child : children)
                 {
                     child->visit(Matrix4::IDENTITY, false);
                 }
 
-                std::stable_sort(drawQueue.begin(), drawQueue.end(), [](const NodePtr& a, const NodePtr& b) {
+                std::stable_sort(drawQueue.begin(), drawQueue.end(), [](Node* a, Node* b) {
                     return a->getZ() > b->getZ();
                 });
 
-                for (const NodePtr& node : drawQueue)
+                for (Node* node : drawQueue)
                 {
                     node->process();
                 }
@@ -53,11 +53,11 @@ namespace ouzel
             }
         }
 
-        bool Layer::addChild(const NodePtr& node)
+        bool Layer::addChild(Node* node)
         {
             if (NodeContainer::addChild(node))
             {
-                node->addToLayer(std::static_pointer_cast<Layer>(shared_from_this()));
+                node->addToLayer(this);
 
                 node->updateTransform(Matrix4::IDENTITY);
 
@@ -69,27 +69,27 @@ namespace ouzel
             }
         }
 
-        void Layer::addToDrawQueue(const NodePtr& node)
+        void Layer::addToDrawQueue(Node* node)
         {
             drawQueue.push_back(node);
         }
 
-        void Layer::setCamera(const CameraPtr& newCamera)
+        void Layer::setCamera(Camera* newCamera)
         {
             camera = newCamera;
 
             if (camera)
             {
-                camera->addToLayer(std::static_pointer_cast<Layer>(shared_from_this()));
+                camera->addToLayer(this);
                 camera->recalculateProjection();
             }
         }
 
-        NodePtr Layer::pickNode(const Vector2& position) const
+        Node* Layer::pickNode(const Vector2& position) const
         {
-            for (std::vector<NodePtr>::const_reverse_iterator i = drawQueue.rbegin(); i != drawQueue.rend(); ++i)
+            for (std::vector<Node*>::const_reverse_iterator i = drawQueue.rbegin(); i != drawQueue.rend(); ++i)
             {
-                NodePtr node = *i;
+                Node* node = *i;
 
                 if (node->isVisible() && node->isPickable() && node->pointOn(position))
                 {
@@ -100,13 +100,13 @@ namespace ouzel
             return nullptr;
         }
 
-        std::set<NodePtr> Layer::pickNodes(const std::vector<Vector2>& edges) const
+        std::set<Node*> Layer::pickNodes(const std::vector<Vector2>& edges) const
         {
-            std::set<NodePtr> result;
+            std::set<Node*> result;
 
-            for (std::vector<NodePtr>::const_reverse_iterator i = drawQueue.rbegin(); i != drawQueue.rend(); ++i)
+            for (std::vector<Node*>::const_reverse_iterator i = drawQueue.rbegin(); i != drawQueue.rend(); ++i)
             {
-                NodePtr node = *i;
+                Node* node = *i;
 
                 if (node->isVisible() && node->isPickable() && node->shapeOverlaps(edges))
                 {
@@ -121,23 +121,23 @@ namespace ouzel
         {
             order = newOrder;
 
-            if (ScenePtr currentScene = scene.lock())
+            if (scene)
             {
-                currentScene->reorderLayers();
+                scene->reorderLayers();
             }
         }
 
-        void Layer::addToScene(const ScenePtr& newScene)
+        void Layer::addToScene(Scene* newScene)
         {
             scene = newScene;
         }
 
         void Layer::removeFromScene()
         {
-            scene.reset();
+            scene->release();
         }
 
-        void Layer::setRenderTarget(const graphics::RenderTargetPtr& newRenderTarget)
+        void Layer::setRenderTarget(graphics::RenderTarget* newRenderTarget)
         {
             renderTarget = newRenderTarget;
 

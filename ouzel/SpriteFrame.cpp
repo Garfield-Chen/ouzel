@@ -15,9 +15,9 @@ namespace ouzel
 {
     namespace scene
     {
-        std::vector<SpriteFramePtr> SpriteFrame::loadSpriteFrames(const std::string& filename, bool mipmaps)
+        std::vector<SpriteFrame*> SpriteFrame::loadSpriteFrames(const std::string& filename, bool mipmaps)
         {
-            std::vector<SpriteFramePtr> frames;
+            std::vector<SpriteFrame*> frames;
 
             File file(filename, File::Mode::READ, false);
 
@@ -44,7 +44,7 @@ namespace ouzel
             Size2 textureSize(static_cast<float>(sizeObject["w"].GetInt()),
                               static_cast<float>(sizeObject["h"].GetInt()));
 
-            graphics::TexturePtr texture = sharedEngine->getCache()->getTexture(metaObject["image"].GetString(), false, mipmaps);
+            graphics::Texture* texture = sharedEngine->getCache()->getTexture(metaObject["image"].GetString(), false, mipmaps);
 
             const rapidjson::Value& framesArray = document["frames"];
 
@@ -84,7 +84,7 @@ namespace ouzel
             return frames;
         }
 
-        SpriteFramePtr SpriteFrame::create(const Rectangle& rectangle, const graphics::TexturePtr& texture, bool rotated, const Size2& sourceSize, const Vector2& sourceOffset, const Vector2& pivot)
+        SpriteFrame* SpriteFrame::create(const Rectangle& rectangle, graphics::Texture* texture, bool rotated, const Size2& sourceSize, const Vector2& sourceOffset, const Vector2& pivot)
         {
             std::vector<uint16_t> indices = {0, 1, 2, 1, 3, 2};
 
@@ -143,12 +143,12 @@ namespace ouzel
                 graphics::VertexPCT(Vector3(finalOffset.x + rectangle.width, finalOffset.y + rectangle.height, 0.0f),  graphics::Color(255, 255, 255, 255), textCoords[3])
             };
 
-            graphics::MeshBufferPtr meshBuffer = (sharedEngine->getRenderer()->createMeshBufferFromData(indices.data(), sizeof(uint16_t),
+            graphics::MeshBuffer* meshBuffer = (sharedEngine->getRenderer()->createMeshBufferFromData(indices.data(), sizeof(uint16_t),
                                                                                                         static_cast<uint32_t>(indices.size()), false,
                                                                                                         vertices.data(), graphics::VertexPCT::ATTRIBUTES,
                                                                                                         static_cast<uint32_t>(vertices.size()), true));
 
-            SpriteFramePtr frame = std::make_shared<SpriteFrame>(newRectangle, meshBuffer, texture);
+            SpriteFrame* frame = new SpriteFrame(newRectangle, meshBuffer, texture);
 
             return frame;
         }
