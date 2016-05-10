@@ -26,7 +26,7 @@ namespace ouzel
         }
         else
         {
-            currentLanguage->release();
+            currentLanguage = nullptr;
         }
     }
 

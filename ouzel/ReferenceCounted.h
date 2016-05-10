@@ -20,13 +20,13 @@ namespace ouzel
             //LeakHunter::removeObject(this);
         }
 
-        void retain() const { ++_referenceCounter; }
+        void retain() const { ++referenceCounter; }
 
         bool release() const
         {
-            assert(_referenceCounter > 0 && "Reference count must be positive");
+            assert(referenceCounter > 0 && "Reference count must be positive");
 
-            if (--_referenceCounter <= 0)
+            if (--referenceCounter <= 0)
             {
                 delete this;
                 return true;
@@ -37,22 +37,22 @@ namespace ouzel
 
         int32_t getReferenceCount() const
         {
-            return _referenceCounter;
+            return referenceCounter;
         }
 
         const char* getDebugName() const
         {
-            return _debugName;
+            return debugName;
         }
 
     protected:
         void setDebugName(const char* newName)
         {
-            _debugName = newName;
+            debugName = newName;
         }
 
     private:
-        const char* _debugName = nullptr;
-        mutable int32_t _referenceCounter = 1;
+        const char* debugName = nullptr;
+        mutable int32_t referenceCounter = 1;
     };
 }
