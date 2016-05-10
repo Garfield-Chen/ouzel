@@ -41,7 +41,7 @@ namespace ouzel
 
             viewport = { 0, 0, size.width, size.height, 0.0f, 1.0f };
 
-            std::shared_ptr<TextureD3D11> textureD3D11(new TextureD3D11());
+            TextureD3D11* textureD3D11 = new TextureD3D11();
 
             if (!textureD3D11->init(size, false, false, true))
             {
@@ -50,7 +50,7 @@ namespace ouzel
 
             texture = textureD3D11;
 
-            std::shared_ptr<RendererD3D11> rendererD3D11 = static_cast<RendererD3D11>(sharedEngine->getRenderer());
+            RendererD3D11* rendererD3D11 = static_cast<RendererD3D11*>(sharedEngine->getRenderer());
 
             D3D11_TEXTURE2D_DESC textureDesc;
             textureD3D11->texture->GetDesc(&textureDesc);

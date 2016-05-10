@@ -153,6 +153,7 @@
     <ClInclude Include="..\ouzel\Popup.h" />
     <ClInclude Include="..\ouzel\RadioButton.h" />
     <ClInclude Include="..\ouzel\Rectangle.h" />
+    <ClInclude Include="..\ouzel\ReferenceCounted.h" />
     <ClInclude Include="..\ouzel\Renderer.h" />
     <ClInclude Include="..\ouzel\RenderTarget.h" />
     <ClInclude Include="..\ouzel\Repeat.h" />

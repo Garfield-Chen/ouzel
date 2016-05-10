@@ -30,23 +30,29 @@ namespace ouzel
             modeStr += "b";
         }
 
-        if (FILE* newFile = fopen(sharedEngine->getFileSystem()->getPath(filename).c_str(), modeStr.c_str()))
-        {
-            file.reset(newFile, std::fclose);
-        }
-        else
+        file = fopen(sharedEngine->getFileSystem()->getPath(filename).c_str(), modeStr.c_str());
+
+        if (!file)
         {
             log("Failed to open file %s", filename.c_str());
         }
     }
 
+    File::~File()
+    {
+        if (file)
+        {
+            fclose(file);
+        }
+    }
+
     int64_t File::read(char* buffer, uint32_t size)
     {
-        return static_cast<int64_t>(fread(buffer, size, 1, file.get()));
+        return static_cast<int64_t>(fread(buffer, size, 1, file));
     }
 
     int64_t File::write(const char* buffer, uint32_t size)
     {
-        return static_cast<int64_t>(fwrite(buffer, size, 1, file.get()));
+        return static_cast<int64_t>(fwrite(buffer, size, 1, file));
     }
 }

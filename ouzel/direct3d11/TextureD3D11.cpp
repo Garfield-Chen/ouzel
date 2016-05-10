@@ -97,7 +97,7 @@ namespace ouzel
                 return false;
             }
 
-            std::shared_ptr<RendererD3D11> rendererD3D11 = static_cast<RendererD3D11>(sharedEngine->getRenderer());
+            RendererD3D11* rendererD3D11 = static_cast<RendererD3D11*>(sharedEngine->getRenderer());
 
             UINT newWidth = static_cast<UINT>(mipmapSizes[level].width);
 
@@ -109,7 +109,7 @@ namespace ouzel
 
         bool TextureD3D11::createTexture(UINT newWidth, UINT newHeight)
         {
-            std::shared_ptr<RendererD3D11> rendererD3D11 = static_cast<RendererD3D11>(sharedEngine->getRenderer());
+            RendererD3D11* rendererD3D11 = static_cast<RendererD3D11*>(sharedEngine->getRenderer());
 
             D3D11_TEXTURE2D_DESC textureDesc;
             memset(&textureDesc, 0, sizeof(textureDesc));

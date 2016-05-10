@@ -486,6 +486,9 @@
     <ClInclude Include="..\ouzel\SpriteFrame.h">
       <Filter>scene</Filter>
     </ClInclude>
+    <ClInclude Include="..\ouzel\ReferenceCounted.h">
+      <Filter>core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="events">

@@ -6,12 +6,13 @@
 #include <string>
 #include <cstdio>
 #include <cstdint>
+#include "Noncopyable.h"
 
 namespace ouzel
 {
     class FileSystem;
 
-    class File
+    class File: public Noncopyable
     {
     public:
         enum class Mode
@@ -22,23 +23,24 @@ namespace ouzel
         };
 
         File(const std::string& filename, Mode mode, bool binary);
+        virtual ~File();
 
         operator bool() const
         {
-            return static_cast<bool>(file);
+            return file != nullptr;
         }
 
         bool isOpen() const
         {
-            return static_cast<bool>(file);
+            return file != nullptr;
         }
 
-        const std::shared_ptr<FILE>& getFile() const { return file; }
+        FILE* getFile() const { return file; }
 
         int64_t read(char* buffer, uint32_t size);
         int64_t write(const char* buffer, uint32_t size);
 
     protected:
-        std::shared_ptr<FILE> file;
+        FILE* file = nullptr;
     };
 }

@@ -22,7 +22,7 @@ namespace ouzel
     namespace scene
     {
         class SpriteFrame;
-        class ParticleDefinition;
+        struct ParticleDefinition;
     }
     
     class Cache: public Noncopyable

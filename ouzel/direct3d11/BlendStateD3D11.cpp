@@ -46,7 +46,7 @@ namespace ouzel
 
             destroy();
 
-            std::shared_ptr<RendererD3D11> rendererD3D11 = static_cast<RendererD3D11>(sharedEngine->getRenderer());
+            RendererD3D11* rendererD3D11 = static_cast<RendererD3D11*>(sharedEngine->getRenderer());
 
             // Blending state
             D3D11_BLEND_DESC blendStateDesc = { FALSE, FALSE }; // alpha to coverage, independent blend

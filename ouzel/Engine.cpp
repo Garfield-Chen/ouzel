@@ -54,10 +54,14 @@ namespace ouzel
 
     Engine::~Engine()
     {
-        if (sceneManager)
-        {
-            sceneManager->setScene(nullptr);
-        }
+        if (sceneManager) delete sceneManager;
+        if (eventDispatcher) delete eventDispatcher;
+        if (input) delete input;
+        if (cache) delete cache;
+        if (renderer) delete renderer;
+        if (window) delete window;
+        if (fileSystem) delete fileSystem;
+        if (localization) delete localization;
     }
 
     std::set<graphics::Renderer::Driver> Engine::getAvailableDrivers() const
@@ -152,7 +156,7 @@ namespace ouzel
 #if defined(OUZEL_SUPPORTS_DIRECT3D11)
             case graphics::Renderer::Driver::DIRECT3D11:
                 log("Using Direct3D 11 render driver");
-                renderer.reset(new graphics::RendererD3D11());
+                renderer = new graphics::RendererD3D11();
                 break;
 #endif
 #if defined(OUZEL_SUPPORTS_METAL)
