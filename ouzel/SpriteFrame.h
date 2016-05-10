@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+#include "Noncopyable.h"
 #include "Rectangle.h"
 #include "Vertex.h"
 
@@ -18,7 +19,7 @@ namespace ouzel
 
     namespace scene
     {
-        class SpriteFrame
+        class SpriteFrame: public Noncopyable
         {
         public:
             static std::vector<SpriteFrame*> loadSpriteFrames(const std::string& filename, bool mipmaps = true);
