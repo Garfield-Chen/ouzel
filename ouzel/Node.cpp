@@ -286,6 +286,8 @@ namespace ouzel
             {
                 child->removeFromLayer();
             }
+
+            layer = nullptr;
         }
 
         bool Node::pointOn(const Vector2& worldPosition) const
