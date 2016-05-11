@@ -10,12 +10,22 @@ namespace ouzel
         Parallel::Parallel(const std::vector<Animator*>& pAnimators):
             Animator(0.0f), animators(pAnimators)
         {
-            for (auto& animator : animators)
+            for (Animator* animator : animators)
             {
+                animator->retain();
+
                 if (animator->getLength() > length)
                 {
                     length = animator->getLength();
                 }
+            }
+        }
+
+        Parallel::~Parallel()
+        {
+            for (Animator* animator : animators)
+            {
+                animator->release();
             }
         }
 

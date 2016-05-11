@@ -23,6 +23,12 @@ namespace ouzel
 
         Node::~Node()
         {
+            if (currentAnimator)
+            {
+                currentAnimator->stop();
+                currentAnimator->release();
+            }
+
             for (Drawable* drawable : drawables)
             {
                 drawable->release();

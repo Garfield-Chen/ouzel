@@ -13,6 +13,7 @@ namespace ouzel
         {
         public:
             Repeat(Animator* pAnimator, uint32_t pCount = 0);
+            virtual ~Repeat();
 
             virtual void update(float delta) override;
 

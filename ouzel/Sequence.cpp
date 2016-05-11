@@ -11,7 +11,18 @@ namespace ouzel
         Sequence::Sequence(const std::vector<Animator*>& pAnimators):
             Animator(std::accumulate(pAnimators.begin(), pAnimators.end(), 0.0f, [](float a, Animator* b) { return a + b->getLength(); })), animators(pAnimators)
         {
+            for (Animator* animator : animators)
+            {
+                animator->retain();
+            }
+        }
 
+        Sequence::~Sequence()
+        {
+            for (Animator* animator : animators)
+            {
+                animator->release();
+            }
         }
 
         void Sequence::start(Node* node)

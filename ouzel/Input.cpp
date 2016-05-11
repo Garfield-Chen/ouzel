@@ -217,11 +217,18 @@ namespace ouzel
                 {
                     mouseLeaveNode(mouseNode, position);
                 }
+
+                mouseNode->release();
             }
 
             mouseNode = node;
 
-            if (node && node->isReceivingInput())
+            if (mouseNode)
+            {
+                mouseNode->retain();
+            }
+
+            if (mouseNode && mouseNode->isReceivingInput())
             {
                 MouseEvent* enterEvent = new MouseEvent();
                 enterEvent->type = Event::Type::UI_ENTER_NODE;
@@ -247,12 +254,20 @@ namespace ouzel
 
         void Input::mouseDownOnNode(scene::Node* node, const Vector2& position)
         {
+            if (mouseDownNode)
+            {
+                mouseDownNode->release();
+            }
+
             mouseDownNode = node;
+
+            if (mouseDownNode)
+            {
+                mouseDownNode->retain();
+            }
 
             if (mouseDownNode && mouseDownNode->isReceivingInput())
             {
-                mouseDownNode->retain();
-
                 MouseEvent* enterEvent = new MouseEvent();
                 enterEvent->type = Event::Type::UI_PRESS_NODE;
                 enterEvent->position = node->convertWorldToLocal(position);

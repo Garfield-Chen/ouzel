@@ -10,7 +10,12 @@ namespace ouzel
         Repeat::Repeat(Animator* pAnimator, uint32_t pCount):
             Animator(pAnimator->getLength() * static_cast<float>(pCount)), animator(pAnimator), count(pCount)
         {
+            if (animator) animator->retain();
+        }
 
+        Repeat::~Repeat()
+        {
+            if (animator) animator->release();
         }
 
         void Repeat::update(float delta)

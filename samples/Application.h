@@ -17,17 +17,17 @@ public:
     bool handleUI(ouzel::UIEvent* event, void* sender) const;
 
 protected:
-    ouzel::scene::Layer* rtLayer;
-    ouzel::scene::Layer* layer;
-    ouzel::scene::Layer* uiLayer;
+    ouzel::scene::Layer* rtLayer = nullptr;
+    ouzel::scene::Layer* layer = nullptr;
+    ouzel::scene::Layer* uiLayer = nullptr;
 
-    ouzel::scene::Node* character;
-    ouzel::scene::Node* witch;
-    ouzel::scene::Node* flame;
+    ouzel::scene::Node* character = nullptr;
+    ouzel::scene::Node* witch = nullptr;
+    ouzel::scene::Node* flame = nullptr;
 
-    ouzel::gui::Button* button;
+    ouzel::gui::Button* button = nullptr;
 
-    ouzel::EventHandler* eventHandler;
+    ouzel::EventHandler* eventHandler = nullptr;
 
-    ouzel::graphics::RenderTarget* renderTarget;
+    ouzel::graphics::RenderTarget* renderTarget = nullptr;
 };

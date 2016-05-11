@@ -9,6 +9,16 @@ using namespace ouzel;
 
 Application::~Application()
 {
+    if (rtLayer) rtLayer->release();
+    if (layer) layer->release();
+    if (uiLayer) uiLayer->release();
+    if (character) character->release();
+    if (witch) witch->release();
+    if (flame) flame->release();
+    if (button) button->release();
+
+    if (renderTarget) renderTarget->release();
+
     sharedEngine->getEventDispatcher()->removeEventHandler(eventHandler);
     eventHandler->release();
 }
@@ -42,11 +52,13 @@ void Application::begin()
 
     layer = new scene::Layer();
     scene->addLayer(layer);
-    layer->setCamera(new scene::Camera());
+    scene::Camera* camera = new scene::Camera();
+    layer->setCamera(camera);
 
     uiLayer = new scene::Layer();
     scene->addLayer(uiLayer);
-    uiLayer->setCamera(new scene::Camera());
+    uiLayer->setCamera(camera);
+    camera->release();
 
     scene::DebugDrawable* debugDrawable = new scene::DebugDrawable();
     debugDrawable->rectangle(Rectangle(100.0f, 100.0f), graphics::Color(0, 128, 128, 255), true);
@@ -59,59 +71,79 @@ void Application::begin()
 
     scene::Node* drawNode = new scene::Node();
     drawNode->addDrawable(debugDrawable);
+    debugDrawable->release();
     drawNode->setPosition(Vector2(-300, 0.0f));
     layer->addChild(drawNode);
+    drawNode->release();
 
-    drawNode->animate(new ouzel::scene::Shake(10.0f, Vector2(10.0f, 20.0f), 20.0f));
+    scene::Animator* shake = new ouzel::scene::Shake(10.0f, Vector2(10.0f, 20.0f), 20.0f);
+    drawNode->animate(shake);
+    shake->release();
 
     scene::Sprite* characterSprite = scene::Sprite::createFromFile("run.json");
     characterSprite->play(true);
 
     character = new scene::Node();
     character->addDrawable(characterSprite);
+    characterSprite->release();
     layer->addChild(character);
     character->setPosition(Vector2(-300.0f, 0.0f));
 
-    std::vector<scene::Animator*> sequence = {
-        new scene::Move(4.0f, Vector2(300.0f, 0.0f)),
-        new scene::Fade(2.0f, 0.4f)
-    };
+    scene::Animator* move = new scene::Move(4.0f, Vector2(300.0f, 0.0f));
+    scene::Animator* fade = new scene::Fade(2.0f, 0.4f);
 
-    character->animate(new scene::Sequence(sequence));
+    scene::Animator* sequence = new scene::Sequence({ move, fade });
+    character->animate(sequence);
+    move->release();
+    fade->release();
+    sequence->release();
 
     scene::Sprite* fireSprite = scene::Sprite::createFromFile("fire.json");
     fireSprite->play(true);
 
     scene::Node* fireNode = new scene::Node();
     fireNode->addDrawable(fireSprite);
+    fireSprite->release();
     fireNode->setPosition(Vector2(-100.0f, -100.0f));
     layer->addChild(fireNode);
+    fireNode->release();
     fireNode->animate(new scene::Fade(5.0f, 0.5f));
 
     scene::ParticleSystem* flameParticleSystem = scene::ParticleSystem::createFromFile("flame.json");
 
     flame = new scene::Node();
     flame->addDrawable(flameParticleSystem);
+    flameParticleSystem->release();
     layer->addChild(flame);
+    flame->release();
 
     scene::Sprite* witchSprite = scene::Sprite::createFromFile("witch.png");
     //witchSprite->setColor(graphics::Color(128, 0, 255, 255));
 
     witch = new scene::Node();
     witch->addDrawable(witchSprite);
+    witchSprite->release();
     witch->setPosition(Vector2(100.0f, 100.0f));
     layer->addChild(witch);
-    witch->animate(new scene::Repeat(new scene::Rotate(1.0f, TAU, false), 3));
+    witch->release();
+
+    scene::Animator* rotate = new scene::Rotate(1.0f, TAU, false);
+    scene::Animator* repeatRotation = new scene::Repeat(rotate, 3);
+    witch->animate(repeatRotation);
+    rotate->release();
+    repeatRotation->release();
 
     gui::Label* label = gui::Label::create("font.fnt", sharedEngine->getLocalization()->getString("Test"));
     uiLayer->addChild(label);
+    label->release();
 
-    std::vector<scene::Animator*> sequence2 = {
-        new scene::Animator(1.0f), // delay
-        new scene::Ease(new scene::Move(2.0f, Vector2(0.0f, -240.0f), false), scene::Ease::Type::OUT, scene::Ease::Func::BOUNCE)
-    };
-
-    label->animate(new scene::Sequence(sequence2));
+    scene::Animator* delay = new scene::Animator(1.0f);
+    scene::Animator* ease = new scene::Ease(new scene::Move(2.0f, Vector2(0.0f, -240.0f), false), scene::Ease::Type::OUT, scene::Ease::Func::BOUNCE);
+    scene::Animator* sequence2 = new scene::Sequence({ delay, ease });
+    label->animate(sequence2);
+    delay->release();
+    ease->release();
+    sequence2->release();
 
     button = gui::Button::create("button.png", "button.png", "button_down.png", "", "", graphics::Color(), "");
     button->setPosition(Vector2(-200.0f, 200.0f));
@@ -122,14 +154,17 @@ void Application::begin()
     ouzel::scene::Node* rtCharacter = new scene::Node();
     rtCharacter->addDrawable(characterSprite);
     rtLayer->addChild(rtCharacter);
+    rtCharacter->release();
 
     ouzel::scene::SpriteFrame* rtFrame = ouzel::scene::SpriteFrame::create(Rectangle(0.0f, 0.0f, 256.0f, 256.0f), renderTarget->getTexture(), false, renderTarget->getTexture()->getSize(), Vector2(), Vector2(0.5f, 0.5f));
 
     ouzel::scene::Sprite* rtSprite = ouzel::scene::Sprite::createFromSpriteFrames({ rtFrame });
     ouzel::scene::Node* rtNode = new ouzel::scene::Node();
     rtNode->addDrawable(rtSprite);
+    rtFrame->release();
     rtNode->setPosition(Vector2(200.0f, 200.0f));
     layer->addChild(rtNode);
+    rtNode->release();
 
     sharedEngine->getInput()->startGamepadDiscovery();
 }
