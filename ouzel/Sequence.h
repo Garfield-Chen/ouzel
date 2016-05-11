@@ -13,7 +13,7 @@ namespace ouzel
         class Sequence: public Animator
         {
         public:
-            Sequence(const std::vector<Animator*>& pAnimators);
+            Sequence(const std::initializer_list<Animator*>& pAnimators);
             virtual ~Sequence();
 
             virtual void start(Node* node) override;
