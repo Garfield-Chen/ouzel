@@ -33,7 +33,7 @@ namespace ouzel
         {
             Animator::start(targetNode);
 
-            for (auto& animator : animators)
+            for (Animator* animator : animators)
             {
                 animator->start(targetNode);
             }
@@ -43,7 +43,7 @@ namespace ouzel
         {
             Animator::reset();
 
-            for (auto& animator : animators)
+            for (Animator* animator : animators)
             {
                 animator->reset();
             }
@@ -53,7 +53,7 @@ namespace ouzel
         {
             Animator::updateProgress();
 
-            for (auto& animator : animators)
+            for (Animator* animator : animators)
             {
                 float animationLength = animator->getLength();
 

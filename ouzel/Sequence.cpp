@@ -29,7 +29,7 @@ namespace ouzel
         {
             Animator::start(node);
 
-            for (auto& animator : animators)
+            for (Animator* animator : animators)
             {
                 animator->start(node);
             }
@@ -39,7 +39,7 @@ namespace ouzel
         {
             Animator::reset();
 
-            for (auto& animator : animators)
+            for (Animator* animator : animators)
             {
                 animator->reset();
             }
@@ -51,7 +51,7 @@ namespace ouzel
 
             float time = 0.0f;
 
-            for (auto& animator : animators)
+            for (Animator* animator : animators)
             {
                 float animationLength = animator->getLength();
 
