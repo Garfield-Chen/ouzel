@@ -4,6 +4,7 @@
 #include <algorithm>
 #include "NodeContainer.h"
 #include "Node.h"
+#include "Utils.h"
 
 namespace ouzel
 {
@@ -33,19 +34,18 @@ namespace ouzel
                 return false;
             }
 
-            if (!hasChild(node) && !node->hasParent())
+            if (node->hasParent())
             {
-                node->remove = false;
-                node->parent = this;
-                children.push_back(node);
-                node->retain();
+                log("Node already has parent");
+                node->removeFromParent();
+            }
 
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            node->remove = false;
+            node->parent = this;
+            children.push_back(node);
+            node->retain();
+
+            return true;
         }
 
         bool NodeContainer::removeChild(Node* node)

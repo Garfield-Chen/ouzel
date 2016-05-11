@@ -195,9 +195,9 @@ namespace ouzel
 
         bool Node::removeFromParent()
         {
-            if (layer)
+            if (parent)
             {
-                layer->removeChild(this);
+                parent->removeChild(this);
                 return true;
             }
 
@@ -432,6 +432,7 @@ namespace ouzel
             if (currentAnimator)
             {
                 currentAnimator->release();
+                currentAnimator = nullptr;
             }
         }
 
