@@ -21,7 +21,7 @@ namespace ouzel
 
     BMFont::~BMFont()
     {
-
+        if (texture) texture->release();
     }
 
     bool BMFont::parseFont(const std::string& filename)
@@ -70,6 +70,11 @@ namespace ouzel
                         }
 
                         texture = sharedEngine->getCache()->getTexture(value, false, true);
+
+                        if (texture)
+                        {
+                            texture->retain();
+                        }
                     }
                 }
             }

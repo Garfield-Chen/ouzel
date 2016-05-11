@@ -49,8 +49,8 @@ namespace ouzel
             virtual bool isPlaying() const { return playing; }
             
         protected:
-            graphics::Shader* shader;
-            graphics::BlendState* blendState;
+            graphics::Shader* shader = nullptr;
+            graphics::BlendState* blendState = nullptr;
 
             Size2 size;
 
@@ -62,7 +62,7 @@ namespace ouzel
             bool repeat = false;
             float timeSinceLastFrame = 0.0f;
 
-            UpdateCallback* updateCallback;
+            UpdateCallback* updateCallback = nullptr;
         };
     } // namespace scene
 } // namespace ouzel

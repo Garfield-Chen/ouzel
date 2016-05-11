@@ -16,6 +16,7 @@ namespace ouzel
         {
         public:
             DebugDrawable();
+            virtual ~DebugDrawable();
 
             virtual void draw(const Matrix4& projectionMatrix, const Matrix4& transformMatrix, const graphics::Color& drawColor) override;
 
@@ -31,10 +32,10 @@ namespace ouzel
             struct DrawCommand
             {
                 graphics::Renderer::DrawMode mode;
-                graphics::MeshBuffer* mesh;
+                graphics::MeshBuffer* mesh = nullptr;
             };
 
-            graphics::Shader* shader;
+            graphics::Shader* shader = nullptr;
             std::vector<DrawCommand> drawCommands;
         };
     } // namespace scene

@@ -52,6 +52,7 @@ namespace ouzel
             event->fullscreen = fullscreen;
 
             sharedEngine->getEventDispatcher()->dispatchEvent(event, sharedEngine->getRenderer());
+            event->release();
         }
     }
 
@@ -70,6 +71,7 @@ namespace ouzel
             event->fullscreen = fullscreen;
 
             sharedEngine->getEventDispatcher()->dispatchEvent(event, sharedEngine->getRenderer());
+            event->release();
         }
     }
 
@@ -86,6 +88,7 @@ namespace ouzel
             event->fullscreen = fullscreen;
 
             sharedEngine->getEventDispatcher()->dispatchEvent(event, sharedEngine->getRenderer());
+            event->release();
         }
     }
 }

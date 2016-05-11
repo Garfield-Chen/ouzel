@@ -35,7 +35,7 @@ namespace ouzel
 
         Label::~Label()
         {
-
+            if (textDrawable) textDrawable->release();
         }
 
         bool Label::init(const std::string& fontFile, const std::string& newText, const Vector2& newTextAnchor)

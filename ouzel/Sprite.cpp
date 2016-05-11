@@ -57,11 +57,25 @@ namespace ouzel
 
         Sprite::~Sprite()
         {
+            if (shader) shader->release();
+            if (blendState) blendState->release();
+
+            for (SpriteFrame* frame : frames)
+            {
+                frame->release();
+            }
+
             sharedEngine->unscheduleUpdate(updateCallback);
+            updateCallback->release();
         }
 
         bool Sprite::initFromSpriteFrames(const std::vector<SpriteFrame*>& spriteFrames)
         {
+            for (SpriteFrame* frame : frames)
+            {
+                frame->release();
+            }
+
             size.width = size.height = 0.0f;
             boundingBox.reset();
 
@@ -69,6 +83,8 @@ namespace ouzel
 
             for (SpriteFrame* frame : frames)
             {
+                frame->retain();
+
                 boundingBox.insertPoint(frame->getRectangle().bottomLeft());
                 boundingBox.insertPoint(frame->getRectangle().topRight());
 
@@ -83,6 +99,7 @@ namespace ouzel
                 }
             }
 
+            if (blendState) blendState->release();
             blendState = sharedEngine->getCache()->getBlendState(graphics::BLEND_ALPHA);
 
             if (!blendState)
@@ -90,6 +107,9 @@ namespace ouzel
                 return false;
             }
 
+            blendState->retain();
+
+            if (shader) shader->release();
             shader = sharedEngine->getCache()->getShader(graphics::SHADER_TEXTURE);
             
             if (!shader)
@@ -97,12 +117,19 @@ namespace ouzel
                 return false;
             }
 
+            shader->retain();
+
             return true;
         }
 
         bool Sprite::initFromFile(const std::string& filename, bool mipmaps)
         {
+            for (SpriteFrame* frame : frames)
+            {
+                frame->release();
+            }
             frames.clear();
+
             size.width = size.height = 0.0f;
             boundingBox.reset();
 
@@ -110,6 +137,8 @@ namespace ouzel
 
             for (SpriteFrame* frame : frames)
             {
+                frame->retain();
+
                 boundingBox.insertPoint(frame->getRectangle().bottomLeft());
                 boundingBox.insertPoint(frame->getRectangle().topRight());
 
@@ -124,6 +153,7 @@ namespace ouzel
                 }
             }
 
+            if (blendState) blendState->release();
             blendState = sharedEngine->getCache()->getBlendState(graphics::BLEND_ALPHA);
 
             if (!blendState)
@@ -131,12 +161,17 @@ namespace ouzel
                 return false;
             }
 
+            blendState->retain();
+
+            if (shader) shader->release();
             shader = sharedEngine->getCache()->getShader(graphics::SHADER_TEXTURE);
 
             if (!shader)
             {
                 return false;
             }
+
+            shader->retain();
 
             return true;
         }

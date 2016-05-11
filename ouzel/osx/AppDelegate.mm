@@ -54,6 +54,7 @@
         event->filename = [filename cStringUsingEncoding:NSUTF8StringEncoding];
 
         ouzel::sharedEngine->getEventDispatcher()->dispatchEvent(event, ouzel::sharedEngine->getInput());
+        event->release();
     }
 
     return YES;

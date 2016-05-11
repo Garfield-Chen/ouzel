@@ -137,10 +137,10 @@ namespace ouzel
 
             Color clearColor;
 
-            BlendState* activeBlendState;
+            BlendState* activeBlendState = nullptr;
             Texture* activeTextures[TEXTURE_LAYERS];
-            Shader* activeShader;
-            RenderTarget* activeRenderTarget;
+            Shader* activeShader = nullptr;
+            RenderTarget* activeRenderTarget = nullptr;
 
             uint32_t drawCallCount = 0;
         };

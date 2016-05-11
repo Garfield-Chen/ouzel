@@ -38,7 +38,7 @@ namespace ouzel
             AABB2 boundingBox;
             bool visible = true;
 
-            Node* parentNode;
+            Node* parentNode = nullptr;
         };
     } // namespace scene
 } // namespace ouzel

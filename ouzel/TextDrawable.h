@@ -38,9 +38,9 @@ namespace ouzel
         protected:
             void updateMesh();
 
-            graphics::Texture* texture;
-            graphics::MeshBuffer* meshBuffer;
-            graphics::Shader* shader;
+            graphics::Texture* texture = nullptr;
+            graphics::MeshBuffer* meshBuffer = nullptr;
+            graphics::Shader* shader = nullptr;
 
             BMFont font;
             Vector2 textAnchor;

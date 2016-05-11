@@ -40,13 +40,13 @@ namespace ouzel
 
             void updateSprite();
 
-            scene::Sprite* normalSprite;
-            scene::Sprite* selectedSprite;
-            scene::Sprite* pressedSprite;
-            scene::Sprite* disabledSprite;
-            scene::TextDrawable* labelDrawable;
+            scene::Sprite* normalSprite = nullptr;
+            scene::Sprite* selectedSprite = nullptr;
+            scene::Sprite* pressedSprite = nullptr;
+            scene::Sprite* disabledSprite = nullptr;
+            scene::TextDrawable* labelDrawable = nullptr;
 
-            EventHandler* eventHandler;
+            EventHandler* eventHandler = nullptr;
 
             bool checked = false;
         };

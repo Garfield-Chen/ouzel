@@ -28,12 +28,9 @@ namespace ouzel
 
             SpriteFrame(Rectangle pRectangle,
                         graphics::MeshBuffer* pMeshBuffer,
-                        graphics::Texture* pTexture):
-                rectangle(pRectangle),
-                meshBuffer(pMeshBuffer),
-                texture(pTexture)
-            {
-            }
+                        graphics::Texture* pTexture);
+
+            virtual ~SpriteFrame();
 
             const Rectangle& getRectangle() const { return rectangle; }
             graphics::MeshBuffer* getMeshBuffer() const { return meshBuffer; }
@@ -41,8 +38,8 @@ namespace ouzel
 
         protected:
             Rectangle rectangle;
-            graphics::MeshBuffer* meshBuffer;
-            graphics::Texture* texture;
+            graphics::MeshBuffer* meshBuffer = nullptr;
+            graphics::Texture* texture = nullptr;
         };
     } // scene
 } // ouzel

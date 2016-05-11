@@ -92,12 +92,12 @@ namespace ouzel
             ParticleDefinition particleDefinition;
             ParticleDefinition::PositionType positionType;
 
-            graphics::Shader* shader;
-            graphics::Texture* texture;
+            graphics::Shader* shader = nullptr;
+            graphics::Texture* texture = nullptr;
 
             std::vector<Particle> particles;
 
-            graphics::MeshBuffer* mesh;
+            graphics::MeshBuffer* mesh = nullptr;
 
             std::vector<uint16_t> indices;
             std::vector<graphics::VertexPCT> vertices;
@@ -112,7 +112,7 @@ namespace ouzel
 
             bool needsMeshUpdate = false;
 
-            UpdateCallback* updateCallback;
+            UpdateCallback* updateCallback = nullptr;
         };
     } // namespace scene
 } // namespace ouzel

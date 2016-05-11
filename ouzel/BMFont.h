@@ -58,6 +58,6 @@ namespace ouzel
         uint16_t kernCount = 0;
         std::map<int32_t, CharDescriptor> chars;
         std::map<std::pair<int32_t, int32_t>, KerningInfo> kern;
-        graphics::Texture* texture;
+        graphics::Texture* texture = nullptr;
     };
 }

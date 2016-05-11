@@ -37,7 +37,14 @@ namespace ouzel
 
         Button::~Button()
         {
+            if (normalSprite) normalSprite->release();
+            if (selectedSprite) selectedSprite->release();
+            if (pressedSprite) pressedSprite->release();
+            if (disabledSprite) disabledSprite->release();
+            if (labelDrawable) labelDrawable->release();
+
             sharedEngine->getEventDispatcher()->removeEventHandler(eventHandler);
+            eventHandler->release();
         }
 
         bool Button::init(const std::string& normalImage, const std::string& selectedImage, const std::string& pressedImage, const std::string& disabledImage,
@@ -61,8 +68,8 @@ namespace ouzel
 
             if (!selectedImage.empty())
             {
-                selectedSprite = new scene::Sprite();
-                if (selectedSprite->initFromFile(selectedImage, false))
+                selectedSprite = scene::Sprite::createFromFile(selectedImage, false);
+                if (selectedSprite)
                 {
                     addDrawable(selectedSprite);
                 }
@@ -70,8 +77,8 @@ namespace ouzel
 
             if (!pressedImage.empty())
             {
-                pressedSprite = new scene::Sprite();
-                if (pressedSprite->initFromFile(pressedImage, false))
+                pressedSprite = scene::Sprite::createFromFile(pressedImage, false);
+                if (pressedSprite)
                 {
                     addDrawable(pressedSprite);
                 }
@@ -79,8 +86,8 @@ namespace ouzel
 
             if (!disabledImage.empty())
             {
-                disabledSprite = new scene::Sprite();
-                if (disabledSprite->initFromFile(disabledImage, false))
+                disabledSprite = scene::Sprite::createFromFile(disabledImage, false);
+                if (disabledSprite)
                 {
                     addDrawable(disabledSprite);
                 }

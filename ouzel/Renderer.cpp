@@ -22,7 +22,7 @@ namespace ouzel
         Renderer::Renderer(Driver pDriver):
             driver(pDriver)
         {
-
+            memset(activeTextures, 0, sizeof(activeTextures));
         }
 
         Renderer::~Renderer()

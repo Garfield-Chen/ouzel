@@ -4,13 +4,15 @@
 #pragma once
 
 #include <functional>
+#include "Noncopyable.h"
+#include "ReferenceCounted.h"
 #include "Event.h"
 
 namespace ouzel
 {
     class EventDispatcher;
 
-    class EventHandler
+    class EventHandler: public Noncopyable, public ReferenceCounted
     {
         friend EventDispatcher;
 

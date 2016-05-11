@@ -2,6 +2,7 @@
 // This file is part of the Ouzel engine.
 
 #include "RenderTarget.h"
+#include "Texture.h"
 
 namespace ouzel
 {
@@ -14,7 +15,7 @@ namespace ouzel
 
         RenderTarget::~RenderTarget()
         {
-
+            if (texture) texture->release();
         }
 
         bool RenderTarget::init(const Size2& newSize, bool useDepthBuffer)

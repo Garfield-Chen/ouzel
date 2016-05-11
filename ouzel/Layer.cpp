@@ -7,6 +7,7 @@
 #include "Node.h"
 #include "Camera.h"
 #include "Renderer.h"
+#include "RenderTarget.h"
 #include "Scene.h"
 #include "Matrix4.h"
 
@@ -21,11 +22,21 @@ namespace ouzel
 
         Layer::~Layer()
         {
+            for (Node* node : drawQueue)
+            {
+                node->release();
+            }
 
+            if (camera) camera->release();
+            if (renderTarget) renderTarget->release();
         }
 
         void Layer::draw()
         {
+            for (Node* node : drawQueue)
+            {
+                node->release();
+            }
             drawQueue.clear();
 
             // render only if there is an active camera
@@ -72,16 +83,23 @@ namespace ouzel
         void Layer::addToDrawQueue(Node* node)
         {
             drawQueue.push_back(node);
+            node->retain();
         }
 
         void Layer::setCamera(Camera* newCamera)
         {
+            if (camera)
+            {
+                camera->release();
+            }
+
             camera = newCamera;
 
             if (camera)
             {
                 camera->addToLayer(this);
                 camera->recalculateProjection();
+                camera->retain();
             }
         }
 
@@ -134,12 +152,22 @@ namespace ouzel
 
         void Layer::removeFromScene()
         {
-            scene->release();
+            scene = nullptr;
         }
 
         void Layer::setRenderTarget(graphics::RenderTarget* newRenderTarget)
         {
+            if (renderTarget)
+            {
+                renderTarget->release();
+            }
+
             renderTarget = newRenderTarget;
+
+            if (renderTarget)
+            {
+                renderTarget->retain();
+            }
 
             if (camera)
             {

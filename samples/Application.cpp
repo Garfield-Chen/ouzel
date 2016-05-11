@@ -10,6 +10,7 @@ using namespace ouzel;
 Application::~Application()
 {
     sharedEngine->getEventDispatcher()->removeEventHandler(eventHandler);
+    eventHandler->release();
 }
 
 void Application::begin()

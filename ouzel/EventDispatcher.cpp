@@ -29,39 +29,41 @@ namespace ouzel
 
             mutex.unlock();
 
+            Event* event = eventPair.first;
+
             switch (eventPair.first->type)
             {
                 case Event::Type::KEY_DOWN:
                 case Event::Type::KEY_UP:
                 case Event::Type::KEY_REPEAT:
-                    dispatchKeyboardEvent(static_cast<KeyboardEvent*>(eventPair.first), eventPair.second);
+                    dispatchKeyboardEvent(static_cast<KeyboardEvent*>(event), eventPair.second);
                     break;
 
                 case Event::Type::MOUSE_DOWN:
                 case Event::Type::MOUSE_UP:
                 case Event::Type::MOUSE_SCROLL:
                 case Event::Type::MOUSE_MOVE:
-                    dispatchMouseEvent(static_cast<MouseEvent*>(eventPair.first), eventPair.second);
+                    dispatchMouseEvent(static_cast<MouseEvent*>(event), eventPair.second);
                     break;
                 case Event::Type::TOUCH_BEGIN:
                 case Event::Type::TOUCH_MOVE:
                 case Event::Type::TOUCH_END:
                 case Event::Type::TOUCH_CANCEL:
-                    dispatchTouchEvent(static_cast<TouchEvent*>(eventPair.first), eventPair.second);
+                    dispatchTouchEvent(static_cast<TouchEvent*>(event), eventPair.second);
                     break;
                 case Event::Type::GAMEPAD_CONNECT:
                 case Event::Type::GAMEPAD_DISCONNECT:
                 case Event::Type::GAMEPAD_BUTTON_CHANGE:
-                    dispatchGamepadEvent(static_cast<GamepadEvent*>(eventPair.first), eventPair.second);
+                    dispatchGamepadEvent(static_cast<GamepadEvent*>(event), eventPair.second);
                     break;
                 case Event::Type::WINDOW_SIZE_CHANGE:
                 case Event::Type::WINDOW_TITLE_CHANGE:
                 case Event::Type::WINDOW_FULLSCREEN_CHANGE:
-                    dispatchWindowEvent(static_cast<WindowEvent*>(eventPair.first), eventPair.second);
+                    dispatchWindowEvent(static_cast<WindowEvent*>(event), eventPair.second);
                     break;
                 case Event::Type::LOW_MEMORY:
                 case Event::Type::OPEN_FILE:
-                    dispatchSystemEvent(static_cast<SystemEvent*>(eventPair.first), eventPair.second);
+                    dispatchSystemEvent(static_cast<SystemEvent*>(event), eventPair.second);
                     break;
                 case Event::Type::UI_ENTER_NODE:
                 case Event::Type::UI_LEAVE_NODE:
@@ -69,9 +71,11 @@ namespace ouzel
                 case Event::Type::UI_RELEASE_NODE:
                 case Event::Type::UI_CLICK_NODE:
                 case Event::Type::UI_DRAG_NODE:
-                    dispatchUIEvent(static_cast<UIEvent*>(eventPair.first), eventPair.second);
+                    dispatchUIEvent(static_cast<UIEvent*>(event), eventPair.second);
                     break;
             }
+
+            event->release();
         }
 
         unlock();
@@ -82,6 +86,7 @@ namespace ouzel
         if (locked)
         {
             eventHandlerAddList.insert(eventHandler);
+            eventHandler->retain();
         }
         else
         {
@@ -91,6 +96,7 @@ namespace ouzel
             {
                 eventHandler->remove = false;
                 eventHandlers.push_back(eventHandler);
+                eventHandler->retain();
 
                 std::sort(eventHandlers.begin(), eventHandlers.end(), [](EventHandler* a, EventHandler* b) {
                     return a->priority < b->priority;
@@ -105,6 +111,7 @@ namespace ouzel
         {
             eventHandler->remove = true;
             eventHandlerRemoveList.insert(eventHandler);
+            eventHandler->retain();
         }
         else
         {
@@ -113,6 +120,7 @@ namespace ouzel
             if (i != eventHandlers.end())
             {
                 eventHandlers.erase(i);
+                eventHandler->release();
             }
         }
     }
@@ -122,6 +130,7 @@ namespace ouzel
         std::lock_guard<std::mutex> mutexLock(mutex);
 
         eventQueue.push(std::make_pair(event, sender));
+        event->retain();
     }
 
     void EventDispatcher::dispatchKeyboardEvent(KeyboardEvent* event, void* sender)
@@ -264,6 +273,7 @@ namespace ouzel
                 for (EventHandler* eventHandler : eventHandlerAddList)
                 {
                     addEventHandler(eventHandler);
+                    eventHandler->release();
                 }
                 eventHandlerAddList.clear();
             }
@@ -273,6 +283,7 @@ namespace ouzel
                 for (EventHandler* eventHandler : eventHandlerRemoveList)
                 {
                     removeEventHandler(eventHandler);
+                    eventHandler->release();
                 }
                 eventHandlerRemoveList.clear();
             }

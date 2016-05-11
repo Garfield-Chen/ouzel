@@ -5,6 +5,8 @@
 
 #include <cstdint>
 #include <string>
+#include "Noncopyable.h"
+#include "ReferenceCounted.h"
 #include "Vector2.h"
 #include "Size2.h"
 #include "Input.h"
@@ -16,7 +18,7 @@ namespace ouzel
         class Gamepad;
     }
 
-    struct Event
+    struct Event: public Noncopyable, public ReferenceCounted
     {
         enum class Type
         {

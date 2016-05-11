@@ -36,7 +36,7 @@ namespace ouzel
             std::string text;
             graphics::Color color = graphics::Color(255, 255, 255, 255);
 
-            scene::TextDrawable* textDrawable;
+            scene::TextDrawable* textDrawable = nullptr;
         };
     } // namespace gui
 } // namespace ouzel

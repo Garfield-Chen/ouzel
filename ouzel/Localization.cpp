@@ -6,6 +6,14 @@
 
 namespace ouzel
 {
+    Localization::~Localization()
+    {
+        for (auto i : languages)
+        {
+            i.second->release();
+        }
+    }
+
     void Localization::addLanguage(const std::string& name, const std::string& filename)
     {
         Language* language = Language::createFromFile(filename);

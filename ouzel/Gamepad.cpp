@@ -57,6 +57,7 @@ namespace ouzel
             event->value = value;
 
             sharedEngine->getEventDispatcher()->dispatchEvent(event, sharedEngine->getInput());
+            event->release();
 
             buttonStates[static_cast<uint32_t>(button)].pressed = pressed;
             buttonStates[static_cast<uint32_t>(button)].value = value;

@@ -27,11 +27,17 @@ namespace ouzel
         TextDrawable::TextDrawable()
         {
             shader = sharedEngine->getCache()->getShader(graphics::SHADER_TEXTURE);
+            if (shader)
+            {
+                shader->retain();
+            }
         }
 
         TextDrawable::~TextDrawable()
         {
-
+            if (texture) texture->release();
+            if (meshBuffer) meshBuffer->release();
+            if (shader) shader->release();
         }
 
         bool TextDrawable::init(const std::string& fontFile, const std::string& newText, const Vector2& newTextAnchor)
@@ -39,7 +45,10 @@ namespace ouzel
             font.loadFont(fontFile);
             textAnchor = newTextAnchor;
 
+            if (texture) texture->release();
+
             texture = font.getTexture();
+            texture->release();
 
             if (!texture)
             {
@@ -77,6 +86,7 @@ namespace ouzel
             if (text.empty())
             {
                 meshBuffer->release();
+                meshBuffer = nullptr;
             }
             else
             {
@@ -93,6 +103,8 @@ namespace ouzel
 
         void TextDrawable::updateMesh()
         {
+            if (meshBuffer) meshBuffer->release();
+
             std::vector<uint16_t> indices;
             std::vector<graphics::VertexPCT> vertices;
 

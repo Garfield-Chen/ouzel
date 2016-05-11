@@ -8,6 +8,7 @@
 #include "Engine.h"
 #include "Cache.h"
 #include "Texture.h"
+#include "MeshBuffer.h"
 #include "Utils.h"
 #include "File.h"
 
@@ -149,8 +150,26 @@ namespace ouzel
                                                                                                         static_cast<uint32_t>(vertices.size()), true));
 
             SpriteFrame* frame = new SpriteFrame(newRectangle, meshBuffer, texture);
+            meshBuffer->release();
 
             return frame;
+        }
+
+        SpriteFrame::SpriteFrame(Rectangle pRectangle,
+                                 graphics::MeshBuffer* pMeshBuffer,
+                                 graphics::Texture* pTexture):
+            rectangle(pRectangle),
+            meshBuffer(pMeshBuffer),
+            texture(pTexture)
+        {
+            if (meshBuffer) meshBuffer->retain();
+            if (texture) texture->retain();
+        }
+
+        SpriteFrame::~SpriteFrame()
+        {
+            if (meshBuffer) meshBuffer->release();
+            if (texture) texture->release();
         }
     } // scene
 } // ouzel

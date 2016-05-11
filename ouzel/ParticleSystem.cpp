@@ -12,6 +12,7 @@
 #include "Layer.h"
 #include "Camera.h"
 #include "MeshBuffer.h"
+#include "Texture.h"
 #include "Utils.h"
 #include "MathUtils.h"
 
@@ -35,6 +36,10 @@ namespace ouzel
         ParticleSystem::ParticleSystem()
         {
             shader = sharedEngine->getCache()->getShader(graphics::SHADER_TEXTURE);
+            if (shader)
+            {
+                shader->retain();
+            }
 
             updateCallback = new UpdateCallback();
             updateCallback->callback = std::bind(&ParticleSystem::update, this, std::placeholders::_1);
@@ -42,7 +47,12 @@ namespace ouzel
 
         ParticleSystem::~ParticleSystem()
         {
+            if (shader) shader->release();
+            if (texture) texture->release();
+            if (mesh) mesh->release();
+
             sharedEngine->unscheduleUpdate(updateCallback);
+            updateCallback->release();
         }
 
         void ParticleSystem::draw(const Matrix4& projectionMatrix, const Matrix4& transformMatrix, const graphics::Color& drawColor)
@@ -227,12 +237,16 @@ namespace ouzel
 
             particleDefinition = *newParticleDefinition;
             positionType = particleDefinition.positionType;
+
+            if (texture) texture->release();
             texture = sharedEngine->getCache()->getTexture(particleDefinition.textureFilename);
 
             if (!texture)
             {
                 return false;
             }
+
+            texture->retain();
 
             createParticleMesh();
             resume();
@@ -289,9 +303,9 @@ namespace ouzel
             }
 
             mesh = sharedEngine->getRenderer()->createMeshBufferFromData(indices.data(), sizeof(uint16_t),
-                                                                          static_cast<uint32_t>(indices.size()), false,
-                                                                          vertices.data(), graphics::VertexPCT::ATTRIBUTES,
-                                                                          static_cast<uint32_t>(vertices.size()), true);
+                                                                         static_cast<uint32_t>(indices.size()), false,
+                                                                         vertices.data(), graphics::VertexPCT::ATTRIBUTES,
+                                                                         static_cast<uint32_t>(vertices.size()), true);
 
             particles.resize(particleDefinition.maxParticles);
         }

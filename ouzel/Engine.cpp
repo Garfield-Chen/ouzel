@@ -228,6 +228,7 @@ namespace ouzel
         if (locked)
         {
             updateCallbackAddList.insert(callback);
+            callback->retain();
         }
         else
         {
@@ -237,6 +238,7 @@ namespace ouzel
             {
                 callback->remove = false;
                 updateCallbacks.push_back(callback);
+                callback->retain();
             }
         }
     }
@@ -247,6 +249,7 @@ namespace ouzel
         {
             callback->remove = true;
             updateCallbackRemoveList.insert(callback);
+            callback->retain();
         }
         else
         {
@@ -255,6 +258,7 @@ namespace ouzel
             if (i != updateCallbacks.end())
             {
                 updateCallbacks.erase(i);
+                callback->release();
             }
         }
     }
@@ -273,6 +277,7 @@ namespace ouzel
                 for (UpdateCallback* updateCallback : updateCallbackAddList)
                 {
                     scheduleUpdate(updateCallback);
+                    updateCallback->release();
                 }
                 updateCallbackAddList.clear();
             }
@@ -282,6 +287,7 @@ namespace ouzel
                 for (UpdateCallback* updateCallback : updateCallbackRemoveList)
                 {
                     unscheduleUpdate(updateCallback);
+                    updateCallback->release();
                 }
                 updateCallbackRemoveList.clear();
             }

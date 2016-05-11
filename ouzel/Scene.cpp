@@ -18,7 +18,10 @@ namespace ouzel
 
         Scene::~Scene()
         {
-
+            for (Layer* layer : layers)
+            {
+                layer->release();
+            }
         }
 
         void Scene::draw()

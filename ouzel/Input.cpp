@@ -21,7 +21,8 @@ namespace ouzel
 
         Input::~Input()
         {
-
+            if (mouseNode) mouseNode->release();
+            if (mouseDownNode) mouseDownNode->release();
         }
 
         void Input::update()
@@ -67,6 +68,8 @@ namespace ouzel
                 event->type = Event::Type::KEY_REPEAT;
                 sharedEngine->getEventDispatcher()->dispatchEvent(event, this);
             }
+
+            event->release();
         }
 
         void Input::keyUp(KeyboardKey key, uint32_t modifiers)
@@ -79,6 +82,7 @@ namespace ouzel
             event->modifiers = modifiers;
 
             sharedEngine->getEventDispatcher()->dispatchEvent(event, this);
+            event->release();
         }
 
         void Input::mouseDown(MouseButton button, const Vector2& position, uint32_t modifiers)
@@ -92,6 +96,7 @@ namespace ouzel
             event->modifiers = modifiers;
 
             sharedEngine->getEventDispatcher()->dispatchEvent(event, this);
+            event->release();
 
             if (scene::Scene* scene = sharedEngine->getSceneManager()->getScene())
             {
@@ -111,6 +116,7 @@ namespace ouzel
             event->modifiers = modifiers;
 
             sharedEngine->getEventDispatcher()->dispatchEvent(event, this);
+            event->release();
 
             if (scene::Scene* scene = sharedEngine->getSceneManager()->getScene())
             {
@@ -129,6 +135,7 @@ namespace ouzel
             event->modifiers = modifiers;
 
             sharedEngine->getEventDispatcher()->dispatchEvent(event, this);
+            event->release();
 
             if (scene::Scene* scene = sharedEngine->getSceneManager()->getScene())
             {
@@ -151,6 +158,7 @@ namespace ouzel
             event->modifiers = modifiers;
 
             sharedEngine->getEventDispatcher()->dispatchEvent(event, this);
+            event->release();
         }
 
         void Input::touchBegin(uint64_t touchId, const Vector2& position)
@@ -161,6 +169,7 @@ namespace ouzel
             event->position = position;
 
             sharedEngine->getEventDispatcher()->dispatchEvent(event, this);
+            event->release();
         }
 
         void Input::touchEnd(uint64_t touchId, const Vector2& position)
@@ -171,6 +180,7 @@ namespace ouzel
             event->position = position;
 
             sharedEngine->getEventDispatcher()->dispatchEvent(event, this);
+            event->release();
         }
 
         void Input::touchMove(uint64_t touchId, const Vector2& position)
@@ -181,6 +191,7 @@ namespace ouzel
             event->position = position;
 
             sharedEngine->getEventDispatcher()->dispatchEvent(event, this);
+            event->release();
         }
 
         void Input::touchCancel(uint64_t touchId, const Vector2& position)
@@ -191,6 +202,7 @@ namespace ouzel
             event->position = position;
 
             sharedEngine->getEventDispatcher()->dispatchEvent(event, this);
+            event->release();
         }
 
         void Input::mouseEnterNode(scene::Node* node, const Vector2& position)
@@ -216,6 +228,7 @@ namespace ouzel
                 enterEvent->position = node->convertWorldToLocal(position);
 
                 sharedEngine->getEventDispatcher()->dispatchEvent(enterEvent, node);
+                enterEvent->release();
             }
         }
 
@@ -228,6 +241,7 @@ namespace ouzel
                 leaveEvent->position = node->convertWorldToLocal(position);
 
                 sharedEngine->getEventDispatcher()->dispatchEvent(leaveEvent, node);
+                leaveEvent->release();
             }
         }
 
@@ -244,6 +258,7 @@ namespace ouzel
                 enterEvent->position = node->convertWorldToLocal(position);
 
                 sharedEngine->getEventDispatcher()->dispatchEvent(enterEvent, node);
+                enterEvent->release();
             }
         }
 
@@ -256,6 +271,7 @@ namespace ouzel
                 pressEvent->position = mouseDownNode->convertWorldToLocal(position);
 
                 sharedEngine->getEventDispatcher()->dispatchEvent(pressEvent, mouseDownNode);
+                pressEvent->release();
 
                 if (mouseDownNode == node)
                 {
@@ -264,6 +280,7 @@ namespace ouzel
                     clickEvent->position = mouseDownNode->convertWorldToLocal(position);
 
                     sharedEngine->getEventDispatcher()->dispatchEvent(clickEvent, mouseDownNode);
+                    clickEvent->release();
                 }
 
                 mouseDownNode->release();
@@ -278,6 +295,7 @@ namespace ouzel
             enterEvent->position = node->convertWorldToLocal(position);
 
             sharedEngine->getEventDispatcher()->dispatchEvent(enterEvent, node);
+            enterEvent->release();
         }
 
     } // namespace input

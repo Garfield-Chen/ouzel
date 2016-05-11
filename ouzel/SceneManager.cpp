@@ -31,6 +31,11 @@ namespace ouzel
             {
                 if (locked)
                 {
+                    if (nextScene)
+                    {
+                        nextScene->release();
+                    }
+
                     nextScene = newScene;
                     nextScene->retain();
                 }

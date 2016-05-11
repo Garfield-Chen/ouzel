@@ -36,7 +36,7 @@ namespace ouzel
             bool depthBuffer = false;
 
             Color clearColor;
-            Texture* texture;
+            Texture* texture = nullptr;
         };
     } // namespace graphics
 } // namespace ouzel

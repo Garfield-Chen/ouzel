@@ -3,6 +3,8 @@
 
 #include "CheckBox.h"
 #include "Engine.h"
+#include "Sprite.h"
+#include "TextDrawable.h"
 
 namespace ouzel
 {
@@ -15,7 +17,14 @@ namespace ouzel
 
         CheckBox::~CheckBox()
         {
+            if (normalSprite) normalSprite->release();
+            if (selectedSprite) selectedSprite->release();
+            if (pressedSprite) pressedSprite->release();
+            if (disabledSprite) disabledSprite->release();
+            if (labelDrawable) labelDrawable->release();
+
             sharedEngine->getEventDispatcher()->removeEventHandler(eventHandler);
+            eventHandler->release();
         }
 
         bool CheckBox::init(const std::string& normal, const std::string& selected, const std::string& pressed, const std::string& disabled, const std::string& tick)

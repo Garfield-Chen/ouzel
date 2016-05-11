@@ -23,7 +23,10 @@ namespace ouzel
 
         Node::~Node()
         {
-
+            for (Drawable* drawable : drawables)
+            {
+                drawable->release();
+            }
         }
 
         void Node::visit(const Matrix4& newTransformMatrix, bool parentTransformDirty)
@@ -504,6 +507,10 @@ namespace ouzel
 
         void Node::removeAllDrawables()
         {
+            for (Drawable* drawable : drawables)
+            {
+                drawable->release();
+            }
             drawables.clear();
         }
 

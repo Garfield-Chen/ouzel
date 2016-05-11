@@ -8,6 +8,7 @@
 #include "Cache.h"
 #include "Layer.h"
 #include "Camera.h"
+#include "MeshBuffer.h"
 #include "MathUtils.h"
 #include "Utils.h"
 
@@ -18,6 +19,20 @@ namespace ouzel
         DebugDrawable::DebugDrawable()
         {
             shader = sharedEngine->getCache()->getShader(graphics::SHADER_COLOR);
+            if (shader)
+            {
+                shader->retain();
+            }
+        }
+
+        DebugDrawable::~DebugDrawable()
+        {
+            if (shader) shader->release();
+
+            for (const DrawCommand& drawCommand : drawCommands)
+            {
+                drawCommand.mesh->release();
+            }
         }
 
         void DebugDrawable::draw(const Matrix4& projectionMatrix, const Matrix4& transformMatrix, const graphics::Color& drawColor)
@@ -45,6 +60,10 @@ namespace ouzel
         {
             boundingBox = AABB2();
 
+            for (const DrawCommand& drawCommand : drawCommands)
+            {
+                drawCommand.mesh->release();
+            }
             drawCommands.clear();
         }
 

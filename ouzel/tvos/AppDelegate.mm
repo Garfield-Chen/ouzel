@@ -68,6 +68,7 @@
         event->type = ouzel::Event::Type::LOW_MEMORY;
 
         ouzel::sharedEngine->getEventDispatcher()->dispatchEvent(event, ouzel::sharedEngine->getInput());
+        event->release();
     }
 }
 
