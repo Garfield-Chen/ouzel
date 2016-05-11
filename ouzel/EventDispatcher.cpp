@@ -107,17 +107,17 @@ namespace ouzel
 
     void EventDispatcher::removeEventHandler(EventHandler* eventHandler)
     {
-        if (locked)
-        {
-            eventHandler->remove = true;
-            eventHandlerRemoveList.insert(eventHandler);
-            eventHandler->retain();
-        }
-        else
-        {
-            std::vector<EventHandler*>::iterator i = std::find(eventHandlers.begin(), eventHandlers.end(), eventHandler);
+        std::vector<EventHandler*>::iterator i = std::find(eventHandlers.begin(), eventHandlers.end(), eventHandler);
 
-            if (i != eventHandlers.end())
+        if (i != eventHandlers.end())
+        {
+            if (locked)
+            {
+                eventHandler->remove = true;
+                eventHandlerRemoveList.insert(eventHandler);
+                eventHandler->retain();
+            }
+            else
             {
                 eventHandlers.erase(i);
                 eventHandler->release();

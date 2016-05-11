@@ -245,17 +245,17 @@ namespace ouzel
 
     void Engine::unscheduleUpdate(UpdateCallback* callback)
     {
-        if (locked)
-        {
-            callback->remove = true;
-            updateCallbackRemoveList.insert(callback);
-            callback->retain();
-        }
-        else
-        {
-            std::vector<UpdateCallback*>::iterator i = std::find(updateCallbacks.begin(), updateCallbacks.end(), callback);
+        std::vector<UpdateCallback*>::iterator i = std::find(updateCallbacks.begin(), updateCallbacks.end(), callback);
 
-            if (i != updateCallbacks.end())
+        if (i != updateCallbacks.end())
+        {
+            if (locked)
+            {
+                callback->remove = true;
+                updateCallbackRemoveList.insert(callback);
+                callback->retain();
+            }
+            else
             {
                 updateCallbacks.erase(i);
                 callback->release();

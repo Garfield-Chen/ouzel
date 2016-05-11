@@ -50,25 +50,27 @@ namespace ouzel
 
         bool NodeContainer::removeChild(Node* node)
         {
-            if (locked)
-            {
-                node->remove = true;
-                nodeRemoveList.insert(node);
-                node->retain();
-                return false;
-            }
-
             std::vector<Node*>::iterator i = std::find(children.begin(), children.end(), node);
 
             if (i != children.end())
             {
-                node->removeFromLayer();
-                node->parent = nullptr;
-                node->layer = nullptr;
-                children.erase(i);
-                node->release();
+                if (locked)
+                {
+                    node->remove = true;
+                    nodeRemoveList.insert(node);
+                    node->retain();
+                    return false;
+                }
+                else
+                {
+                    node->removeFromLayer();
+                    node->parent = nullptr;
+                    node->layer = nullptr;
+                    children.erase(i);
+                    node->release();
 
-                return true;
+                    return true;
+                }
             }
             else
             {

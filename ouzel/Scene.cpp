@@ -71,17 +71,17 @@ namespace ouzel
 
         void Scene::removeLayer(Layer* layer)
         {
-            if (locked)
-            {
-                layer->remove = true;
-                layerRemoveList.insert(layer);
-                layer->retain();
-            }
-            else
-            {
-                std::vector<Layer*>::iterator i = std::find(layers.begin(), layers.end(), layer);
+            std::vector<Layer*>::iterator i = std::find(layers.begin(), layers.end(), layer);
 
-                if (i != layers.end())
+            if (i != layers.end())
+            {
+                if (locked)
+                {
+                    layer->remove = true;
+                    layerRemoveList.insert(layer);
+                    layer->retain();
+                }
+                else
                 {
                     layer->removeFromScene();
                     layers.erase(i);
