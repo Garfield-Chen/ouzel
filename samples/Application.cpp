@@ -107,9 +107,9 @@ void Application::begin()
     fireNode->setPosition(Vector2(-100.0f, -100.0f));
     layer->addChild(fireNode);
     fireNode->release();
-    scene::Animator* fade = new scene::Fade(5.0f, 0.5f);
-    fireNode->animate(fade);
-    fade->release();
+    scene::Animator* fade2 = new scene::Fade(5.0f, 0.5f);
+    fireNode->animate(fade2);
+    fade2->release();
 
     scene::ParticleSystem* flameParticleSystem = scene::ParticleSystem::createFromFile("flame.json");
 
