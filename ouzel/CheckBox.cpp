@@ -10,6 +10,18 @@ namespace ouzel
 {
     namespace gui
     {
+        CheckBox* CheckBox::create(const std::string& normalImage, const std::string& selectedImage, const std::string& pressedImage, const std::string& disabledImage, const std::string& tickImage)
+        {
+            CheckBox* result = new CheckBox();
+
+            if (!result->init(normalImage, selectedImage, pressedImage, disabledImage, tickImage))
+            {
+                result = nullptr;
+            }
+
+            return result;
+        }
+
         CheckBox::CheckBox()
         {
 
@@ -21,13 +33,13 @@ namespace ouzel
             if (selectedSprite) selectedSprite->release();
             if (pressedSprite) pressedSprite->release();
             if (disabledSprite) disabledSprite->release();
-            if (labelDrawable) labelDrawable->release();
+            if (tickSprite) tickSprite->release();
 
             sharedEngine->getEventDispatcher()->removeEventHandler(eventHandler);
             eventHandler->release();
         }
 
-        bool CheckBox::init(const std::string& normal, const std::string& selected, const std::string& pressed, const std::string& disabled, const std::string& tick)
+        bool CheckBox::init(const std::string& normalImage, const std::string& selectedImage, const std::string& pressedImage, const std::string& disabledImage, const std::string& tickImage)
         {
             eventHandler = new EventHandler(EventHandler::PRIORITY_MAX + 1);
 
@@ -35,6 +47,51 @@ namespace ouzel
             eventHandler->uiHandler = std::bind(&CheckBox::handleUI, this, std::placeholders::_1, std::placeholders::_2);
 
             sharedEngine->getEventDispatcher()->addEventHandler(eventHandler);
+
+            if (!normalImage.empty())
+            {
+                normalSprite = new scene::Sprite();
+                if (normalSprite->initFromFile(normalImage, false))
+                {
+                    addDrawable(normalSprite);
+                }
+            }
+
+            if (!selectedImage.empty())
+            {
+                selectedSprite = new scene::Sprite();
+                if (selectedSprite->initFromFile(selectedImage, false))
+                {
+                    addDrawable(selectedSprite);
+                }
+            }
+
+            if (!pressedImage.empty())
+            {
+                pressedSprite = new scene::Sprite();
+                if (pressedSprite->initFromFile(pressedImage, false))
+                {
+                    addDrawable(pressedSprite);
+                }
+            }
+
+            if (!disabledImage.empty())
+            {
+                disabledSprite = new scene::Sprite();
+                if (disabledSprite->initFromFile(disabledImage, false))
+                {
+                    addDrawable(disabledSprite);
+                }
+            }
+
+            if (!tickImage.empty())
+            {
+                tickSprite = new scene::Sprite();
+                if (tickSprite->initFromFile(tickImage, false))
+                {
+                    addDrawable(tickSprite);
+                }
+            }
 
             return true;
         }

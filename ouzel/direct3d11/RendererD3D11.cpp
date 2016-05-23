@@ -27,15 +27,15 @@ namespace ouzel
         RendererD3D11::RendererD3D11():
             Renderer(Driver::DIRECT3D11)
         {
-
+            apiVersion = 11;
         }
 
         RendererD3D11::~RendererD3D11()
         {
-            destroy();
+            free();
         }
 
-        void RendererD3D11::destroy()
+        void RendererD3D11::free()
         {
             if (depthStencilState)
             {
@@ -80,14 +80,14 @@ namespace ouzel
             }
         }
 
-        bool RendererD3D11::init(const Size2& newSize, bool newFullscreen, uint32_t newSampleCount)
+        bool RendererD3D11::init(const Size2& newSize, bool newFullscreen, uint32_t newSampleCount, TextureFiltering newTextureFiltering)
         {
-            if (!Renderer::init(newSize, newFullscreen, newSampleCount))
+            if (!Renderer::init(newSize, newFullscreen, newSampleCount, newTextureFiltering))
             {
                 return false;
             }
 
-            destroy();
+            free();
 
             UINT deviceCreationFlags = 0;
     #if D3D11_DEBUG
@@ -174,10 +174,23 @@ namespace ouzel
 
             // Sampler state
             D3D11_SAMPLER_DESC samplerStateDesc;
-            samplerStateDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+            switch (textureFiltering)
+            {
+                case Renderer::TextureFiltering::NONE:
+                    samplerStateDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+                    break;
+                case Renderer::TextureFiltering::LINEAR:
+                    samplerStateDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
+                    break;
+                case Renderer::TextureFiltering::BILINEAR:
+                    samplerStateDesc.Filter = D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
+                    break;
+                case Renderer::TextureFiltering::TRILINEAR:
+                    samplerStateDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+                    break;
+            }
             samplerStateDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
             samplerStateDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-            samplerStateDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
             samplerStateDesc.MipLODBias = 0.0f;
             samplerStateDesc.MaxAnisotropy = 1;
             samplerStateDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
@@ -643,11 +656,6 @@ namespace ouzel
 
         bool RendererD3D11::activateRenderTarget(RenderTarget* renderTarget)
         {
-            if (activeRenderTarget == renderTarget)
-            {
-                return true;
-            }
-
             if (!Renderer::activateRenderTarget(renderTarget))
             {
                 return false;
@@ -836,11 +844,6 @@ namespace ouzel
 
         bool RendererD3D11::saveScreenshot(const std::string& filename)
         {
-            if (!Renderer::saveScreenshot(filename))
-            {
-                return false;
-            }
-
             D3D11_TEXTURE2D_DESC desc;
             desc.Width = static_cast<UINT>(size.width);
             desc.Height = static_cast<UINT>(size.height);

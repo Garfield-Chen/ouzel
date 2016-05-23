@@ -6,13 +6,39 @@
 #include <string>
 #include <vector>
 #include <cstdint>
-#include <climits>
+#include <limits>
+
+#include "CompileConfig.h"
+#if defined(OUZEL_PLATFORM_ANDROID)
+#include <cpu-features.h>
+#endif
 
 #define OUZEL_UNUSED(x) (void)(x)
 
 namespace ouzel
 {
     extern char TEMP_BUFFER[65536];
+
+#if defined(OUZEL_PLATFORM_ANDROID) && defined(OUZEL_SUPPORTS_NEON_CHECK)
+    class AnrdoidNEONChecker
+    {
+    public:
+        AnrdoidNEONChecker()
+        {
+            if (android_getCpuFamily() == ANDROID_CPU_FAMILY_ARM && (android_getCpuFeatures() & ANDROID_CPU_ARM_FEATURE_NEON) != 0)
+                neonAvailable = true;
+            else
+                neonAvailable = false;
+        }
+
+        bool isNEONAvailable() const { return neonAvailable; }
+
+    private:
+        bool neonAvailable;
+    };
+
+    extern AnrdoidNEONChecker anrdoidNEONChecker;
+#endif
 
     template<typename T> size_t vectorDataSize(const typename std::vector<T>& vec)
     {
@@ -28,6 +54,6 @@ namespace ouzel
     void setArgs(const std::vector<std::string>& args);
     const std::vector<std::string>& getArgs();
 
-    uint32_t random(uint32_t min = 0, uint32_t max = UINT_MAX);
+    uint32_t random(uint32_t min = 0, uint32_t max = std::numeric_limits<uint32_t>::max());
     float randomf(float min = 0.0f, float max = 1.0f);
 }

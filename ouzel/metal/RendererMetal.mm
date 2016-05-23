@@ -8,7 +8,7 @@
 #include "ShaderMetal.h"
 #include "MeshBufferMetal.h"
 #include "BlendStateMetal.h"
-#ifdef OUZEL_PLATFORM_OSX
+#if defined(OUZEL_PLATFORM_OSX)
     #include "WindowOSX.h"
     #include "ColorPSOSX.h"
     #include "ColorVSOSX.h"
@@ -18,7 +18,7 @@
     #define COLOR_VERTEX_SHADER_METAL ColorVSOSX_metallib
     #define TEXTURE_PIXEL_SHADER_METAL TexturePSOSX_metallib
     #define TEXTURE_VERTEX_SHADER_METAL TextureVSOSX_metallib
-#elif OUZEL_PLATFORM_TVOS
+#elif defined(OUZEL_PLATFORM_TVOS)
     #include "WindowTVOS.h"
     #include "ColorPSTVOS.h"
     #include "ColorVSTVOS.h"
@@ -28,7 +28,7 @@
     #define COLOR_VERTEX_SHADER_METAL ColorVSTVOS_metallib
     #define TEXTURE_PIXEL_SHADER_METAL TexturePSTVOS_metallib
     #define TEXTURE_VERTEX_SHADER_METAL TextureVSTVOS_metallib
-#elif OUZEL_PLATFORM_IOS
+#elif defined(OUZEL_PLATFORM_IOS)
     #include "WindowIOS.h"
     #include "ColorPSIOS.h"
     #include "ColorVSIOS.h"
@@ -42,6 +42,7 @@
 #include "Engine.h"
 #include "Cache.h"
 #include "Utils.h"
+#include "stb_image_write.h"
 
 namespace ouzel
 {
@@ -63,15 +64,15 @@ namespace ouzel
         RendererMetal::RendererMetal():
             Renderer(Driver::METAL)
         {
-
+            apiVersion = 1;
         }
 
         RendererMetal::~RendererMetal()
         {
-            destroy();
+            free();
         }
 
-        void RendererMetal::destroy()
+        void RendererMetal::free()
         {
             if (msaaTexture)
             {
@@ -122,14 +123,14 @@ namespace ouzel
             }
         }
 
-        bool RendererMetal::init(const Size2& newSize, bool newFullscreen, uint32_t newSampleCount)
+        bool RendererMetal::init(const Size2& newSize, bool newFullscreen, uint32_t newSampleCount, TextureFiltering newTextureFiltering)
         {
-            if (!Renderer::init(newSize, newFullscreen, newSampleCount))
+            if (!Renderer::init(newSize, newFullscreen, newSampleCount, newTextureFiltering))
             {
                 return false;
             }
 
-            destroy();
+            free();
 
             inflightSemaphore = dispatch_semaphore_create(3); // allow encoding up to 3 command buffers simultaneously
 
@@ -140,6 +141,7 @@ namespace ouzel
                 log("Failed to create Metal device");
                 return false;
             }
+
 #ifdef OUZEL_PLATFORM_OSX
             WindowOSX* window = static_cast<WindowOSX*>(sharedEngine->getWindow());
 #elif OUZEL_PLATFORM_TVOS
@@ -150,6 +152,7 @@ namespace ouzel
             view = static_cast<MTKView*>(window->getNativeView());
             view.device = device;
             view.sampleCount = sampleCount;
+            view.framebufferOnly = NO; // for screenshot capturing
             //_view.depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
 
             renderPassDescriptor = [[MTLRenderPassDescriptor renderPassDescriptor] retain];
@@ -173,12 +176,29 @@ namespace ouzel
             }
 
             MTLSamplerDescriptor* samplerDescriptor = [MTLSamplerDescriptor new];
-            samplerDescriptor.minFilter = MTLSamplerMinMagFilterNearest;
             samplerDescriptor.magFilter = MTLSamplerMinMagFilterLinear;
-            samplerDescriptor.mipFilter = MTLSamplerMipFilterLinear;
-            samplerDescriptor.sAddressMode = MTLSamplerAddressModeRepeat;
-            samplerDescriptor.tAddressMode = MTLSamplerAddressModeRepeat;
-
+            switch (textureFiltering)
+            {
+                case TextureFiltering::NONE:
+                    samplerDescriptor.minFilter = MTLSamplerMinMagFilterNearest;
+                    samplerDescriptor.mipFilter = MTLSamplerMipFilterNearest;
+                    break;
+                case TextureFiltering::LINEAR:
+                    samplerDescriptor.minFilter = MTLSamplerMinMagFilterLinear;
+                    samplerDescriptor.mipFilter = MTLSamplerMipFilterNearest;
+                    break;
+                case TextureFiltering::BILINEAR:
+                    samplerDescriptor.minFilter = MTLSamplerMinMagFilterNearest;
+                    samplerDescriptor.mipFilter = MTLSamplerMipFilterLinear;
+                    break;
+                case TextureFiltering::TRILINEAR:
+                    samplerDescriptor.minFilter = MTLSamplerMinMagFilterLinear;
+                    samplerDescriptor.mipFilter = MTLSamplerMipFilterLinear;
+                    break;
+            }
+            samplerDescriptor.sAddressMode = MTLSamplerAddressModeClampToEdge;
+            samplerDescriptor.tAddressMode = MTLSamplerAddressModeClampToEdge;
+            
             samplerState = [device newSamplerStateWithDescriptor:samplerDescriptor];
             [samplerDescriptor release];
 
@@ -376,6 +396,24 @@ namespace ouzel
                 [currentCommandBuffer release];
                 currentCommandBuffer = Nil;
             }
+        }
+
+        std::vector<Size2> RendererMetal::getSupportedResolutions() const
+        {
+            return std::vector<Size2>();
+        }
+
+        Texture* RendererMetal::createTexture(const Size2& textureSize, bool dynamic, bool mipmaps)
+        {
+            TextureMetal* texture = new TextureMetal();
+
+            if (!texture->init(textureSize, dynamic, mipmaps))
+            {
+                texture->release();
+                texture = nullptr;
+            }
+
+            return texture;
         }
 
         Texture* RendererMetal::loadTextureFromFile(const std::string& filename, bool dynamic, bool mipmaps)
@@ -686,6 +724,42 @@ namespace ouzel
             pipelineStates[std::make_pair(blendState, shader)] = pipelineState;
 
             return pipelineState;
+        }
+
+        bool RendererMetal::saveScreenshot(const std::string& filename)
+        {
+            MTLTexturePtr texture = view.currentDrawable.texture;
+
+            if (!texture)
+            {
+                return false;
+            }
+
+            NSUInteger width = static_cast<NSUInteger>(texture.width);
+            NSUInteger height = static_cast<NSUInteger>(texture.height);
+
+            std::shared_ptr<uint8_t> data(new uint8_t[width * height * 4]);
+            [texture getBytes:data.get() bytesPerRow:width * 4 fromRegion:MTLRegionMake2D(0, 0, width, height) mipmapLevel:0];
+
+            uint8_t temp;
+            for (uint32_t y = 0; y < height; ++y)
+            {
+                for (uint32_t x = 0; x < width; ++x)
+                {
+                    temp = data.get()[((y * width + x) * 4)];
+                    data.get()[((y * width + x) * 4)] = data.get()[((y * width + x) * 4) + 2];
+                    data.get()[((y * width + x) * 4) + 2] = temp;
+                    data.get()[((y * width + x) * 4) + 3] = 255;
+                }
+            }
+
+            if (!stbi_write_png(filename.c_str(), static_cast<int>(width), static_cast<int>(height), 4, data.get(), static_cast<int>(width * 4)))
+            {
+                log("Failed to save image to file");
+                return false;
+            }
+
+            return false;
         }
     } // namespace graphics
 } // namespace ouzel

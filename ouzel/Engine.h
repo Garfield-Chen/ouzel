@@ -29,9 +29,10 @@ namespace ouzel
         Engine();
         virtual ~Engine();
 
-        std::set<graphics::Renderer::Driver> getAvailableDrivers() const;
+        static std::set<graphics::Renderer::Driver> getAvailableDrivers();
 
-        bool init(Settings& settings);
+        bool init(Settings& newSettings);
+        const Settings& getSettings() const { return settings; }
 
         EventDispatcher* getEventDispatcher() const { return eventDispatcher; }
         Cache* getCache() const { return cache; }
@@ -58,6 +59,8 @@ namespace ouzel
         void lock();
         void unlock();
 
+        Settings settings;
+        
         EventDispatcher* eventDispatcher = nullptr;
         input::Input* input = nullptr;
         Cache* cache = nullptr;

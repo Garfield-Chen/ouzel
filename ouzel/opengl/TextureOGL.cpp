@@ -6,6 +6,7 @@
 #include "Engine.h"
 #include "RendererOGL.h"
 #include "Image.h"
+#include "Utils.h"
 
 namespace ouzel
 {
@@ -18,13 +19,15 @@ namespace ouzel
 
         TextureOGL::~TextureOGL()
         {
-            destroy();
+            free();
         }
 
-        void TextureOGL::destroy()
+        void TextureOGL::free()
         {
             if (textureId)
             {
+                RendererOGL::unbindTexture(textureId);
+
                 glDeleteTextures(1, &textureId);
                 textureId = 0;
             }
@@ -37,12 +40,13 @@ namespace ouzel
                 return false;
             }
 
-            destroy();
+            free();
 
             glGenTextures(1, &textureId);
 
             if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
+                log("Failed to create texture");
                 return false;
             }
 
@@ -56,7 +60,7 @@ namespace ouzel
                 return false;
             }
 
-            destroy();
+            free();
 
             glGenTextures(1, &textureId);
 
@@ -70,13 +74,14 @@ namespace ouzel
 
             if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
+                log("Failed to create texture");
                 return false;
             }
 
             return uploadData(data, size);
         }
 
-        bool TextureOGL::uploadMipmap(uint32_t level, const void *data)
+        bool TextureOGL::uploadMipmap(uint32_t level, const void* data)
         {
             if (!Texture::uploadMipmap(level, data))
             {
@@ -93,6 +98,7 @@ namespace ouzel
 
             if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
+                log("Failed to upload texture data");
                 return false;
             }
             
@@ -108,7 +114,23 @@ namespace ouzel
 
             if (mipmapSizes.size() > 1) // has mip-maps
             {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+                RendererOGL* rendererOGL = static_cast<RendererOGL*>(sharedEngine->getRenderer());
+
+                switch (rendererOGL->getTextureFiltering())
+                {
+                    case Renderer::TextureFiltering::NONE:
+                        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+                        break;
+                    case Renderer::TextureFiltering::LINEAR:
+                        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+                        break;
+                    case Renderer::TextureFiltering::BILINEAR:
+                        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+                        break;
+                    case Renderer::TextureFiltering::TRILINEAR:
+                        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+                        break;
+                }
             }
             else
             {

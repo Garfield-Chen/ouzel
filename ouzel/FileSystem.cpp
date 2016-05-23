@@ -2,14 +2,19 @@
 // This file is part of the Ouzel engine.
 
 #include <algorithm>
+#include <fstream>
 #include <sys/stat.h>
 #include "CompileConfig.h"
 #if defined(OUZEL_PLATFORM_OSX)
-#include <sys/types.h>
-#include <pwd.h>
-#include <CoreServices/CoreServices.h>
+    #include <sys/types.h>
+    #include <pwd.h>
+    #include <CoreServices/CoreServices.h>
 #elif defined(OUZEL_PLATFORM_WINDOWS)
-#include <Shlobj.h>
+    #define NOMINMAX
+    #include <windows.h>
+    #include <Shlobj.h>
+#elif defined(OUZEL_PLATFORM_LINUX)
+    #include <unistd.h>
 #endif
 #include "FileSystem.h"
 #include "Utils.h"
@@ -18,16 +23,16 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
-#if defined(OUZEL_PLATFORM_WINDOWS)
-#include <Windows.h>
-#endif
-
 namespace ouzel
 {
-#ifdef OUZEL_PLATFORM_WINDOWS
+#if defined(OUZEL_PLATFORM_WINDOWS)
     const std::string FileSystem::DIRECTORY_SEPARATOR = "\\";
 #else
     const std::string FileSystem::DIRECTORY_SEPARATOR = "/";
+#endif
+
+#if defined(OUZEL_PLATFORM_ANDROID)
+    AAssetManager* assetManager = nullptr;
 #endif
 
     FileSystem::FileSystem()
@@ -72,7 +77,7 @@ namespace ouzel
         FSRef ref;
         OSType folderType = kApplicationSupportFolderType;
 
-        FSFindFolder( kUserDomain, folderType, kCreateFolder, &ref );
+        FSFindFolder(kUserDomain, folderType, kCreateFolder, &ref);
 
         FSRefMakePath(&ref, reinterpret_cast<UInt8*>(&TEMP_BUFFER), sizeof(TEMP_BUFFER));
 
@@ -126,6 +131,52 @@ namespace ouzel
         return path;
     }
 
+    bool FileSystem::loadFile(const std::string& filename, std::vector<uint8_t>& data) const
+    {
+#if defined(OUZEL_PLATFORM_ANDROID)
+        if (!isAbsolutePath(filename))
+        {
+            AAsset* asset = AAssetManager_open(assetManager, filename.c_str(), AASSET_MODE_STREAMING);
+
+            if (!asset)
+            {
+                log("Failed to open file %s", filename.c_str());
+                return false;
+            }
+
+            int bytesRead = 0;
+
+            while ((bytesRead = AAsset_read(asset, TEMP_BUFFER, sizeof(TEMP_BUFFER))) > 0)
+            {
+                data.insert(data.end(), reinterpret_cast<uint8_t*>(TEMP_BUFFER), reinterpret_cast<uint8_t*>(TEMP_BUFFER + bytesRead));
+            }
+
+            AAsset_close(asset);
+
+            return true;
+        }
+#endif
+        std::string path = getPath(filename);
+
+        // file does not exist
+        if (path.empty())
+        {
+            log("Failed to find file %s", filename.c_str());
+            return false;
+        }
+
+        std::ifstream file(path, std::ios::binary);
+
+        if (!file)
+        {
+            log("Failed to open file %s", path.c_str());
+        }
+
+        data.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
+
+        return true;
+    }
+
     bool FileSystem::directoryExists(const std::string& filename) const
     {
         struct stat buf;
@@ -165,14 +216,23 @@ namespace ouzel
         CFRelease(urlString);
 
         appPath = std::string(TEMP_BUFFER);
-#endif
-
-#if defined(OUZEL_PLATFORM_WINDOWS)
+#elif defined(OUZEL_PLATFORM_WINDOWS)
         wchar_t szBuffer[MAX_PATH];
-        GetCurrentDirectoryW(MAX_PATH, szBuffer);
+        if (!GetCurrentDirectoryW(MAX_PATH, szBuffer))
+        {
+            log("Failed to get current directory");
+            return "";
+        }
 
         WideCharToMultiByte(CP_ACP, 0, szBuffer, -1, TEMP_BUFFER, sizeof(TEMP_BUFFER), nullptr, nullptr);
 
+        appPath = std::string(TEMP_BUFFER);
+#elif defined(OUZEL_PLATFORM_LINUX)
+        if (!getcwd(TEMP_BUFFER, sizeof(TEMP_BUFFER)))
+        {
+            log("Failed to get current directory");
+            return "";
+        }
         appPath = std::string(TEMP_BUFFER);
 #endif
 
@@ -208,17 +268,46 @@ namespace ouzel
         }
     }
 
-    std::string FileSystem::getExtension(const std::string& path) const
+    std::string FileSystem::getExtensionPart(const std::string& path) const
     {
-        std::string result;
-
         size_t pos = path.find_last_of('.');
 
         if (pos != std::string::npos)
         {
-            result = path.substr(pos + 1);
+            return path.substr(pos + 1);
         }
 
-        return result;
+        return std::string();
+    }
+
+    std::string FileSystem::getFilenamePart(const std::string& path) const
+    {
+        size_t pos = path.find_last_of('/');
+
+        if (pos != std::string::npos)
+        {
+            return path.substr(pos + 1);
+        }
+        else
+        {
+            return path;
+        }
+    }
+
+    std::string FileSystem::getDirectoryPart(const std::string& path) const
+    {
+        size_t pos = path.find_last_of('/');
+
+        if (pos != std::string::npos)
+        {
+            return path.substr(0, pos);
+        }
+
+        return std::string();
+    }
+
+    bool FileSystem::isAbsolutePath(const std::string& path) const
+    {
+        return !path.empty() && path[0] == '/';
     }
 }

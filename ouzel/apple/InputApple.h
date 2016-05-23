@@ -6,7 +6,7 @@
 #include <vector>
 #include "Input.h"
 
-#ifdef __OBJC__
+#if defined(__OBJC__)
 @class ConnectDelegate;
 typedef ConnectDelegate* ConnectDelegatePtr;
 #else

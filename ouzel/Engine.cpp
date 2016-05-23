@@ -46,7 +46,7 @@
 namespace ouzel
 {
     ouzel::Engine* sharedEngine = nullptr;
-    
+
     Engine::Engine()
     {
         sharedEngine = this;
@@ -64,7 +64,7 @@ namespace ouzel
         if (localization) delete localization;
     }
 
-    std::set<graphics::Renderer::Driver> Engine::getAvailableDrivers() const
+    std::set<graphics::Renderer::Driver> Engine::getAvailableDrivers()
     {
         std::set<graphics::Renderer::Driver> availableDrivers;
 
@@ -86,14 +86,14 @@ namespace ouzel
         return availableDrivers;
     }
 
-    bool Engine::init(Settings& settings)
+    bool Engine::init(Settings& newSettings)
     {
+        settings = newSettings;
+
         targetFPS = settings.targetFPS;
 
         if (settings.driver == graphics::Renderer::Driver::DEFAULT)
         {
-            settings.driver = graphics::Renderer::Driver::NONE;
-
 #if defined(OUZEL_SUPPORTS_METAL)
             if (graphics::RendererMetal::available())
             {
@@ -112,18 +112,24 @@ namespace ouzel
 #endif
         }
 
+        if (settings.driver == graphics::Renderer::Driver::DEFAULT)
+        {
+            log("Failed to select render driver");
+            return false;
+        }
+
 #if defined(OUZEL_PLATFORM_OSX)
-        window = new WindowOSX(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title);
+        window = new WindowOSX(settings.size, settings.resizable, settings.fullscreen, settings.title);
 #elif defined(OUZEL_PLATFORM_IOS)
-        window = new WindowIOS(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title);
+        window = new WindowIOS(settings.size, settings.resizable, settings.fullscreen, settings.title);
 #elif defined(OUZEL_PLATFORM_TVOS)
-        window = new WindowTVOS(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title);
+        window = new WindowTVOS(settings.size, settings.resizable, settings.fullscreen, settings.title);
 #elif defined(OUZEL_PLATFORM_ANDROID)
-        window = new WindowAndroid(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title);
+        window = new WindowAndroid(settings.size, settings.resizable, settings.fullscreen, settings.title);
 #elif defined(OUZEL_PLATFORM_LINUX)
-        window = new WindowLinux(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title);
+        window = new WindowLinux(settings.size, settings.resizable, settings.fullscreen, settings.title);
 #elif defined(OUZEL_PLATFORM_WINDOWS)
-        window = new WindowWin(settings.size, settings.resizable, settings.fullscreen, settings.sampleCount, settings.title);
+        window = new WindowWin(settings.size, settings.resizable, settings.fullscreen, settings.title);
 #endif
 
         eventDispatcher = new EventDispatcher();
@@ -143,10 +149,6 @@ namespace ouzel
 
         switch (settings.driver)
         {
-            case graphics::Renderer::Driver::NONE:
-                log("Using NULL render driver");
-                renderer = new graphics::Renderer();
-                break;
 #if defined(OUZEL_SUPPORTS_OPENGL) || defined(OUZEL_SUPPORTS_OPENGLES)
             case graphics::Renderer::Driver::OPENGL:
                 log("Using OpenGL render driver");
@@ -171,6 +173,11 @@ namespace ouzel
         }
 
         if (!window->init())
+        {
+            return false;
+        }
+
+        if (!sharedEngine->getRenderer()->init(window->getSize(), window->isFullscreen(), settings.sampleCount, settings.textureFiltering))
         {
             return false;
         }

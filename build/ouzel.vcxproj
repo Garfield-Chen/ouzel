@@ -42,7 +42,6 @@
     <ClCompile Include="..\ouzel\Engine.cpp" />
     <ClCompile Include="..\ouzel\EventDispatcher.cpp" />
     <ClCompile Include="..\ouzel\Fade.cpp" />
-    <ClCompile Include="..\ouzel\File.cpp" />
     <ClCompile Include="..\ouzel\FileSystem.cpp" />
     <ClCompile Include="..\ouzel\Gamepad.cpp" />
     <ClCompile Include="..\ouzel\Image.cpp" />
@@ -128,7 +127,6 @@
     <ClInclude Include="..\ouzel\EventDispatcher.h" />
     <ClInclude Include="..\ouzel\EventHander.h" />
     <ClInclude Include="..\ouzel\Fade.h" />
-    <ClInclude Include="..\ouzel\File.h" />
     <ClInclude Include="..\ouzel\FileSystem.h" />
     <ClInclude Include="..\ouzel\Gamepad.h" />
     <ClInclude Include="..\ouzel\Image.h" />
@@ -237,11 +235,11 @@
   <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <GenerateManifest>false</GenerateManifest>
-    <IncludePath>..\external\stb;..\external\rapidjson\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);..\ouzel\</IncludePath>
+    <IncludePath>..\external\stb;..\external\rapidjson\include;..\ouzel\;</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <GenerateManifest>false</GenerateManifest>
-    <IncludePath>..\external\stb;..\external\rapidjson\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);..\ouzel\</IncludePath>
+    <IncludePath>..\external\stb;..\external\rapidjson\include;..\ouzel\;</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <GenerateManifest>false</GenerateManifest>

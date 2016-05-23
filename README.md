@@ -1,10 +1,25 @@
 <img src="https://github.com/elvman/ouzel/blob/master/img/ouzel.png" alt="ouzel" width=128>
 
-# Ouzel v0.14
+# Ouzel v0.17
 Ouzel is a game engine mainly targeted for development of 2D games, but also 3D games can be created with it.
 
-## Supported platforms
-Currently Windows 7+ with Direct3D11 backend and OS X 10.8, iOS 7+ and tvOS 9.0+ with OpenGL and Metal backends are supported. Android, Windows Phone and Linux platform support is under development.
+Supported platforms:
+
+* Windows Vista, 7, 8, 10 
+* OS X 10.8+
+* Linux
+* iOS 7+
+* tvOS 9+
+* Android 2.3+
+
+Supported rendering backends:
+
+* Direct3D 11
+* OpenGL 2 and OpenGL 3
+* OpenGL ES 2 and OpenGL ES 3
+* Metal 
+
+Windows Phone platform support is under development.
 
 ## Compilation
 
@@ -15,11 +30,12 @@ $ git submodule init
 $ git submodule update
 ```
 
-Xcode and Visual Studio project files are located in the build directory.
+Linux and Android Makefiles and Xcode and Visual Studio project files are located in the build directory. Makefiles and project files for sample project are located in samples directory.
 
 ## System requirements
 * Windows 7+ with Visual Studio 2013 or Visual Studio 2015
 * OS X 10.8+ with Xcode 5.0+
+* Any reasonable new Linux distro
 
 ## Example app
 
@@ -42,8 +58,7 @@ The following code will open a 640px x 480px window:
 
 ## Features
 
-* Direct3D 11, Metal and OpenGL renderer support
-* Cross-platform (Windows, OS X, iOS, tvOS supported, Android and Linux targets under development)
+* Cross-platform (Windows, OS X, iOS, tvOS, Android and Linux supported, and Windows Phone support under development)
 * Scene management
 * GUI helper classes and management
 * Bitmap font support
@@ -65,4 +80,4 @@ You can ask question in the following locations:
 
 ## License
 
-Ouzel codebase is licensed under BSD. Please refer to the LICENSE file for detailed information.
+Ouzel codebase is licensed under the BSD license. Please refer to the LICENSE file for detailed information.

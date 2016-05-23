@@ -10,13 +10,13 @@
 #include <sys/syslog.h>
 #endif
 
-#ifdef OUZEL_PLATFORM_WINDOWS
+#if defined(OUZEL_PLATFORM_WINDOWS)
 #define NOMINMAX
 #include <windows.h>
 #include <strsafe.h>
 #endif
 
-#ifdef OUZEL_PLATFORM_ANDROID
+#if defined(OUZEL_PLATFORM_ANDROID)
 #include <android/log.h>
 #endif
 
@@ -24,6 +24,9 @@
 
 namespace ouzel
 {
+#if defined(OUZEL_PLATFORM_ANDROID) && defined(OUZEL_SUPPORTS_NEON_CHECK)
+    AnrdoidNEONChecker anrdoidNEONChecker;
+#endif
     char TEMP_BUFFER[65536];
 
     void log(const char* format, ...)

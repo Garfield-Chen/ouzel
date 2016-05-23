@@ -5,7 +5,7 @@
 
 #include "Window.h"
 
-#ifdef __OBJC__
+#if defined(__OBJC__)
 #import <Cocoa/Cocoa.h>
 typedef NSWindow* NSWindowPtr;
 typedef NSView* NSViewPtr;
@@ -42,7 +42,7 @@ namespace ouzel
         NSViewPtr getNativeView() const { return view; }
 
     protected:
-        WindowOSX(const Size2& size, bool resizable, bool fullscreen, uint32_t pSampleCount, const std::string& title);
+        WindowOSX(const Size2& size, bool resizable, bool fullscreen, const std::string& title);
         virtual bool init() override;
 
         NSWindowPtr window = Nil;

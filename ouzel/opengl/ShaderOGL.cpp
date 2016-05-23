@@ -18,13 +18,15 @@ namespace ouzel
 
         ShaderOGL::~ShaderOGL()
         {
-            destroy();
+            free();
         }
 
-        void ShaderOGL::destroy()
+        void ShaderOGL::free()
         {
             if (programId)
             {
+                RendererOGL::unbindProgram(programId);
+
                 glDeleteProgram(programId);
                 programId = 0;
             }
@@ -55,32 +57,18 @@ namespace ouzel
                 return false;
             }
 
-            destroy();
-
-            GLboolean support;
-            glGetBooleanv(GL_SHADER_COMPILER, &support);
-
-            if (!support)
-            {
-                log("No shader compiler present");
-                return false;
-            }
-
-            if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
-            {
-                return false;
-            }
+            free();
 
             pixelShaderId = glCreateShader(GL_FRAGMENT_SHADER);
             glShaderSource(pixelShaderId, 1, reinterpret_cast<const GLchar**>(&pixelShader), reinterpret_cast<const GLint*>(&pixelShaderSize));
             glCompileShader(pixelShaderId);
 
-            printShaderMessage(pixelShaderId);
-
             GLint status;
             glGetShaderiv(pixelShaderId, GL_COMPILE_STATUS, &status);
             if (status == GL_FALSE)
             {
+                log("Failed to compile pixel shader");
+                printShaderMessage(pixelShaderId);
                 return false;
             }
 
@@ -93,12 +81,11 @@ namespace ouzel
             glShaderSource(vertexShaderId, 1, reinterpret_cast<const GLchar**>(&vertexShader), reinterpret_cast<const GLint*>(&vertexShaderSize));
             glCompileShader(vertexShaderId);
 
-            printShaderMessage(vertexShaderId);
-
             glGetShaderiv(vertexShaderId, GL_COMPILE_STATUS, &status);
             if (status == GL_FALSE)
             {
-                log("Failed to link shader");
+                log("Failed to compile vertex shader");
+                printShaderMessage(vertexShaderId);
                 return false;
             }
 
@@ -140,11 +127,11 @@ namespace ouzel
 
             glLinkProgram(programId);
 
-            printProgramMessage();
-
             glGetProgramiv(programId, GL_LINK_STATUS, &status);
             if (status == GL_FALSE)
             {
+                log("Failed to link shader");
+                printProgramMessage();
                 return false;
             }
 
@@ -189,7 +176,7 @@ namespace ouzel
 
             if (logLength > 0)
             {
-                std::vector<char> logMessage(logLength);
+                std::vector<char> logMessage(static_cast<size_t>(logLength));
                 glGetShaderInfoLog(shaderId, logLength, nullptr, logMessage.data());
 
                 log("Shader compilation error: %s", logMessage.data());
@@ -203,7 +190,7 @@ namespace ouzel
 
             if (logLength > 0)
             {
-                std::vector<char> logMessage(logLength);
+                std::vector<char> logMessage(static_cast<size_t>(logLength));
                 glGetProgramInfoLog(programId, logLength, nullptr, logMessage.data());
 
                 log("Shader linking error: %s", logMessage.data());

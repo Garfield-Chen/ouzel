@@ -34,18 +34,54 @@ using namespace ouzel;
 {
     if (self = [super initWithFrame:frameRect])
     {
+        graphics::RendererOGL* rendererOGL = static_cast<graphics::RendererOGL*>(sharedEngine->getRenderer());
+
         // Create pixel format
-        NSOpenGLPixelFormatAttribute attributes[] =
+        NSOpenGLPixelFormatAttribute openGL3Attributes[] =
         {
             NSOpenGLPFADoubleBuffer,
-            NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core, // ensure we're using 3.2
+            NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core,
             NSOpenGLPFAColorSize, 24,
             NSOpenGLPFAAlphaSize, 8,
             NSOpenGLPFADepthSize, 32, // set depth buffer size
             0
         };
 
-        NSOpenGLPixelFormat* pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attributes] autorelease];
+        NSOpenGLPixelFormat* pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:openGL3Attributes] autorelease];
+
+        if (pixelFormat)
+        {
+            rendererOGL->setAPIVersion(3);
+            log("Using OpenGL 3.2");
+        }
+        else
+        {
+            log("Failed to crete OpenGL 3.2 pixel format");
+
+            NSOpenGLPixelFormatAttribute openGL2Attributes[] =
+            {
+                NSOpenGLPFADoubleBuffer,
+                NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersionLegacy,
+                NSOpenGLPFAColorSize, 24,
+                NSOpenGLPFAAlphaSize, 8,
+                NSOpenGLPFADepthSize, 32, // set depth buffer size
+                0
+            };
+
+            pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:openGL2Attributes] autorelease];
+
+            if (pixelFormat)
+            {
+                rendererOGL->setAPIVersion(2);
+                log("Using OpenGL 2");
+            }
+        }
+
+        if (!pixelFormat)
+        {
+            log("Failed to crete OpenGL 2 pixel format");
+            return Nil;
+        }
 
         // Create OpenGL context
         openGLContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:NULL];

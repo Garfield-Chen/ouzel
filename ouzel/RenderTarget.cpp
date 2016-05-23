@@ -18,6 +18,15 @@ namespace ouzel
             if (texture) texture->release();
         }
 
+        void RenderTarget::free()
+        {
+            if (texture)
+            {
+                texture->release();
+                texture = nullptr;
+            }
+        }
+
         bool RenderTarget::init(const Size2& newSize, bool useDepthBuffer)
         {
             size = newSize;

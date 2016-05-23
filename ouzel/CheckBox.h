@@ -22,12 +22,12 @@ namespace ouzel
         class CheckBox: public Widget
         {
         public:
-            static CheckBox* create(const std::string& normal, const std::string& selected, const std::string& pressed, const std::string& disabled, const std::string& tick);
+            static CheckBox* create(const std::string& normalImage, const std::string& selectedImage, const std::string& pressedImage, const std::string& disabledImage, const std::string& tickImage);
 
             CheckBox();
             virtual ~CheckBox();
 
-            virtual bool init(const std::string& normal, const std::string& selected, const std::string& pressed, const std::string& disabled, const std::string& tick);
+            virtual bool init(const std::string& normalImage, const std::string& selectedImage, const std::string& pressedImage, const std::string& disabledImage, const std::string& tickImage);
 
             virtual void setEnabled(bool enabled) override;
 
@@ -44,7 +44,7 @@ namespace ouzel
             scene::Sprite* selectedSprite = nullptr;
             scene::Sprite* pressedSprite = nullptr;
             scene::Sprite* disabledSprite = nullptr;
-            scene::TextDrawable* labelDrawable = nullptr;
+            scene::Sprite* tickSprite = nullptr;
 
             EventHandler* eventHandler = nullptr;
 

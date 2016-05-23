@@ -2,7 +2,7 @@
 // This file is part of the Ouzel engine.
 
 #include <rapidjson/rapidjson.h>
-#include <rapidjson/filereadstream.h>
+#include <rapidjson/memorystream.h>
 #include <rapidjson/document.h>
 #include "SpriteFrame.h"
 #include "Engine.h"
@@ -10,7 +10,6 @@
 #include "Texture.h"
 #include "MeshBuffer.h"
 #include "Utils.h"
-#include "File.h"
 
 namespace ouzel
 {
@@ -20,15 +19,13 @@ namespace ouzel
         {
             std::vector<SpriteFrame*> frames;
 
-            File file(filename, File::Mode::READ, false);
-
-            if (!file)
+            std::vector<uint8_t> data;
+            if (!sharedEngine->getFileSystem()->loadFile(filename, data))
             {
-                log("Failed to open %s", filename.c_str());
                 return frames;
             }
 
-            rapidjson::FileReadStream is(file.getFile(), TEMP_BUFFER, sizeof(TEMP_BUFFER));
+            rapidjson::MemoryStream is(reinterpret_cast<char*>(data.data()), data.size());
 
             rapidjson::Document document;
             document.ParseStream<0>(is);

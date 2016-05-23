@@ -17,10 +17,10 @@ namespace ouzel
 
         BlendStateD3D11::~BlendStateD3D11()
         {
-            destroy();
+            free();
         }
 
-        void BlendStateD3D11::destroy()
+        void BlendStateD3D11::free()
         {
             if (blendState)
             {
@@ -44,7 +44,7 @@ namespace ouzel
                 return false;
             }
 
-            destroy();
+            free();
 
             RendererD3D11* rendererD3D11 = static_cast<RendererD3D11*>(sharedEngine->getRenderer());
 

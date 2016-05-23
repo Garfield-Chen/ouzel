@@ -14,23 +14,35 @@
 #include "stb_image_write.h"
 
 #if defined(OUZEL_SUPPORTS_OPENGL)
-#include "ColorPSOGL.h"
-#include "ColorVSOGL.h"
-#include "TexturePSOGL.h"
-#include "TextureVSOGL.h"
+#include "ColorPSOGL2.h"
+#include "ColorVSOGL2.h"
+#include "TexturePSOGL2.h"
+#include "TextureVSOGL2.h"
+    #if defined(OUZEL_SUPPORTS_OPENGL3)
+    #include "ColorPSOGL3.h"
+    #include "ColorVSOGL3.h"
+    #include "TexturePSOGL3.h"
+    #include "TextureVSOGL3.h"
+    #endif
 #endif
 
 #if defined(OUZEL_SUPPORTS_OPENGLES)
-#include "ColorPSOGLES.h"
-#include "ColorVSOGLES.h"
-#include "TexturePSOGLES.h"
-#include "TextureVSOGLES.h"
+#include "ColorPSOGLES2.h"
+#include "ColorVSOGLES2.h"
+#include "TexturePSOGLES2.h"
+#include "TextureVSOGLES2.h"
+    #if defined(OUZEL_SUPPORTS_OPENGLES3)
+    #include "ColorPSOGLES3.h"
+    #include "ColorVSOGLES3.h"
+    #include "TexturePSOGLES3.h"
+    #include "TextureVSOGLES3.h"
+    #endif
 #endif
 
 #if defined(OUZEL_PLATFORM_ANDROID)
-PFNGLGENVERTEXARRAYSOESPROC glGenVertexArraysOESEXT = 0;
-PFNGLBINDVERTEXARRAYOESPROC glBindVertexArrayOESEXT = 0;
-PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArraysOESEXT = 0;
+PFNGLGENVERTEXARRAYSOESPROC glGenVertexArraysOESEXT = nullptr;
+PFNGLBINDVERTEXARRAYOESPROC glBindVertexArrayOESEXT = nullptr;
+PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArraysOESEXT = nullptr;
 #endif
 
 namespace ouzel
@@ -52,17 +64,37 @@ namespace ouzel
 
         }
 
-        bool RendererOGL::init(const Size2& newSize, bool newFullscreen, uint32_t newSampleCount)
+        bool RendererOGL::init(const Size2& newSize, bool newFullscreen, uint32_t newSampleCount, TextureFiltering newTextureFiltering)
         {
-            if (!Renderer::init(newSize, newFullscreen, newSampleCount))
+            if (!Renderer::init(newSize, newFullscreen, newSampleCount, newTextureFiltering))
             {
                 return false;
+            }
+
+            if (sampleCount > 1)
+            {
+                log("Multisample anti-aliasing is disabled for OpenGL");
             }
 
             //glEnable(GL_DEPTH_TEST);
             glClearColor(clearColor.getR(), clearColor.getG(), clearColor.getB(), clearColor.getA());
 
-            Shader* textureShader = loadShaderFromBuffers(TEXTURE_PIXEL_SHADER_OGL, sizeof(TEXTURE_PIXEL_SHADER_OGL), TEXTURE_VERTEX_SHADER_OGL, sizeof(TEXTURE_VERTEX_SHADER_OGL), VertexPCT::ATTRIBUTES);
+            Shader* textureShader = nullptr;
+
+            switch (apiVersion)
+            {
+                case 2:
+                    textureShader = loadShaderFromBuffers(TEXTURE_PIXEL_SHADER_OGL2, sizeof(TEXTURE_PIXEL_SHADER_OGL2), TEXTURE_VERTEX_SHADER_OGL2, sizeof(TEXTURE_VERTEX_SHADER_OGL2), VertexPCT::ATTRIBUTES);
+                    break;
+#if defined(OUZEL_SUPPORTS_OPENGL3) || defined(OUZEL_SUPPORTS_OPENGLES3)
+                case 3:
+                    textureShader = loadShaderFromBuffers(TEXTURE_PIXEL_SHADER_OGL3, sizeof(TEXTURE_PIXEL_SHADER_OGL3), TEXTURE_VERTEX_SHADER_OGL3, sizeof(TEXTURE_VERTEX_SHADER_OGL3), VertexPCT::ATTRIBUTES);
+                    break;
+#endif
+                default:
+                    log("Unsupported OpenGL version");
+                    return false;
+            }
 
             if (!textureShader)
             {
@@ -74,7 +106,22 @@ namespace ouzel
 
             sharedEngine->getCache()->setShader(SHADER_TEXTURE, textureShader);
 
-            Shader* colorShader = loadShaderFromBuffers(COLOR_PIXEL_SHADER_OGL, sizeof(COLOR_PIXEL_SHADER_OGL), COLOR_VERTEX_SHADER_OGL, sizeof(COLOR_VERTEX_SHADER_OGL), VertexPC::ATTRIBUTES);
+            Shader* colorShader = nullptr;
+
+            switch (apiVersion)
+            {
+                case 2:
+                    colorShader = loadShaderFromBuffers(COLOR_PIXEL_SHADER_OGL2, sizeof(COLOR_PIXEL_SHADER_OGL2), COLOR_VERTEX_SHADER_OGL2, sizeof(COLOR_VERTEX_SHADER_OGL2), VertexPC::ATTRIBUTES);
+                    break;
+#if defined(OUZEL_SUPPORTS_OPENGL3) || defined(OUZEL_SUPPORTS_OPENGLES3)
+                case 3:
+                    colorShader = loadShaderFromBuffers(COLOR_PIXEL_SHADER_OGL3, sizeof(COLOR_PIXEL_SHADER_OGL3), COLOR_VERTEX_SHADER_OGL3, sizeof(COLOR_VERTEX_SHADER_OGL3), VertexPC::ATTRIBUTES);
+                    break;
+#endif
+                default:
+                    log("Unsupported OpenGL version");
+                    return false;
+            }
 
             if (!colorShader)
             {
@@ -150,24 +197,27 @@ namespace ouzel
             frameBuffer = newFrameBuffer;
         }
 
-        bool RendererOGL::checkOpenGLErrors()
+        bool RendererOGL::checkOpenGLErrors(bool logError)
         {
             bool gotError = false;
 
             while (GLenum error = glGetError() != GL_NO_ERROR)
             {
-                const char* errorStr = "Unknown error";
-
-                switch (error)
+                if (logError)
                 {
-                    case GL_INVALID_ENUM: errorStr = "GL_INVALID_ENUM"; break;
-                    case GL_INVALID_VALUE: errorStr = "GL_INVALID_VALUE"; break;
-                    case GL_INVALID_OPERATION: errorStr = "GL_INVALID_OPERATION"; break;
-                    case GL_OUT_OF_MEMORY: errorStr = "GL_OUT_OF_MEMORY"; break;
-                    case GL_INVALID_FRAMEBUFFER_OPERATION: errorStr = "GL_INVALID_FRAMEBUFFER_OPERATION"; break;
-                }
+                    const char* errorStr = "Unknown error";
 
-                log("OpenGL error: %s (%x)", errorStr, error);
+                    switch (error)
+                    {
+                        case GL_INVALID_ENUM: errorStr = "GL_INVALID_ENUM"; break;
+                        case GL_INVALID_VALUE: errorStr = "GL_INVALID_VALUE"; break;
+                        case GL_INVALID_OPERATION: errorStr = "GL_INVALID_OPERATION"; break;
+                        case GL_OUT_OF_MEMORY: errorStr = "GL_OUT_OF_MEMORY"; break;
+                        case GL_INVALID_FRAMEBUFFER_OPERATION: errorStr = "GL_INVALID_FRAMEBUFFER_OPERATION"; break;
+                    }
+
+                    log("OpenGL error: %s (%x)", errorStr, error);
+                }
 
                 gotError = true;
             }
@@ -215,11 +265,16 @@ namespace ouzel
             checkOpenGLErrors();
         }
 
+        std::vector<Size2> RendererOGL::getSupportedResolutions() const
+        {
+            return std::vector<Size2>();
+        }
+
         BlendState* RendererOGL::createBlendState(bool enableBlending,
-                                                    BlendState::BlendFactor colorBlendSource, BlendState::BlendFactor colorBlendDest,
-                                                    BlendState::BlendOperation colorOperation,
-                                                    BlendState::BlendFactor alphaBlendSource, BlendState::BlendFactor alphaBlendDest,
-                                                    BlendState::BlendOperation alphaOperation)
+                                                  BlendState::BlendFactor colorBlendSource, BlendState::BlendFactor colorBlendDest,
+                                                  BlendState::BlendOperation colorOperation,
+                                                  BlendState::BlendFactor alphaBlendSource, BlendState::BlendFactor alphaBlendDest,
+                                                  BlendState::BlendOperation alphaOperation)
         {
             BlendStateOGL* blendState = new BlendStateOGL();
 
@@ -278,6 +333,7 @@ namespace ouzel
 
             if (checkOpenGLErrors())
             {
+                log("Failed to activate blend state");
                 return false;
             }
 
@@ -359,11 +415,6 @@ namespace ouzel
 
         bool RendererOGL::activateRenderTarget(RenderTarget* renderTarget)
         {
-            if (activeRenderTarget == renderTarget)
-            {
-                return true;
-            }
-
             if (!Renderer::activateRenderTarget(renderTarget))
             {
                 return false;
@@ -399,7 +450,10 @@ namespace ouzel
             {
                 glClearColor(newClearColor.getR(), newClearColor.getG(), newClearColor.getB(), newClearColor.getA());
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                checkOpenGLErrors();
+                if (checkOpenGLErrors())
+                {
+                    log("Failed to clear frame buffer");
+                }
 
                 clearedFrameBuffers.insert(newFrameBuffer);
             }
@@ -554,12 +608,21 @@ namespace ouzel
                 default: return false;
             }
 
-            glBindVertexArray(meshBufferOGL->getVertexArrayId());
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshBufferOGL->getIndexBufferId());
+            if (!meshBufferOGL->bindVertexBuffer())
+            {
+                return false;
+            }
+
+            if (!bindElementArrayBuffer(meshBufferOGL->getIndexBufferId()))
+            {
+                return false;
+            }
+
             glDrawElements(mode, static_cast<GLsizei>(indexCount), meshBufferOGL->getIndexFormat(), static_cast<const char*>(nullptr) + (startIndex * meshBuffer->getIndexSize()));
 
             if (checkOpenGLErrors())
             {
+                log("Failed to draw elements");
                 return false;
             }
 
@@ -568,11 +631,6 @@ namespace ouzel
 
         bool RendererOGL::saveScreenshot(const std::string& filename)
         {
-            if (!Renderer::saveScreenshot(filename))
-            {
-                return false;
-            }
-
             bindFrameBuffer(frameBuffer);
 
             GLsizei width = static_cast<GLsizei>(size.width);
@@ -584,6 +642,7 @@ namespace ouzel
 
             if (checkOpenGLErrors())
             {
+                log("Failed to read pixels from frame buffer");
                 return false;
             }
 
@@ -616,7 +675,10 @@ namespace ouzel
 
         GLuint RendererOGL::currentTextureId[TEXTURE_LAYERS] = { 0 };
         GLuint RendererOGL::currentProgramId = 0;
-        GLuint RendererOGL::currentFramBufferId = 0;
+        GLuint RendererOGL::currentFrameBufferId = 0;
+        GLuint RendererOGL::currentElementArrayBufferId = 0;
+        GLuint RendererOGL::currentArrayBufferId = 0;
+        GLuint RendererOGL::currentVertexArrayId = 0;
 
         bool RendererOGL::bindTexture(GLuint textureId, uint32_t layer)
         {
@@ -628,6 +690,7 @@ namespace ouzel
 
                 if (checkOpenGLErrors())
                 {
+                    log("Failed to create bind texture");
                     return false;
                 }
             }
@@ -644,6 +707,7 @@ namespace ouzel
 
                 if (checkOpenGLErrors())
                 {
+                    log("Failed to bind program");
                     return false;
                 }
             }
@@ -653,13 +717,14 @@ namespace ouzel
 
         bool RendererOGL::bindFrameBuffer(GLuint frameBufferId)
         {
-            if (currentFramBufferId != frameBufferId)
+            if (currentFrameBufferId != frameBufferId)
             {
                 glBindFramebuffer(GL_FRAMEBUFFER, frameBufferId);
-                currentFramBufferId = frameBufferId;
+                currentFrameBufferId = frameBufferId;
 
                 if (checkOpenGLErrors())
                 {
+                    log("Failed to create bind frame buffer");
                     return false;
                 }
             }
@@ -667,5 +732,124 @@ namespace ouzel
             return true;
         }
 
+        bool RendererOGL::bindElementArrayBuffer(GLuint elementArrayBufferId)
+        {
+            if (currentElementArrayBufferId != elementArrayBufferId)
+            {
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferId);
+                currentElementArrayBufferId = elementArrayBufferId;
+
+                if (checkOpenGLErrors())
+                {
+                    log("Failed to bind element array buffer");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        bool RendererOGL::bindArrayBuffer(GLuint arrayBufferId)
+        {
+            if (currentArrayBufferId != arrayBufferId)
+            {
+                glBindBuffer(GL_ARRAY_BUFFER, arrayBufferId);
+                currentArrayBufferId = arrayBufferId;
+
+                if (checkOpenGLErrors())
+                {
+                    log("Failed to bind array buffer");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        bool RendererOGL::bindVertexArray(GLuint vertexArrayId)
+        {
+            if (currentVertexArrayId != vertexArrayId)
+            {
+#if defined(OUZEL_PLATFORM_IOS) || defined(OUZEL_PLATFORM_TVOS)
+                glBindVertexArrayOES(vertexArrayId);
+#elif defined(OUZEL_PLATFORM_ANDROID)
+                if (glBindVertexArrayOESEXT) glBindVertexArrayOESEXT(vertexArrayId);
+#else
+                glBindVertexArray(vertexArrayId);
+#endif
+                currentVertexArrayId = vertexArrayId;
+
+                if (checkOpenGLErrors())
+                {
+                    log("Failed to bind vertex array");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        bool RendererOGL::unbindTexture(GLuint textureId)
+        {
+            for (uint32_t layer = 0; layer < TEXTURE_LAYERS; ++layer)
+            {
+                if (currentTextureId[layer] == textureId)
+                {
+                    bindTexture(0, layer);
+                }
+            }
+
+            return true;
+        }
+
+        bool RendererOGL::unbindProgram(GLuint programId)
+        {
+            if (currentProgramId == programId)
+            {
+                return bindProgram(0);
+            }
+
+            return true;
+        }
+
+        bool RendererOGL::unbindFrameBuffer(GLuint frameBufferId)
+        {
+            if (currentFrameBufferId == frameBufferId)
+            {
+                return bindFrameBuffer(0);
+            }
+
+            return true;
+        }
+
+        bool RendererOGL::unbindElementArrayBuffer(GLuint elementArrayBufferId)
+        {
+            if (currentElementArrayBufferId == elementArrayBufferId)
+            {
+                return bindElementArrayBuffer(0);
+            }
+
+            return true;
+        }
+
+        bool RendererOGL::unbindArrayBuffer(GLuint arrayBufferId)
+        {
+            if (currentArrayBufferId == arrayBufferId)
+            {
+                return bindArrayBuffer(0);
+            }
+
+            return true;
+        }
+
+        bool RendererOGL::unbindVertexArray(GLuint vertexArrayId)
+        {
+            if (currentVertexArrayId == vertexArrayId)
+            {
+                return bindVertexArray(0);
+            }
+
+            return true;
+        }
     } // namespace graphics
 } // namespace ouzel

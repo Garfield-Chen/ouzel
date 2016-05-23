@@ -17,12 +17,11 @@ namespace ouzel
 {
     namespace gui
     {
-        Button* Button::create(const std::string& normal, const std::string& selected, const std::string& pressed, const std::string& disabled,
-                                               const std::string& label, const graphics::Color& labelColor, const std::string& font)
+        Button* Button::create(const std::string& normalImage, const std::string& selectedImage, const std::string& pressedImage, const std::string& disabledImage, const std::string& label, const graphics::Color& labelColor, const std::string& font)
         {
             Button* result = new Button();
 
-            if (!result->init(normal, selected, pressed, disabled, label, labelColor, font))
+            if (!result->init(normalImage, selectedImage, pressedImage, disabledImage, label, labelColor, font))
             {
                 result->release();
             }

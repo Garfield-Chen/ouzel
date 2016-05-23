@@ -7,7 +7,6 @@
 #include "Engine.h"
 #include "SceneManager.h"
 #include "FileSystem.h"
-#include "File.h"
 #include "Cache.h"
 #include "Layer.h"
 #include "Camera.h"
@@ -282,7 +281,7 @@ namespace ouzel
             finished = false;
         }
 
-        void ParticleSystem::createParticleMesh()
+        bool ParticleSystem::createParticleMesh()
         {
             indices.reserve(particleDefinition.maxParticles * 6);
             vertices.reserve(particleDefinition.maxParticles * 4);
@@ -307,10 +306,17 @@ namespace ouzel
                                                                          vertices.data(), graphics::VertexPCT::ATTRIBUTES,
                                                                          static_cast<uint32_t>(vertices.size()), true);
 
+            if (!mesh)
+            {
+                return false;
+            }
+
             particles.resize(particleDefinition.maxParticles);
+
+            return true;
         }
 
-        void ParticleSystem::updateParticleMesh()
+        bool ParticleSystem::updateParticleMesh()
         {
             if (parentNode)
             {
@@ -360,8 +366,13 @@ namespace ouzel
                     vertices[i * 4 + 3].color = color;
                 }
 
-                mesh->uploadVertices(vertices.data(), static_cast<uint32_t>(vertices.size()));
+                if (!mesh->uploadVertices(vertices.data(), static_cast<uint32_t>(vertices.size())))
+                {
+                    return false;
+                }
             }
+
+            return true;
         }
 
         void ParticleSystem::emitParticles(uint32_t count)

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#define NOMINMAX
 #include <d3d11.h>
 #include "CompileConfig.h"
 #include "Shader.h"
@@ -18,6 +19,7 @@ namespace ouzel
             friend RendererD3D11;
         public:
             virtual ~ShaderD3D11();
+            virtual void free() override;
 
             virtual bool initFromBuffers(const uint8_t* newPixelShader,
                                          uint32_t newPixelShaderSize,
@@ -43,7 +45,6 @@ namespace ouzel
         protected:
             ShaderD3D11();
 
-            void destroy();
             bool createPixelShaderConstantBuffer(uint32_t size);
             bool createVertexShaderConstantBuffer(uint32_t size);
 

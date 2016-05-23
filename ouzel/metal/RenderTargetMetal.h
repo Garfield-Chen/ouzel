@@ -7,7 +7,7 @@
 #include "RenderTarget.h"
 #include "Size2.h"
 
-#ifdef __OBJC__
+#if defined(__OBJC__)
 #import <Metal/Metal.h>
 typedef MTLRenderPassDescriptor* MTLRenderPassDescriptorPtr;
 typedef id <MTLTexture> MTLTexturePtr;
@@ -27,6 +27,7 @@ namespace ouzel
             friend RendererMetal;
         public:
             virtual ~RenderTargetMetal();
+            virtual void free() override;
 
             virtual bool init(const Size2& newSize, bool depthBuffer) override;
 
@@ -37,10 +38,8 @@ namespace ouzel
         protected:
             RenderTargetMetal();
 
-            void destroy();
-
-            MTLRenderPassDescriptorPtr renderPassDescriptor;
-            MTLTexturePtr msaaTexture;
+            MTLRenderPassDescriptorPtr renderPassDescriptor = Nil;
+            MTLTexturePtr msaaTexture = Nil;
         };
     } // namespace graphics
 } // namespace ouzel

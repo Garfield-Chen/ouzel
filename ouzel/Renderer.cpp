@@ -30,11 +30,12 @@ namespace ouzel
 
         }
 
-        bool Renderer::init(const Size2& newSize, bool newFullscreen, uint32_t newSampleCount)
+        bool Renderer::init(const Size2& newSize, bool newFullscreen, uint32_t newSampleCount, TextureFiltering newTextureFiltering)
         {
             size = newSize;
             fullscreen = newFullscreen;
             sampleCount = newSampleCount;
+            textureFiltering = newTextureFiltering;
 
             return true;
         }
@@ -46,16 +47,10 @@ namespace ouzel
 
         void Renderer::present()
         {
-
         }
 
         void Renderer::flush()
         {
-        }
-
-        std::vector<Size2> Renderer::getSupportedResolutions() const
-        {
-            return std::vector<Size2>();
         }
 
         void Renderer::setSize(const Size2& newSize)
@@ -97,18 +92,6 @@ namespace ouzel
             return true;
         }
 
-        Texture* Renderer::createTexture(const Size2& textureSize, bool dynamic, bool mipmaps)
-        {
-            Texture* texture = new Texture();
-            if (!texture->init(textureSize, dynamic, mipmaps))
-            {
-                texture->release();
-                texture = nullptr;
-            }
-
-            return texture;
-        }
-
         bool Renderer::activateTexture(Texture* texture, uint32_t layer)
         {
             activeTextures[layer] = texture;
@@ -116,86 +99,11 @@ namespace ouzel
             return true;
         }
 
-        Texture* Renderer::loadTextureFromFile(const std::string& filename, bool dynamic, bool mipmaps)
-        {
-            Texture* texture = new Texture();
-
-            if (!texture->initFromFile(filename, dynamic, mipmaps))
-            {
-                texture->release();
-                texture = nullptr;
-            }
-
-            return texture;
-        }
-
-        Texture* Renderer::loadTextureFromData(const void* data, const Size2& textureSize, bool dynamic, bool mipmaps)
-        {
-            Texture* texture = new Texture();
-
-            if (!texture->initFromData(data, textureSize, dynamic, mipmaps))
-            {
-                texture->release();
-                texture = nullptr;
-            }
-
-            return texture;
-        }
-
-        RenderTarget* Renderer::createRenderTarget(const Size2& renderTargetSize, bool depthBuffer)
-        {
-            RenderTarget* renderTarget = new RenderTarget();
-
-            if (!renderTarget->init(renderTargetSize, depthBuffer))
-            {
-                renderTarget->release();
-                renderTarget = nullptr;
-            }
-
-            return renderTarget;
-        }
-
         bool Renderer::activateRenderTarget(RenderTarget* renderTarget)
         {
             activeRenderTarget = renderTarget;
 
             return true;
-        }
-
-        Shader* Renderer::loadShaderFromFiles(const std::string& pixelShader,
-                                                const std::string& vertexShader,
-                                                uint32_t vertexAttributes,
-                                                const std::string& pixelShaderFunction,
-                                                const std::string& vertexShaderFunction)
-        {
-            Shader* shader = new Shader();
-
-            if (!shader->initFromFiles(pixelShader, vertexShader, vertexAttributes, pixelShaderFunction, vertexShaderFunction))
-            {
-                shader->release();
-                shader = nullptr;
-            }
-
-            return shader;
-        }
-
-        Shader* Renderer::loadShaderFromBuffers(const uint8_t* pixelShader,
-                                                  uint32_t pixelShaderSize,
-                                                  const uint8_t* vertexShader,
-                                                  uint32_t vertexShaderSize,
-                                                  uint32_t vertexAttributes,
-                                                  const std::string& pixelShaderFunction,
-                                                  const std::string& vertexShaderFunction)
-        {
-            Shader* shader = new Shader();
-
-            if (!shader->initFromBuffers(pixelShader, pixelShaderSize, vertexShader, vertexShaderSize, vertexAttributes, pixelShaderFunction, vertexShaderFunction))
-            {
-                shader->release();
-                shader = nullptr;
-            }
-
-            return shader;
         }
 
         bool Renderer::activateShader(Shader* shader)
@@ -210,19 +118,6 @@ namespace ouzel
             MeshBuffer* meshBuffer = new MeshBuffer();
 
             if (!meshBuffer->init())
-            {
-                meshBuffer->release();
-                meshBuffer = nullptr;
-            }
-
-            return meshBuffer;
-        }
-
-        MeshBuffer* Renderer::createMeshBufferFromData(const void* indices, uint32_t indexSize, uint32_t indexCount, bool dynamicIndexBuffer, const void* vertices, uint32_t vertexAttributes, uint32_t vertexCount, bool dynamicVertexBuffer)
-        {
-            MeshBuffer* meshBuffer = new MeshBuffer();
-
-            if (!meshBuffer->initFromData(indices, indexSize, indexCount, dynamicIndexBuffer, vertices, vertexAttributes, vertexCount, dynamicVertexBuffer))
             {
                 meshBuffer->release();
                 meshBuffer = nullptr;
@@ -305,13 +200,6 @@ namespace ouzel
             visibleRect.height += halfWorldSize.height * 2.0f;
 
             return visibleRect.containsPoint(v2p);
-        }
-
-        bool Renderer::saveScreenshot(const std::string& filename)
-        {
-            OUZEL_UNUSED(filename);
-
-            return true;
         }
     } // namespace graphics
 } // namespace ouzel

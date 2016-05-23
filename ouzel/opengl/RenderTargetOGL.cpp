@@ -5,6 +5,7 @@
 #include "TextureOGL.h"
 #include "Engine.h"
 #include "RendererOGL.h"
+#include "Utils.h"
 
 namespace ouzel
 {
@@ -17,10 +18,10 @@ namespace ouzel
 
         RenderTargetOGL::~RenderTargetOGL()
         {
-            destroy();
+            free();
         }
 
-        void RenderTargetOGL::destroy()
+        void RenderTargetOGL::free()
         {
             if (depthBufferId)
             {
@@ -30,6 +31,8 @@ namespace ouzel
 
             if (frameBufferId)
             {
+                RendererOGL::unbindFrameBuffer(frameBufferId);
+
                 glDeleteFramebuffers(1, &frameBufferId);
                 frameBufferId = 0;
             }
@@ -42,7 +45,7 @@ namespace ouzel
                 return false;
             }
 
-            destroy();
+            free();
 
             viewport = Rectangle(0.0f, 0.0f, newSize.width, newSize.height);
 
@@ -86,7 +89,7 @@ namespace ouzel
 
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureOGL->getTextureId(), 0);
 
-#ifdef OUZEL_SUPPORTS_OPENGL // TODO: fix this
+#if defined(OUZEL_SUPPORTS_OPENGL) // TODO: fix this
             //GLenum drawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
             //glDrawBuffers(1, drawBuffers);
             glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -94,6 +97,7 @@ namespace ouzel
 
             if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
             {
+                log("Failed to create frame buffer");
                 return false;
             }
 

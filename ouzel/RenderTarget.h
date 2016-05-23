@@ -21,6 +21,7 @@ namespace ouzel
             friend Renderer;
         public:
             virtual ~RenderTarget();
+            virtual void free();
 
             virtual bool init(const Size2& newSize, bool useDepthBuffer);
 

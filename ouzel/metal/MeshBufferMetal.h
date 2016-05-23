@@ -6,7 +6,7 @@
 #include "CompileConfig.h"
 #include "MeshBuffer.h"
 
-#ifdef __OBJC__
+#if defined(__OBJC__)
 #import <Metal/Metal.h>
 typedef id<MTLBuffer> MTLBufferPtr;
 #else
@@ -26,6 +26,7 @@ namespace ouzel
             friend RendererMetal;
         public:
             virtual ~MeshBufferMetal();
+            virtual void free() override;
 
             virtual bool initFromData(const void* newIndices, uint32_t newIndexSize, uint32_t newIndexCount, bool newDynamicIndexBuffer, const void* newVertices, uint32_t newVertexAttributes, uint32_t newVertexCount, bool newDynamicVertexBuffer) override;
 
@@ -42,7 +43,6 @@ namespace ouzel
         protected:
             MeshBufferMetal();
 
-            void destroy();
             bool updateIndexFormat();
             bool createIndexBuffer(const void* indices, uint32_t size);
             bool createVertexBuffer(const void* vertices, uint32_t size);

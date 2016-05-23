@@ -29,18 +29,10 @@
     #include <GL/glext.h>
 #endif
 
-#if defined(OUZEL_PLATFORM_IOS) || defined(OUZEL_PLATFORM_TVOS)
-    #define glBindVertexArray glBindVertexArrayOES
-    #define glGenVertexArrays glGenVertexArraysOES
-    #define glDeleteVertexArrays glDeleteVertexArraysOES
-#elif defined(OUZEL_PLATFORM_ANDROID)
-    extern PFNGLGENVERTEXARRAYSOESPROC glGenVertexArraysOESEXT;
-    extern PFNGLBINDVERTEXARRAYOESPROC glBindVertexArrayOESEXT;
-    extern PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArraysOESEXT;
-
-    #define glGenVertexArrays glGenVertexArraysOESEXT
-    #define glBindVertexArray glBindVertexArrayOESEXT
-    #define glDeleteVertexArrays glDeleteVertexArraysOESEXT
+#if defined(OUZEL_PLATFORM_ANDROID)
+extern PFNGLGENVERTEXARRAYSOESPROC glGenVertexArraysOESEXT;
+extern PFNGLBINDVERTEXARRAYOESPROC glBindVertexArrayOESEXT;
+extern PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArraysOESEXT;
 #endif
 
 namespace ouzel
@@ -56,7 +48,8 @@ namespace ouzel
             virtual ~RendererOGL();
 
             void setFrameBuffer(GLuint newFrameBuffer);
-            static bool checkOpenGLErrors();
+
+            static bool checkOpenGLErrors(bool logError = true);
 
             virtual void setClearColor(Color color) override;
 
@@ -64,11 +57,13 @@ namespace ouzel
             virtual void present() override;
             virtual void flush() override;
 
+            virtual std::vector<Size2> getSupportedResolutions() const override;
+
             virtual BlendState* createBlendState(bool enableBlending,
-                                                   BlendState::BlendFactor colorBlendSource, BlendState::BlendFactor colorBlendDest,
-                                                   BlendState::BlendOperation colorOperation,
-                                                   BlendState::BlendFactor alphaBlendSource, BlendState::BlendFactor alphaBlendDest,
-                                                   BlendState::BlendOperation alphaOperation) override;
+                                                 BlendState::BlendFactor colorBlendSource, BlendState::BlendFactor colorBlendDest,
+                                                 BlendState::BlendOperation colorOperation,
+                                                 BlendState::BlendFactor alphaBlendSource, BlendState::BlendFactor alphaBlendDest,
+                                                 BlendState::BlendOperation alphaOperation) override;
             virtual bool activateBlendState(BlendState* blendState) override;
 
             virtual Texture* createTexture(const Size2& size, bool dynamic, bool mipmaps = true) override;
@@ -101,11 +96,21 @@ namespace ouzel
             static bool bindTexture(GLuint textureId, uint32_t layer);
             static bool bindProgram(GLuint programId);
             static bool bindFrameBuffer(GLuint frameBufferId);
+            static bool bindElementArrayBuffer(GLuint elementArrayBufferId);
+            static bool bindArrayBuffer(GLuint arrayBufferId);
+            static bool bindVertexArray(GLuint vertexArrayId);
+
+            static bool unbindTexture(GLuint textureId);
+            static bool unbindProgram(GLuint programId);
+            static bool unbindFrameBuffer(GLuint frameBufferId);
+            static bool unbindElementArrayBuffer(GLuint elementArrayBufferId);
+            static bool unbindArrayBuffer(GLuint arrayBufferId);
+            static bool unbindVertexArray(GLuint vertexArrayId);
 
         protected:
             RendererOGL();
 
-            virtual bool init(const Size2& newSize, bool newFullscreen, uint32_t newSampleCount) override;
+            virtual bool init(const Size2& newSize, bool newFullscreen, uint32_t newSampleCount, TextureFiltering newTextureFiltering) override;
 
             virtual void setSize(const Size2& newSize) override;
 
@@ -115,7 +120,10 @@ namespace ouzel
 
             static GLuint currentTextureId[TEXTURE_LAYERS];
             static GLuint currentProgramId;
-            static GLuint currentFramBufferId;
+            static GLuint currentFrameBufferId;
+            static GLuint currentElementArrayBufferId;
+            static GLuint currentArrayBufferId;
+            static GLuint currentVertexArrayId;
 
             Rectangle viewport;
         };

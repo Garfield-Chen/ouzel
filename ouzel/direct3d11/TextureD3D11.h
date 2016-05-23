@@ -3,6 +3,7 @@
 
 #pragma once
 
+#define NOMINMAX
 #include <d3d11.h>
 #include "Texture.h"
 
@@ -19,6 +20,7 @@ namespace ouzel
             friend RenderTargetD3D11;
         public:
             virtual ~TextureD3D11();
+            virtual void free() override;
 
             virtual bool init(const Size2& newSize, bool newDynamic, bool newMipmaps = true, bool newRenderTarget = false) override;
             virtual bool initFromData(const void* data, const Size2& newSize, bool newDynamic, bool newMipmaps = true) override;
@@ -31,7 +33,6 @@ namespace ouzel
         protected:
             TextureD3D11();
 
-            void destroy();
             bool createTexture(UINT newWidth, UINT newHeight);
             bool uploadData(const void* data, const Size2& newSize);
 

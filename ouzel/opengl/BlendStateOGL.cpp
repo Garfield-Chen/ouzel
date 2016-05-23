@@ -2,6 +2,7 @@
 // This file is part of the Ouzel engine.
 
 #include "BlendStateOGL.h"
+#include "Utils.h"
 
 namespace ouzel
 {
@@ -24,9 +25,10 @@ namespace ouzel
                 case BlendFactor::SRC_ALPHA_SAT: return GL_SRC_ALPHA_SATURATE;
                 case BlendFactor::BLEND_FACTOR: return GL_CONSTANT_COLOR;
                 case BlendFactor::INV_BLEND_FACTOR: return GL_ONE_MINUS_CONSTANT_COLOR;
+                default:
+                    log("Unsupported blend factor");
+                    return GL_ZERO;
             }
-
-            return GL_ZERO;
         }
 
         GLenum BlendStateOGL::getBlendOperation(BlendOperation blendOperation)
@@ -36,13 +38,14 @@ namespace ouzel
                 case BlendOperation::ADD: return GL_FUNC_ADD;
                 case BlendOperation::SUBTRACT: return GL_FUNC_SUBTRACT;
                 case BlendOperation::REV_SUBTRACT: return GL_FUNC_REVERSE_SUBTRACT;
-#ifdef OUZEL_SUPPORTS_OPENGL
+#if defined(OUZEL_SUPPORTS_OPENGL)
                 case BlendOperation::MIN: return GL_MIN;
                 case BlendOperation::MAX: return GL_MAX;
 #endif
+                default:
+                    log("Unsupported blend operation");
+                    return GL_FUNC_ADD;
             }
-
-            return GL_FUNC_ADD;
         }
 
     } // namespace graphics

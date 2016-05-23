@@ -9,7 +9,6 @@
 #include "Renderer.h"
 #include "Texture.h"
 #include "Shader.h"
-#include "File.h"
 #include "ParticleDefinition.h"
 #include "SpriteFrame.h"
 #include "Utils.h"
@@ -76,7 +75,7 @@ namespace ouzel
 
     void Cache::preloadSpriteFrames(const std::string& filename, bool mipmaps)
     {
-        std::string extension = sharedEngine->getFileSystem()->getExtension(filename);
+        std::string extension = sharedEngine->getFileSystem()->getExtensionPart(filename);
 
         std::vector<scene::SpriteFrame*> frames;
 
@@ -112,7 +111,7 @@ namespace ouzel
         }
         else
         {
-            std::string extension = sharedEngine->getFileSystem()->getExtension(filename);
+            std::string extension = sharedEngine->getFileSystem()->getExtensionPart(filename);
 
             std::vector<scene::SpriteFrame*> frames;
 

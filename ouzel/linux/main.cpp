@@ -1,9 +1,6 @@
 // Copyright (C) 2016 Elviss Strazdins
 // This file is part of the Ouzel engine.
 
-#include <GL/glx.h>
-#include <X11/X.h>
-#include <X11/keysym.h>
 #include "Engine.h"
 #include "WindowLinux.h"
 #include "Utils.h"
@@ -223,21 +220,48 @@ int main(int argc, char* argv[])
     ouzel::setArgs(argc, argv);
 
     ouzelMain(getArgs());
-    
+
     if (!ouzel::sharedEngine)
     {
         return 0;
     }
-    
+
     ouzel::sharedEngine->begin();
 
     XEvent event;
     
     WindowLinux* windowLinux = static_cast<WindowLinux*>(ouzel::sharedEngine->getWindow());
 
+    int fd = ConnectionNumber(windowLinux->getDisplay());
+    fd_set fds;
+    timeval tv;
+
     for (;;)
     {
-        do
+        FD_ZERO(&fds);
+        FD_SET(fd, &fds);
+        tv.tv_usec = 0;
+        tv.tv_sec = 0;
+
+        int readyFds = select(fd + 1, &fds, nullptr, nullptr, &tv);
+
+        if (readyFds > 0)
+        {
+        }
+        else if (readyFds == 0)
+        {
+            if (!ouzel::sharedEngine->run())
+            {
+                break;
+            }
+            glXSwapBuffers(windowLinux->getDisplay(), windowLinux->getNativeWindow());
+        }
+        else
+        {
+            return 1;
+        }
+
+        while (XPending(windowLinux->getDisplay()))
         {
             XNextEvent(windowLinux->getDisplay(), &event);
             switch (event.type)
@@ -312,15 +336,8 @@ int main(int argc, char* argv[])
                     // need redraw
                     break;
                 }
-          }
+            }
         }
-        while (XPending(windowLinux->getDisplay())); /* loop to compress events */
-
-        if (!ouzel::sharedEngine->run())
-        {
-            break;
-        }
-        glXSwapBuffers(windowLinux->getDisplay(), windowLinux->getNativeWindow());
     }
 
     ouzel::sharedEngine->end();

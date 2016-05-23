@@ -50,10 +50,17 @@ namespace ouzel
             enum class Driver
             {
                 DEFAULT = 0,
-                NONE,
                 OPENGL,
                 DIRECT3D11,
                 METAL
+            };
+
+            enum class TextureFiltering
+            {
+                NONE = 0,
+                LINEAR,
+                BILINEAR,
+                TRILINEAR
             };
 
             enum class DrawMode
@@ -65,7 +72,8 @@ namespace ouzel
                 TRIANGLE_STRIP
             };
 
-            virtual ~Renderer();
+            virtual ~Renderer() = 0;
+            virtual void free() {}
 
             Driver getDriver() const { return driver; }
 
@@ -78,8 +86,9 @@ namespace ouzel
 
             const Size2& getSize() const { return size; }
             uint32_t getSampleCount() const { return sampleCount; }
+            TextureFiltering getTextureFiltering() const { return textureFiltering; }
 
-            virtual std::vector<Size2> getSupportedResolutions() const;
+            virtual std::vector<Size2> getSupportedResolutions() const = 0;
 
             virtual BlendState* createBlendState(bool enableBlending,
                                                    BlendState::BlendFactor colorBlendSource, BlendState::BlendFactor colorBlendDest,
@@ -88,44 +97,47 @@ namespace ouzel
                                                    BlendState::BlendOperation alphaOperation);
             virtual bool activateBlendState(BlendState* blendState);
 
-            virtual Texture* createTexture(const Size2& textureSize, bool dynamic, bool mipmaps = true);
-            virtual Texture* loadTextureFromFile(const std::string& filename, bool dynamic = false, bool mipmaps = true);
-            virtual Texture* loadTextureFromData(const void* data, const Size2& textureSize, bool dynamic = false, bool mipmaps = true);
+            virtual Texture* createTexture(const Size2& textureSize, bool dynamic, bool mipmaps = true) = 0;
+            virtual Texture* loadTextureFromFile(const std::string& filename, bool dynamic = false, bool mipmaps = true) = 0;
+            virtual Texture* loadTextureFromData(const void* data, const Size2& textureSize, bool dynamic = false, bool mipmaps = true) = 0;
             virtual bool activateTexture(Texture* texture, uint32_t layer);
             virtual Texture* getActiveTexture(uint32_t layer) const { return activeTextures[layer]; }
-            virtual RenderTarget* createRenderTarget(const Size2& renderTargetSize, bool depthBuffer);
+            virtual RenderTarget* createRenderTarget(const Size2& renderTargetSize, bool depthBuffer) = 0;
             virtual bool activateRenderTarget(RenderTarget* renderTarget);
 
             virtual Shader* loadShaderFromFiles(const std::string& pixelShader,
-                                                  const std::string& vertexShader,
+                                                const std::string& vertexShader,
+                                                uint32_t vertexAttributes,
+                                                const std::string& pixelShaderFunction = "",
+                                                const std::string& vertexShaderFunction = "") = 0;
+            virtual Shader* loadShaderFromBuffers(const uint8_t* pixelShader,
+                                                  uint32_t pixelShaderSize,
+                                                  const uint8_t* vertexShader,
+                                                  uint32_t vertexShaderSize,
                                                   uint32_t vertexAttributes,
                                                   const std::string& pixelShaderFunction = "",
-                                                  const std::string& vertexShaderFunction = "");
-            virtual Shader* loadShaderFromBuffers(const uint8_t* pixelShader,
-                                                    uint32_t pixelShaderSize,
-                                                    const uint8_t* vertexShader,
-                                                    uint32_t vertexShaderSize,
-                                                    uint32_t vertexAttributes,
-                                                    const std::string& pixelShaderFunction = "",
-                                                    const std::string& vertexShaderFunction = "");
+                                                  const std::string& vertexShaderFunction = "") = 0;
             virtual bool activateShader(Shader* shader);
             virtual Shader* getActiveShader() const { return activeShader; }
 
             virtual MeshBuffer* createMeshBuffer();
-            virtual MeshBuffer* createMeshBufferFromData(const void* indices, uint32_t indexSize, uint32_t indexCount, bool dynamicIndexBuffer, const void* vertices, uint32_t vertexAttributes, uint32_t vertexCount, bool dynamicVertexBuffer);
+            virtual MeshBuffer* createMeshBufferFromData(const void* indices, uint32_t indexSize, uint32_t indexCount, bool dynamicIndexBuffer, const void* vertices, uint32_t vertexAttributes, uint32_t vertexCount, bool dynamicVertexBuffer) = 0;
             virtual bool drawMeshBuffer(MeshBuffer* meshBuffer, uint32_t indexCount = 0, DrawMode drawMode = DrawMode::TRIANGLE_LIST, uint32_t startIndex = 0);
 
             Vector2 viewToScreenLocation(const Vector2& position);
             Vector2 screenToViewLocation(const Vector2& position);
             bool checkVisibility(const Matrix4& transform, const AABB2& boundingBox, scene::Camera* camera);
 
-            virtual bool saveScreenshot(const std::string& filename);
+            virtual bool saveScreenshot(const std::string& filename) = 0;
 
             virtual uint32_t getDrawCallCount() const { return drawCallCount; }
 
+            uint32_t getAPIVersion() const { return apiVersion; }
+            void setAPIVersion(uint32_t version) { apiVersion = version; }
+
         protected:
-            Renderer(Driver pDriver = Driver::NONE);
-            virtual bool init(const Size2& newSize, bool newFullscreen, uint32_t newSampleCount);
+            Renderer(Driver pDriver);
+            virtual bool init(const Size2& newSize, bool newFullscreen, uint32_t newSampleCount, TextureFiltering newTextureFiltering);
 
             virtual void setSize(const Size2& newSize);
             virtual void setFullscreen(bool newFullscreen);
@@ -134,6 +146,7 @@ namespace ouzel
             Size2 size;
             bool fullscreen = false;
             uint32_t sampleCount = 1; // MSAA sample count
+            TextureFiltering textureFiltering = TextureFiltering::NONE;
 
             Color clearColor;
 
@@ -143,6 +156,8 @@ namespace ouzel
             RenderTarget* activeRenderTarget = nullptr;
 
             uint32_t drawCallCount = 0;
+
+            uint32_t apiVersion = 0;
         };
     } // namespace graphics
 } // namespace ouzel

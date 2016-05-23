@@ -7,7 +7,7 @@
 #include <map>
 #include <dispatch/dispatch.h>
 
-#ifdef __OBJC__
+#if defined(__OBJC__)
 #import <Metal/Metal.h>
 #import <MetalKit/MTKView.h>
 typedef MTKView* MTKViewPtr;
@@ -50,8 +50,7 @@ namespace ouzel
             static bool available();
 
             virtual ~RendererMetal();
-
-            virtual bool init(const Size2& newSize, bool newFullscreen, uint32_t newSampleCount) override;
+            virtual void free() override;
 
             virtual void setClearColor(Color newColor) override;
 
@@ -60,6 +59,9 @@ namespace ouzel
             virtual void clear() override;
             virtual void present() override;
 
+            virtual std::vector<Size2> getSupportedResolutions() const override;
+
+            virtual Texture* createTexture(const Size2& textureSize, bool dynamic, bool mipmaps = true) override;
             virtual Texture* loadTextureFromFile(const std::string& filename, bool dynamic, bool mipmaps = true) override;
             virtual Texture* loadTextureFromData(const void* data, const Size2& size, bool dynamic, bool mipmaps = true) override;
 
@@ -83,13 +85,16 @@ namespace ouzel
             virtual MeshBuffer* createMeshBufferFromData(const void* indices, uint32_t indexSize, uint32_t indexCount, bool dynamicIndexBuffer, const void* vertices, uint32_t vertexAttributes, uint32_t vertexCount, bool dynamicVertexBuffer) override;
             virtual bool drawMeshBuffer(MeshBuffer* meshBuffer, uint32_t indexCount = 0, DrawMode drawMode = DrawMode::TRIANGLE_LIST, uint32_t startIndex = 0) override;
 
+            virtual bool saveScreenshot(const std::string& filename) override;
+
             MTLDevicePtr getDevice() const { return device; }
             MTKViewPtr getMetalView() const { return view; }
 
         protected:
             RendererMetal();
 
-            void destroy();
+            virtual bool init(const Size2& newSize, bool newFullscreen, uint32_t newSampleCount, TextureFiltering newTextureFiltering) override;
+
             MTLRenderPipelineStatePtr createPipelineState(BlendStateMetal* blendState,
                                                           ShaderMetal* shader);
 

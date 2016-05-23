@@ -93,26 +93,57 @@ namespace ouzel
                 const uint8_t* rgba = src;
                 for (uint32_t x = 0; x < dstwidth; ++x, rgba += 8, dst += 4)
                 {
-                    float r = powf(rgba[0], 2.2f);
-                    float g = powf(rgba[1], 2.2f);
-                    float b = powf(rgba[2], 2.2f);
-                    float a = rgba[3];
-                    r += powf(rgba[4], 2.2f);
-                    g += powf(rgba[5], 2.2f);
-                    b += powf(rgba[6], 2.2f);
+                    float pixels = 0.0f;
+
+                    float r = 0, g = 0, b = 0, a = 0;
+
+                    if (rgba[3] > 0)
+                    {
+                        r += powf(rgba[0], 2.2f);
+                        g += powf(rgba[1], 2.2f);
+                        b += powf(rgba[2], 2.2f);
+                        pixels += 1.0f;
+                    }
+                    a = rgba[3];
+
+                    if (rgba[7] > 0)
+                    {
+                        r += powf(rgba[4], 2.2f);
+                        g += powf(rgba[5], 2.2f);
+                        b += powf(rgba[6], 2.2f);
+                        pixels += 1.0f;
+                    }
                     a += rgba[7];
-                    r += powf(rgba[pitch+0], 2.2f);
-                    g += powf(rgba[pitch+1], 2.2f);
-                    b += powf(rgba[pitch+2], 2.2f);
+
+                    if (rgba[pitch+3])
+                    {
+                        r += powf(rgba[pitch+0], 2.2f);
+                        g += powf(rgba[pitch+1], 2.2f);
+                        b += powf(rgba[pitch+2], 2.2f);
+                        pixels += 1.0f;
+                    }
                     a += rgba[pitch+3];
-                    r += powf(rgba[pitch+4], 2.2f);
-                    g += powf(rgba[pitch+5], 2.2f);
-                    b += powf(rgba[pitch+6], 2.2f);
+
+                    if (rgba[pitch+7] > 0)
+                    {
+                        r += powf(rgba[pitch+4], 2.2f);
+                        g += powf(rgba[pitch+5], 2.2f);
+                        b += powf(rgba[pitch+6], 2.2f);
+                        pixels += 1.0f;
+                    }
                     a += rgba[pitch+7];
 
-                    r *= 0.25f;
-                    g *= 0.25f;
-                    b *= 0.25f;
+                    if (pixels > 0.0f)
+                    {
+                        r /= pixels;
+                        g /= pixels;
+                        b /= pixels;
+                    }
+                    else
+                    {
+                        r = g = b = 0;
+                    }
+
                     a *= 0.25f;
                     r = powf(r, 1.0f / 2.2f);
                     g = powf(g, 1.0f / 2.2f);
@@ -139,8 +170,8 @@ namespace ouzel
             uint32_t newWidth = static_cast<uint32_t>(newSize.width);
             uint32_t newHeight = static_cast<uint32_t>(newSize.height);
 
-#ifdef OUZEL_SUPPORTS_OPENGLES
-            if (mipmaps && isPOT(newWidth) && isPOT(newHeight))
+#if defined(OUZEL_SUPPORTS_OPENGLES)
+            if (mipmaps && (sharedEngine->getRenderer()->getDriver() != Renderer::Driver::OPENGL || (isPOT(newWidth) && isPOT(newHeight))))
 #else
             if (mipmaps)
 #endif

@@ -43,6 +43,7 @@ namespace ouzel
             };
 
             virtual ~BlendState() {}
+            virtual void free() {}
 
             virtual bool init(bool newEnableBlending,
                               BlendFactor newColorBlendSource, BlendFactor newColorBlendDest,

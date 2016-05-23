@@ -1,4 +1,4 @@
-// Copyright (C) 2015 Elviss Strazdins
+// Copyright (C) 2016 Elviss Strazdins
 // This file is part of the Ouzel engine.
 
 package lv.elviss.ouzel;
@@ -7,19 +7,20 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
-import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
 
 public class MainActivity extends Activity
 {
-	private GLSurfaceView glSurfaceView;
+	private OuzelSurfaceView surfaceView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+
+        OuzelLibJNIWrapper.setAssetManager(getAssets());
 
 		ActivityManager activityManager 
 			= (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -30,17 +31,17 @@ public class MainActivity extends Activity
 
 		if (supportsEs2)
 		{
-			glSurfaceView = new GLSurfaceView(this);
+			surfaceView = new OuzelSurfaceView(this);
 
 			if (isProbablyEmulator())
 			{
 				// Avoids crashes on startup with some emulator images.
-				glSurfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+				surfaceView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 			}
 
-			glSurfaceView.setEGLContextClientVersion(2);
-			glSurfaceView.setRenderer(new RendererWrapper());
-			setContentView(glSurfaceView);
+			surfaceView.setEGLContextClientVersion(2);
+			surfaceView.setRenderer(new RendererWrapper());
+			setContentView(surfaceView);
 		}
 		else
 		{
@@ -67,9 +68,9 @@ public class MainActivity extends Activity
 	{
 		super.onPause();
 
-		if (glSurfaceView != null)
+		if (surfaceView != null)
 		{
-			glSurfaceView.onPause();
+			surfaceView.onPause();
 		}
 	}
 
@@ -78,9 +79,9 @@ public class MainActivity extends Activity
 	{
 		super.onResume();
 
-		if (glSurfaceView != null)
+		if (surfaceView != null)
 		{
-			glSurfaceView.onResume();
+			surfaceView.onResume();
 		}
 	}
 }

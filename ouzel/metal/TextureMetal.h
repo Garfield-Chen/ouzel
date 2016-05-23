@@ -3,7 +3,7 @@
 
 #pragma once
 
-#ifdef __OBJC__
+#if defined(__OBJC__)
 #import <Metal/Metal.h>
 typedef id<MTLTexture> MTLTexturePtr;
 #else
@@ -27,6 +27,7 @@ namespace ouzel
             friend RenderTargetMetal;
         public:
             virtual ~TextureMetal();
+            virtual void free() override;
 
             virtual bool init(const Size2& newSize, bool newDynamic, bool newMipmaps = true, bool newRenderTarget = false) override;
             virtual bool initFromData(const void* data, const Size2& newSize, bool newDynamic, bool newMipmaps = true) override;
@@ -38,7 +39,6 @@ namespace ouzel
         protected:
             TextureMetal();
 
-            void destroy();
             bool createTexture(NSUInteger newWidth, NSUInteger newHeight);
             bool uploadData(const void* data, const Size2& newSize) override;
 

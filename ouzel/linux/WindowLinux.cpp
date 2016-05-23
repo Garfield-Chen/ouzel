@@ -2,11 +2,15 @@
 // This file is part of the Ouzel engine.
 
 #include "WindowLinux.h"
+#include "Engine.h"
+#include "Renderer.h"
+#include "opengl/RendererOGL.h"
+#include "Utils.h"
 
 namespace ouzel
 {
-    WindowLinux::WindowLinux(const Size2& pSize, bool pResizable, bool pFullscreen, uint32_t pSampleCount, const std::string& pTitle):
-        Window(pSize, pResizable, pFullscreen, pSampleCount, pTitle)
+    WindowLinux::WindowLinux(const Size2& pSize, bool pResizable, bool pFullscreen, const std::string& pTitle):
+        Window(pSize, pResizable, pFullscreen, pTitle)
     {
 
     }
@@ -31,14 +35,20 @@ namespace ouzel
 
     bool WindowLinux::init()
     {
+        std::shared_ptr<graphics::RendererOGL> rendererOGL = std::static_pointer_cast<graphics::RendererOGL>(sharedEngine->getRenderer());
+
         // open a connection to the X server
         display = XOpenDisplay(nullptr);
-        
+
         if (!display)
         {
             ouzel::log("Failed to open display");
             return false;
         }
+
+        int screen = DefaultScreen(display);
+
+        XVisualInfo* vi = nullptr;
 
         // make sure OpenGL's GLX extension supported
         int dummy;
@@ -48,68 +58,95 @@ namespace ouzel
             return false;
         }
 
-        // find an OpenGL-capable RGB visual with depth buffer
-        static int doubleBuffer[]  = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_DOUBLEBUFFER, None};
-
-        XVisualInfo* vi = glXChooseVisual(display, DefaultScreen(display), doubleBuffer);
-        if (!vi)
-        {
-            ouzel::log("No RGB visual with depth buffer");
-            return false;
-        }
-        if (vi->c_class != TrueColor)
-        {
-            ouzel::log("TrueColor visual required for this program");
-            return false;
-        }
-
         int fbcount = 0;
-        GLXFBConfig* framebufferConfig = glXChooseFBConfig(display, DefaultScreen(display), NULL, &fbcount);
+
+        static const int attributes[] = {
+            GLX_RENDER_TYPE, GLX_RGBA_BIT,
+            GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+            GLX_DOUBLEBUFFER, GL_TRUE,
+            GLX_RED_SIZE, 1,
+            GLX_GREEN_SIZE, 1,
+            GLX_BLUE_SIZE, 1,
+            None
+        };
+
+        GLXFBConfig* framebufferConfig = glXChooseFBConfig(display, screen, attributes, &fbcount);
         if (!framebufferConfig)
         {
-            ouzel::log("Failed to get framebuffer.");
+            ouzel::log("Failed to get frame buffer");
         }
-
-        // create an OpenGL rendering context
-        if (framebufferConfig)
+        else
         {
+            // create an OpenGL rendering context
             static const int contextAttribs[] = {
                 GLX_CONTEXT_PROFILE_MASK_ARB,
                 GLX_CONTEXT_CORE_PROFILE_BIT_ARB,
                 GLX_CONTEXT_MAJOR_VERSION_ARB,
                 3,
                 GLX_CONTEXT_MINOR_VERSION_ARB,
-                3,
-                0,
+                2,
+                None
             };
 
             PFNGLXCREATECONTEXTATTRIBSARBPROC glXCreateContextAttribsARB = (PFNGLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddress(reinterpret_cast<const GLubyte*>("glXCreateContextAttribsARB"));
 
-            if (!glXCreateContextAttribsARB)
-            {
-                log("Could not find glXCreateContextAttribsARB");
-            }
-            else
+            if (glXCreateContextAttribsARB)
             {
                 context = glXCreateContextAttribsARB(display, framebufferConfig[0], NULL, GL_TRUE, contextAttribs);
 
-                if (!context)
+                if (context)
                 {
-                    ouzel::log("Failed to create OpenGL 3.3 context");
+                    rendererOGL->setAPIVersion(3);
+                    log("Using OpenGL 3.2");
+
+                    vi = glXGetVisualFromFBConfig(display, framebufferConfig[0]);
+
+                    if (!vi)
+                    {
+                        ouzel::log("Failed to get OpenGL visual");
+                        context = nullptr;
+                    }
                 }
+                else
+                {
+                    log("Failed to crete OpenGL 3.2 rendering context");
+                }
+            }
+            else
+            {
+                log("Could not find glXCreateContextAttribsARB");
             }
         }
 
         if (!context)
         {
-            context = glXCreateContext(display, vi, /* no shared dlists */ None,
-                                       /* direct rendering if possible */ GL_TRUE);
-        }
+            // find an OpenGL-capable RGB visual with depth buffer
+            static int doubleBuffer[] = {GLX_RGBA, GLX_DEPTH_SIZE, 16, GLX_DOUBLEBUFFER, None};
 
-        if (!context)
-        {
-            ouzel::log("Failed to create rendering context");
-            return false;
+            vi = glXChooseVisual(display, screen, doubleBuffer);
+            if (!vi)
+            {
+                ouzel::log("Failed to choose OpenGL visual");
+                return false;
+            }
+            if (vi->c_class != TrueColor)
+            {
+                ouzel::log("TrueColor visual required for this program");
+                return false;
+            }
+
+            context = glXCreateContext(display, vi, None, GL_TRUE);
+
+            if (context)
+            {
+                rendererOGL->setAPIVersion(2);
+                log("Using OpenGL 2");
+            }
+            else
+            {
+                log("Failed to crete OpenGL 2 rendering context");
+                return false;
+            }
         }
 
         // create an X colormap since probably not using default visual
@@ -129,20 +166,20 @@ namespace ouzel
 
         // request the X window to be displayed on the screen
         XMapWindow(display, window);
-    
+
         return Window::init();
     }
-    
+
     void WindowLinux::setSize(const Size2& newSize)
     {
         Window::setSize(newSize);
     }
-    
+
     void WindowLinux::setFullscreen(bool newFullscreen)
     {
         Window::setFullscreen(newFullscreen);
     }
-    
+
     void WindowLinux::setTitle(const std::string& newTitle)
     {
         Window::setTitle(newTitle);

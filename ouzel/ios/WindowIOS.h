@@ -5,7 +5,7 @@
 
 #include "Window.h"
 
-#ifdef __OBJC__
+#if defined(__OBJC__)
 #import <UIKit/UIKit.h>
 typedef UIWindow* UIWindowPtr;
 typedef UIView* UIViewPtr;
@@ -29,7 +29,7 @@ namespace ouzel
         UIViewPtr getNativeView() const { return view; }
 
     protected:
-        WindowIOS(const Size2& pSize, bool pResizable, bool pFullscreen, uint32_t pSampleCount, const std::string& pTitle);
+        WindowIOS(const Size2& pSize, bool pResizable, bool pFullscreen, const std::string& pTitle);
         virtual bool init() override;
 
         UIWindowPtr window = Nil;

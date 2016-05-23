@@ -4,6 +4,7 @@
 #pragma once
 
 #include "CompileConfig.h"
+#include "Renderer.h"
 
 namespace ouzel
 {
@@ -13,6 +14,7 @@ namespace ouzel
 
         Size2 size;
         uint32_t sampleCount = 1; // MSAA sample count
+        graphics::Renderer::TextureFiltering textureFiltering = graphics::Renderer::TextureFiltering::NONE;
         bool resizable = false;
         bool fullscreen = false;
         float targetFPS = 60.0f;

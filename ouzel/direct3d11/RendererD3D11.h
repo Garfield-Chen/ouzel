@@ -3,6 +3,7 @@
 
 #pragma once
 
+#define NOMINMAX
 #include <set>
 #include <windows.h>
 #include <d3d11.h>
@@ -17,6 +18,7 @@ namespace ouzel
             friend Engine;
         public:
             virtual ~RendererD3D11();
+            virtual void free() override;
 
             virtual void clear() override;
             virtual void present() override;
@@ -66,8 +68,7 @@ namespace ouzel
         protected:
             RendererD3D11();
 
-            void destroy();
-            virtual bool init(const Size2& newSize, bool newFullscreen, uint32_t newSampleCount) override;
+            virtual bool init(const Size2& newSize, bool newFullscreen, uint32_t newSampleCount, TextureFiltering newTextureFiltering) override;
 
             IDXGIOutput* getOutput() const;
 

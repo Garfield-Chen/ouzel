@@ -21,10 +21,10 @@ namespace ouzel
 
         ShaderMetal::~ShaderMetal()
         {
-            destroy();
+            free();
         }
 
-        void ShaderMetal::destroy()
+        void ShaderMetal::free()
         {
             if (vertexShader)
             {
@@ -56,7 +56,7 @@ namespace ouzel
                 return false;
             }
 
-            destroy();
+            free();
 
             RendererMetal* rendererMetal = static_cast<RendererMetal*>(sharedEngine->getRenderer());
 
@@ -123,7 +123,7 @@ namespace ouzel
             if (err != Nil)
             {
                 if (pixelShaderLibrary) [pixelShaderLibrary release];
-                log("Failed to load pixel shader");
+                log("Failed to load pixel shader, %s", [err.localizedDescription cStringUsingEncoding:NSASCIIStringEncoding]);
                 return false;
             }
 
@@ -133,7 +133,7 @@ namespace ouzel
 
             if (!pixelShader)
             {
-                log("Failed to get function from shader");
+                log("Failed to get function from shader, %s", [err.localizedDescription cStringUsingEncoding:NSASCIIStringEncoding]);
                 return false;
             }
 
@@ -144,7 +144,7 @@ namespace ouzel
             if (err != Nil)
             {
                 if (vertexShaderLibrary) [vertexShaderLibrary release];
-                log("Failed to load vertex shader");
+                log("Failed to load vertex shader, %s", [err.localizedDescription cStringUsingEncoding:NSASCIIStringEncoding]);
                 return false;
             }
 
@@ -154,7 +154,7 @@ namespace ouzel
 
             if (!vertexShader)
             {
-                log("Failed to get function from shader");
+                log("Failed to get function from shader, %s", [err.localizedDescription cStringUsingEncoding:NSASCIIStringEncoding]);
                 return false;
             }
 

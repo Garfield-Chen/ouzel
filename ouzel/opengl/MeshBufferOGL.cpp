@@ -2,6 +2,7 @@
 // This file is part of the Ouzel engine.
 
 #include "MeshBufferOGL.h"
+#include "CompileConfig.h"
 #include "Engine.h"
 #include "RendererOGL.h"
 #include "Utils.h"
@@ -17,25 +18,37 @@ namespace ouzel
 
         MeshBufferOGL::~MeshBufferOGL()
         {
-            destroy();
+            free();
         }
 
-        void MeshBufferOGL::destroy()
+        void MeshBufferOGL::free()
         {
             if (vertexArrayId)
             {
+                RendererOGL::unbindVertexArray(vertexArrayId);
+
+#if defined(OUZEL_PLATFORM_IOS) || defined(OUZEL_PLATFORM_TVOS)
+                glDeleteVertexArraysOES(1, &vertexArrayId);
+#elif defined(OUZEL_PLATFORM_ANDROID)
+                if (glDeleteVertexArraysOESEXT) glDeleteVertexArraysOESEXT(1, &vertexArrayId);
+#else
                 glDeleteVertexArrays(1, &vertexArrayId);
+#endif
                 vertexArrayId = 0;
             }
 
             if (vertexBufferId)
             {
+                RendererOGL::unbindArrayBuffer(vertexBufferId);
+
                 glDeleteBuffers(1, &vertexBufferId);
                 vertexBufferId = 0;
             }
 
             if (indexBufferId)
             {
+                RendererOGL::unbindElementArrayBuffer(indexBufferId);
+
                 glDeleteBuffers(1, &indexBufferId);
                 indexBufferId = 0;
             }
@@ -44,16 +57,38 @@ namespace ouzel
         bool MeshBufferOGL::init()
         {
             glGenBuffers(1, &indexBufferId);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferId);
-
-            glGenVertexArrays(1, &vertexArrayId);
-            glBindVertexArray(vertexArrayId);
-
-            glGenBuffers(1, &vertexBufferId);
-            glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
+            RendererOGL::bindElementArrayBuffer(indexBufferId);
 
             if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
+                log("Failed to create index buffer");
+                return false;
+            }
+
+#if defined(OUZEL_PLATFORM_IOS) || defined(OUZEL_PLATFORM_TVOS)
+            glGenVertexArraysOES(1, &vertexArrayId);
+#elif defined(OUZEL_PLATFORM_ANDROID)
+            if (glGenVertexArraysOESEXT) glGenVertexArraysOESEXT(1, &vertexArrayId);
+#else
+            glGenVertexArrays(1, &vertexArrayId);
+#endif
+
+            if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors(false))
+            {
+                vertexArrayId = 0;
+                log("Failed to create vertex array");
+            }
+            else
+            {
+                RendererOGL::bindVertexArray(vertexArrayId);
+            }
+
+            glGenBuffers(1, &vertexBufferId);
+            RendererOGL::bindArrayBuffer(vertexBufferId);
+
+            if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
+            {
+                log("Failed to create vertex buffer");
                 return false;
             }
 
@@ -70,15 +105,16 @@ namespace ouzel
                 return false;
             }
 
-            destroy();
+            free();
 
             glGenBuffers(1, &indexBufferId);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferId);
+            RendererOGL::bindElementArrayBuffer(indexBufferId);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexSize * indexCount, newIndices,
                          dynamicIndexBuffer ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 
             if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
+                log("Failed to create index buffer");
                 return false;
             }
 
@@ -87,16 +123,32 @@ namespace ouzel
                 return false;
             }
 
+#if defined(OUZEL_PLATFORM_IOS) || defined(OUZEL_PLATFORM_TVOS)
+            glGenVertexArraysOES(1, &vertexArrayId);
+#elif defined(OUZEL_PLATFORM_ANDROID)
+            if (glGenVertexArraysOESEXT) glGenVertexArraysOESEXT(1, &vertexArrayId);
+#else
             glGenVertexArrays(1, &vertexArrayId);
-            glBindVertexArray(vertexArrayId);
+#endif
+
+            if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors(false))
+            {
+                log("Failed to create vertex array");
+                vertexArrayId = 0;
+            }
+            else
+            {
+                RendererOGL::bindVertexArray(vertexArrayId);
+            }
 
             glGenBuffers(1, &vertexBufferId);
-            glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
+            RendererOGL::bindArrayBuffer(vertexBufferId);
             glBufferData(GL_ARRAY_BUFFER, vertexSize * vertexCount, newVertices,
                          dynamicVertexBuffer ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 
             if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
+                log("Failed to create vertex buffer");
                 return false;
             }
 
@@ -125,7 +177,15 @@ namespace ouzel
                 return false;
             }
 
-            return updateVertexAttributes();
+            if (vertexArrayId)
+            {
+                RendererOGL::bindVertexArray(vertexArrayId);
+                RendererOGL::bindArrayBuffer(vertexBufferId);
+
+                updateVertexAttributes();
+            }
+
+            return true;
         }
 
         bool MeshBufferOGL::uploadIndices(const void* indices, uint32_t indexCount)
@@ -135,12 +195,13 @@ namespace ouzel
                 return false;
             }
 
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferId);
+            RendererOGL::bindElementArrayBuffer(indexBufferId);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexSize * indexCount, indices,
                          dynamicIndexBuffer ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 
             if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
+                log("Failed to upload index data");
                 return false;
             }
 
@@ -154,12 +215,13 @@ namespace ouzel
                 return false;
             }
 
-            glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
+            RendererOGL::bindArrayBuffer(vertexBufferId);
             glBufferData(GL_ARRAY_BUFFER, vertexSize * vertexCount, vertices,
                          dynamicVertexBuffer ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 
             if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
+                log("Failed to create vertex data");
                 return false;
             }
 
@@ -179,11 +241,33 @@ namespace ouzel
             return true;
         }
 
+        bool MeshBufferOGL::bindVertexBuffer()
+        {
+            if (vertexArrayId)
+            {
+                if (!RendererOGL::bindVertexArray(vertexArrayId))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (!RendererOGL::bindArrayBuffer(vertexBufferId))
+                {
+                    return false;
+                }
+
+                if (!updateVertexAttributes())
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         bool MeshBufferOGL::updateVertexAttributes()
         {
-            glBindVertexArray(vertexArrayId);
-            glBindBuffer(GL_ARRAY_BUFFER, vertexBufferId);
-
             GLuint index = 0;
             GLuint offset = 0;
 
@@ -227,6 +311,11 @@ namespace ouzel
                 ++index;
             }
 
+            for (GLuint unusedIndex = index; unusedIndex < 5; ++unusedIndex)
+            {
+                glDisableVertexAttribArray(unusedIndex);
+            }
+
             if (offset != vertexSize)
             {
                 log("Invalid vertex size");
@@ -235,9 +324,10 @@ namespace ouzel
 
             if (static_cast<RendererOGL*>(sharedEngine->getRenderer())->checkOpenGLErrors())
             {
+                log("Failed to update vertex attributes");
                 return false;
             }
-
+            
             return true;
         }
     } // namespace graphics

@@ -40,6 +40,7 @@ namespace ouzel
             friend RendererOGL;
         public:
             virtual ~MeshBufferOGL();
+            virtual void free() override;
 
             virtual bool init() override;
             virtual bool initFromData(const void* newIndices, uint32_t newIndexSize,
@@ -53,7 +54,11 @@ namespace ouzel
             virtual bool uploadIndices(const void* indices, uint32_t indexCount) override;
             virtual bool uploadVertices(const void* vertices, uint32_t vertexCount) override;
 
+            bool bindVertexBuffer();
+            bool updateVertexAttributes();
+
             GLuint getIndexBufferId() const { return indexBufferId; }
+            GLuint getVertexBufferId() const { return vertexBufferId; }
             GLuint getVertexArrayId() const { return vertexArrayId; }
 
             GLenum getIndexFormat() const { return indexFormat; }
@@ -61,13 +66,11 @@ namespace ouzel
         protected:
             MeshBufferOGL();
 
-            void destroy();
             bool updateIndexFormat();
-            bool updateVertexAttributes();
 
-            GLuint vertexArrayId = 0;
             GLuint indexBufferId = 0;
             GLuint vertexBufferId = 0;
+            GLuint vertexArrayId = 0;
 
             GLenum indexFormat = 0;
         };

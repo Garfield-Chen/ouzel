@@ -36,17 +36,22 @@ namespace ouzel
 
     bool Language::initFromFile(const std::string& filename)
     {
-        std::ifstream file(sharedEngine->getFileSystem()->getPath(filename), std::ios::binary);
-        file >> std::noskipws;
+        std::vector<uint8_t> data;
 
-        if (!file)
+        if (!sharedEngine->getFileSystem()->loadFile(filename, data))
         {
-            log("Failed to open file %s", filename.c_str());
             return false;
         }
 
-        uint32_t magic;
-        file.read(reinterpret_cast<char*>(&magic), sizeof(magic));
+        uint32_t offset = 0;
+
+        if (data.size() < 5 * sizeof(uint32_t))
+        {
+            return false;
+        }
+
+        uint32_t magic = *reinterpret_cast<uint32_t*>(data.data() + offset);
+        offset += sizeof(magic);
 
         if (magic != 0x950412DE)
         {
@@ -54,47 +59,63 @@ namespace ouzel
             return false;
         }
 
-        uint32_t version;
-        file.read(reinterpret_cast<char*>(&version), sizeof(version));
+        uint32_t version = *reinterpret_cast<uint32_t*>(data.data() + offset);
+        offset += sizeof(version);
+        OUZEL_UNUSED(version);
 
-        uint32_t stringCount;
-        file.read(reinterpret_cast<char*>(&stringCount), sizeof(stringCount));
+        uint32_t stringCount = *reinterpret_cast<uint32_t*>(data.data() + offset);
+        offset += sizeof(stringCount);
 
         std::vector<TranslationInfo> translations(stringCount);
 
-        uint32_t stringsOffset;
-        file.read(reinterpret_cast<char*>(&stringsOffset), sizeof(stringsOffset));
+        uint32_t stringsOffset = *reinterpret_cast<uint32_t*>(data.data() + offset);
+        offset += sizeof(stringsOffset);
 
-        uint32_t translationsOffset;
-        file.read(reinterpret_cast<char*>(&translationsOffset), sizeof(translationsOffset));
+        uint32_t translationsOffset = *reinterpret_cast<uint32_t*>(data.data() + offset);
+        offset += sizeof(translationsOffset);
 
-        file.seekg(stringsOffset);
+        offset = stringsOffset;
 
-        for (uint32_t i = 0; i < stringCount; ++i)
+        if (data.size() < offset + 2 * sizeof(uint32_t) * stringCount)
         {
-            file.read(reinterpret_cast<char*>(&translations[i].stringLength), sizeof(translations[i].stringLength));
-            file.read(reinterpret_cast<char*>(&translations[i].stringOffset), sizeof(translations[i].stringOffset));
+            return false;
         }
 
         for (uint32_t i = 0; i < stringCount; ++i)
         {
-            file.read(reinterpret_cast<char*>(&translations[i].translationLength), sizeof(translations[i].translationLength));
-            file.read(reinterpret_cast<char*>(&translations[i].translationOffset), sizeof(translations[i].translationOffset));
+            translations[i].stringLength = *reinterpret_cast<uint32_t*>(data.data() + offset);
+            offset += sizeof(translations[i].stringLength);
+
+            translations[i].stringOffset = *reinterpret_cast<uint32_t*>(data.data() + offset);
+            offset += sizeof(translations[i].stringOffset);
+        }
+
+        offset = translationsOffset;
+
+        if (data.size() < offset + 2 * sizeof(uint32_t) * stringCount)
+        {
+            return false;
         }
 
         for (uint32_t i = 0; i < stringCount; ++i)
         {
-            file.seekg(translations[i].stringOffset);
-            std::string str;
+            translations[i].translationLength = *reinterpret_cast<uint32_t*>(data.data() + offset);
+            offset += sizeof(translations[i].translationLength);
 
-            std::istream_iterator<char> isi(file);
-            std::copy_n(isi, translations[i].stringLength, std::insert_iterator<std::string>(str, str.begin()));
+            translations[i].translationOffset = *reinterpret_cast<uint32_t*>(data.data() + offset);
+            offset += sizeof(translations[i].translationOffset);
+        }
 
-            file.seekg(translations[i].translationOffset);
-            std::string translation;
+        for (uint32_t i = 0; i < stringCount; ++i)
+        {
+            if (data.size() < translations[i].stringOffset + translations[i].stringLength ||
+                data.size() < translations[i].translationOffset + translations[i].translationLength)
+            {
+                return false;
+            }
 
-            isi = std::istream_iterator<char>(file);
-            std::copy_n(isi, translations[i].translationLength, std::insert_iterator<std::string>(translation, translation.begin()));
+            std::string str(reinterpret_cast<char*>(data.data() + translations[i].stringOffset), translations[i].stringLength);
+            std::string translation(reinterpret_cast<char*>(data.data() + translations[i].translationOffset), translations[i].translationLength);
 
             strings[str] = translation;
         }
