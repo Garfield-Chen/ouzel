@@ -471,6 +471,9 @@
 		30575AE41C3C91A40009C8A7 /* InputApple.h in Headers */ = {isa = PBXBuildFile; fileRef = 30575AE01C3C91A40009C8A7 /* InputApple.h */; };
 		30575AE51C3C91A40009C8A7 /* InputApple.h in Headers */ = {isa = PBXBuildFile; fileRef = 30575AE01C3C91A40009C8A7 /* InputApple.h */; };
 		30575AE61C3C91A40009C8A7 /* InputApple.h in Headers */ = {isa = PBXBuildFile; fileRef = 30575AE01C3C91A40009C8A7 /* InputApple.h */; };
+		3058EBD31CF4D7D7005A40BC /* ReferenceCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 3058EBD21CF4D7D7005A40BC /* ReferenceCounted.h */; };
+		3058EBD41CF4D7D7005A40BC /* ReferenceCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 3058EBD21CF4D7D7005A40BC /* ReferenceCounted.h */; };
+		3058EBD51CF4D7D7005A40BC /* ReferenceCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 3058EBD21CF4D7D7005A40BC /* ReferenceCounted.h */; };
 		305B99891C41EFFA008589E1 /* Menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 305B99871C41EFFA008589E1 /* Menu.cpp */; };
 		305B998A1C41EFFA008589E1 /* Menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 305B99871C41EFFA008589E1 /* Menu.cpp */; };
 		305B998B1C41EFFA008589E1 /* Menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 305B99871C41EFFA008589E1 /* Menu.cpp */; };
@@ -778,13 +781,13 @@
 		30575AD71C3B48740009C8A7 /* EventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDispatcher.h; sourceTree = "<group>"; };
 		30575ADF1C3C91A40009C8A7 /* InputApple.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InputApple.mm; path = apple/InputApple.mm; sourceTree = "<group>"; };
 		30575AE01C3C91A40009C8A7 /* InputApple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputApple.h; path = apple/InputApple.h; sourceTree = "<group>"; };
+		3058EBD21CF4D7D7005A40BC /* ReferenceCounted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReferenceCounted.h; sourceTree = "<group>"; };
 		305B99871C41EFFA008589E1 /* Menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Menu.cpp; sourceTree = "<group>"; };
 		305B99881C41EFFA008589E1 /* Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Menu.h; sourceTree = "<group>"; };
 		305B998F1C41F06F008589E1 /* Widget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Widget.cpp; sourceTree = "<group>"; };
 		305B99901C41F06F008589E1 /* Widget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Widget.h; sourceTree = "<group>"; };
 		305B999A1C42A695008589E1 /* BMFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BMFont.cpp; sourceTree = "<group>"; };
 		305B999B1C42A695008589E1 /* BMFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BMFont.h; sourceTree = "<group>"; };
-		305B99C71C451962008589E1 /* Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
 		306B0E5D1C567D05005C75C1 /* DebugDrawable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DebugDrawable.cpp; sourceTree = "<group>"; };
 		306B0E5E1C567D05005C75C1 /* DebugDrawable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugDrawable.h; sourceTree = "<group>"; };
 		309ACD261C70DA73005325D3 /* ParticleDefinition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParticleDefinition.h; sourceTree = "<group>"; };
@@ -963,8 +966,8 @@
 				304A8E2D1C237C70008B1151 /* Engine.cpp */,
 				304A8E2E1C237C70008B1151 /* Engine.h */,
 				304A8E381C237C70008B1151 /* Noncopyable.h */,
+				3058EBD21CF4D7D7005A40BC /* ReferenceCounted.h */,
 				303647631C3F218E0024DB5B /* Settings.h */,
-				305B99C71C451962008589E1 /* Types.h */,
 				30C8B6211C6D0E350031B64F /* UpdateCallback.h */,
 				3009341A1C88698500CC50D3 /* Window.cpp */,
 				3009341B1C88698500CC50D3 /* Window.h */,
@@ -1250,6 +1253,7 @@
 				30C56C691CAB3F2D007AEF8F /* RadioButton.h in Headers */,
 				303B75521C2A3CB700FEDE92 /* Matrix4.h in Headers */,
 				30D0FB561CC2C99600477DB0 /* TexturePSIOS.h in Headers */,
+				3058EBD41CF4D7D7005A40BC /* ReferenceCounted.h in Headers */,
 				30EF364F1CA76ACD00F04F29 /* ScrollArea.h in Headers */,
 				301CF5C31CECAD0700B89B5D /* ColorVSOGLES3.h in Headers */,
 				303B75581C2A3CB700FEDE92 /* Vector2.h in Headers */,
@@ -1371,6 +1375,7 @@
 				30C56C6A1CAB3F2D007AEF8F /* RadioButton.h in Headers */,
 				303B76591C355A3B00FEDE92 /* Matrix4.h in Headers */,
 				30D0FB571CC2C99600477DB0 /* TexturePSIOS.h in Headers */,
+				3058EBD51CF4D7D7005A40BC /* ReferenceCounted.h in Headers */,
 				30EF36501CA76ACD00F04F29 /* ScrollArea.h in Headers */,
 				301CF5C41CECAD0700B89B5D /* ColorVSOGLES3.h in Headers */,
 				303B765A1C355A3B00FEDE92 /* Vector2.h in Headers */,
@@ -1545,6 +1550,7 @@
 				30575AC81C3B17540009C8A7 /* Button.h in Headers */,
 				30D0FB431CC2C99600477DB0 /* ColorPSIOS.h in Headers */,
 				30D0FB5B1CC2C99600477DB0 /* TexturePSTVOS.h in Headers */,
+				3058EBD31CF4D7D7005A40BC /* ReferenceCounted.h in Headers */,
 				304B27A11C9A063300BA162D /* ColorPSOGL2.h in Headers */,
 				303B75811C2B17DC00FEDE92 /* Event.h in Headers */,
 				300934271C88950500CC50D3 /* WindowOSX.h in Headers */,
