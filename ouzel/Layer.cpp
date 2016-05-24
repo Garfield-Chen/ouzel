@@ -64,18 +64,12 @@ namespace ouzel
 
         bool Layer::addChild(Node* node)
         {
-            if (NodeContainer::addChild(node))
-            {
-                node->addToLayer(this);
+            NodeContainer::addChild(node);
 
-                node->updateTransform(Matrix4::IDENTITY);
+            node->addToLayer(this);
+            node->updateTransform(Matrix4::IDENTITY);
 
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return true;
         }
 
         void Layer::addToDrawQueue(Node* node)
