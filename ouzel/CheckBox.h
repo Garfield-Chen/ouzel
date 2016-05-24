@@ -7,8 +7,8 @@
 
 namespace ouzel
 {
-    class GamepadEvent;
-    class UIEvent;
+    struct GamepadEvent;
+    struct UIEvent;
     class EventHandler;
 
     namespace scene
