@@ -9,6 +9,7 @@
 #include <queue>
 #include <cstdint>
 #include "Noncopyable.h"
+#include "Array.h"
 #include "Event.h"
 #include "EventHander.h"
 
@@ -40,15 +41,9 @@ namespace ouzel
         void dispatchSystemEvent(SystemEvent* event, void* sender);
         void dispatchUIEvent(UIEvent* event, void* sender);
 
-        void lock();
-        void unlock();
-
-        std::vector<EventHandler*> eventHandlers;
-        std::set<EventHandler*> eventHandlerAddList;
-        std::set<EventHandler*> eventHandlerRemoveList;
+        Array<EventHandler> eventHandlers;
 
         std::queue<std::pair<Event*, void*>> eventQueue;
         std::mutex mutex;
-        int32_t locked = 0;
     };
 }

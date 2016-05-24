@@ -139,7 +139,6 @@ namespace ouzel
             Layer* layer = nullptr;
 
             Animator* currentAnimator = nullptr;
-            bool remove = false;
 
             std::vector<Drawable*> drawables;
         };

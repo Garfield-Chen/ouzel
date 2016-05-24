@@ -15,7 +15,5 @@ namespace ouzel
         friend Engine;
     public:
         std::function<void(float)> callback;
-    protected:
-        bool remove = false;
     };
 }

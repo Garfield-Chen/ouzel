@@ -18,7 +18,7 @@ namespace ouzel
 
     void EventDispatcher::update()
     {
-        lock();
+        eventHandlers.lock();
 
         while (!eventQueue.empty())
         {
@@ -78,51 +78,17 @@ namespace ouzel
             event->release();
         }
 
-        unlock();
+        eventHandlers.unlock();
     }
 
     void EventDispatcher::addEventHandler(EventHandler* eventHandler)
     {
-        if (locked)
-        {
-            eventHandlerAddList.insert(eventHandler);
-            eventHandler->retain();
-        }
-        else
-        {
-            std::vector<EventHandler*>::iterator i = std::find(eventHandlers.begin(), eventHandlers.end(), eventHandler);
-
-            if (i == eventHandlers.end())
-            {
-                eventHandler->remove = false;
-                eventHandlers.push_back(eventHandler);
-                eventHandler->retain();
-
-                std::sort(eventHandlers.begin(), eventHandlers.end(), [](EventHandler* a, EventHandler* b) {
-                    return a->priority < b->priority;
-                });
-            }
-        }
+        eventHandlers.pushBack(eventHandler);
     }
 
     void EventDispatcher::removeEventHandler(EventHandler* eventHandler)
     {
-        std::vector<EventHandler*>::iterator i = std::find(eventHandlers.begin(), eventHandlers.end(), eventHandler);
-
-        if (i != eventHandlers.end())
-        {
-            if (locked)
-            {
-                eventHandler->remove = true;
-                eventHandlerRemoveList.insert(eventHandler);
-                eventHandler->retain();
-            }
-            else
-            {
-                eventHandlers.erase(i);
-                eventHandler->release();
-            }
-        }
+        eventHandlers.erase(eventHandler);
     }
 
     void EventDispatcher::dispatchEvent(Event* event, void* sender)
@@ -135,11 +101,11 @@ namespace ouzel
 
     void EventDispatcher::dispatchKeyboardEvent(KeyboardEvent* event, void* sender)
     {
-        lock();
+        eventHandlers.lock();
 
         for (EventHandler* eventHandler : eventHandlers)
         {
-            if (eventHandler && !eventHandler->remove && eventHandler->keyboardHandler)
+            if (eventHandler && eventHandler->keyboardHandler)
             {
                 if (!eventHandler->keyboardHandler(event, sender))
                 {
@@ -148,16 +114,16 @@ namespace ouzel
             }
         }
 
-        unlock();
+        eventHandlers.unlock();
     }
 
     void EventDispatcher::dispatchMouseEvent(MouseEvent* event, void* sender)
     {
-        lock();
+        eventHandlers.lock();
 
         for (EventHandler* eventHandler : eventHandlers)
         {
-            if (eventHandler && !eventHandler->remove && eventHandler->mouseHandler)
+            if (eventHandler && eventHandler->mouseHandler)
             {
                 if (!eventHandler->mouseHandler(event, sender))
                 {
@@ -166,16 +132,16 @@ namespace ouzel
             }
         }
 
-        unlock();
+        eventHandlers.unlock();
     }
 
     void EventDispatcher::dispatchTouchEvent(TouchEvent* event, void* sender)
     {
-        lock();
+        eventHandlers.lock();
 
         for (EventHandler* eventHandler : eventHandlers)
         {
-            if (eventHandler && !eventHandler->remove && eventHandler->touchHandler)
+            if (eventHandler && eventHandler->touchHandler)
             {
                 if (!eventHandler->touchHandler(event, sender))
                 {
@@ -184,16 +150,16 @@ namespace ouzel
             }
         }
 
-        unlock();
+        eventHandlers.unlock();
     }
 
     void EventDispatcher::dispatchGamepadEvent(GamepadEvent* event, void* sender)
     {
-        lock();
+        eventHandlers.lock();
 
         for (EventHandler* eventHandler : eventHandlers)
         {
-            if (eventHandler && !eventHandler->remove && eventHandler->gamepadHandler)
+            if (eventHandler && eventHandler->gamepadHandler)
             {
                 if (!eventHandler->gamepadHandler(event, sender))
                 {
@@ -202,16 +168,16 @@ namespace ouzel
             }
         }
 
-        unlock();
+        eventHandlers.unlock();
     }
 
     void EventDispatcher::dispatchWindowEvent(WindowEvent* event, void* sender)
     {
-        lock();
+        eventHandlers.lock();
 
         for (EventHandler* eventHandler : eventHandlers)
         {
-            if (eventHandler && !eventHandler->remove && eventHandler->windowHandler)
+            if (eventHandler && eventHandler->windowHandler)
             {
                 if (!eventHandler->windowHandler(event, sender))
                 {
@@ -220,16 +186,16 @@ namespace ouzel
             }
         }
 
-        unlock();
+        eventHandlers.unlock();
     }
 
     void EventDispatcher::dispatchSystemEvent(SystemEvent* event, void* sender)
     {
-        lock();
+        eventHandlers.lock();
 
         for (EventHandler* eventHandler : eventHandlers)
         {
-            if (eventHandler && !eventHandler->remove && eventHandler->systemHandler)
+            if (eventHandler && eventHandler->systemHandler)
             {
                 if (!eventHandler->systemHandler(event, sender))
                 {
@@ -238,16 +204,16 @@ namespace ouzel
             }
         }
 
-        unlock();
+        eventHandlers.unlock();
     }
 
     void EventDispatcher::dispatchUIEvent(UIEvent* event, void* sender)
     {
-        lock();
+        eventHandlers.lock();
 
         for (EventHandler* eventHandler : eventHandlers)
         {
-            if (eventHandler && !eventHandler->remove && eventHandler->uiHandler)
+            if (eventHandler && eventHandler->uiHandler)
             {
                 if (!eventHandler->uiHandler(event, sender))
                 {
@@ -256,37 +222,6 @@ namespace ouzel
             }
         }
 
-        unlock();
-    }
-
-    void EventDispatcher::lock()
-    {
-        ++locked;
-    }
-
-    void EventDispatcher::unlock()
-    {
-        if (--locked == 0)
-        {
-            if (!eventHandlerAddList.empty())
-            {
-                for (EventHandler* eventHandler : eventHandlerAddList)
-                {
-                    addEventHandler(eventHandler);
-                    eventHandler->release();
-                }
-                eventHandlerAddList.clear();
-            }
-
-            if (!eventHandlerRemoveList.empty())
-            {
-                for (EventHandler* eventHandler : eventHandlerRemoveList)
-                {
-                    removeEventHandler(eventHandler);
-                    eventHandler->release();
-                }
-                eventHandlerRemoveList.clear();
-            }
-        }
+        eventHandlers.unlock();
     }
 }

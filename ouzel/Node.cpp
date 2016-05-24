@@ -61,7 +61,7 @@ namespace ouzel
                 }
                 else
                 {
-                    lock();
+                    children.lock();
 
                     std::stable_sort(children.begin(), children.end(), [](Node* a, Node* b) {
                         return a->getZ() > b->getZ();
@@ -73,16 +73,13 @@ namespace ouzel
                     {
                         Node* node = *i;
 
-                        if (!node->remove)
+                        if (node->getZ() < 0.0f)
                         {
-                            if (node->getZ() < 0.0f)
-                            {
-                                node->visit(transform, updateChildrenTransform);
-                            }
-                            else
-                            {
-                                break;
-                            }
+                            node->visit(transform, updateChildrenTransform);
+                        }
+                        else
+                        {
+                            break;
                         }
                     }
 
@@ -95,13 +92,10 @@ namespace ouzel
                     {
                         Node* node = *i;
 
-                        if (!node->remove)
-                        {
-                            node->visit(transform, updateChildrenTransform);
-                        }
+                        node->visit(transform, updateChildrenTransform);
                     }
 
-                    unlock();
+                    children.unlock();
                 }
 
                 updateChildrenTransform = false;
@@ -116,7 +110,7 @@ namespace ouzel
             }
             else
             {
-                lock();
+                children.lock();
 
                 auto i = children.begin();
                 Node* node;
@@ -150,7 +144,7 @@ namespace ouzel
                     }
                 }
 
-                unlock();
+                children.unlock();
             }
         }
 

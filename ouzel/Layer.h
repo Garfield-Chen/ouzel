@@ -58,7 +58,6 @@ namespace ouzel
 
             Scene* scene = nullptr;
             int32_t order = 0;
-            bool remove = false;
 
             graphics::RenderTarget* renderTarget = nullptr;
         };

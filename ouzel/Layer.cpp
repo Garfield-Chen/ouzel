@@ -44,7 +44,7 @@ namespace ouzel
             {
                 sharedEngine->getRenderer()->activateRenderTarget(renderTarget);
                 
-                lock();
+                children.lock();
 
                 for (Node* child : children)
                 {
@@ -60,7 +60,7 @@ namespace ouzel
                     node->process();
                 }
 
-                unlock();
+                children.unlock();
             }
         }
 

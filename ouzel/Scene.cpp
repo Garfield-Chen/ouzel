@@ -26,7 +26,7 @@ namespace ouzel
 
         void Scene::draw()
         {
-            lock();
+            layers.lock();
 
             if (reorder)
             {
@@ -39,28 +39,18 @@ namespace ouzel
 
             for (Layer* layer : layers)
             {
-                if (!layer->remove)
-                {
-                    layer->draw();
-                }
+                layer->draw();
             }
 
-            unlock();
+            layers.unlock();
         }
 
         void Scene::addLayer(Layer* layer)
         {
-            if (locked)
+            if (!hasLayer(layer) && !layer->getScene())
             {
-                layerAddList.insert(layer);
-                layer->retain();
-            }
-            else if (!hasLayer(layer) && !layer->getScene())
-            {
-                layer->remove = false;
-                layers.push_back(layer);
+                layers.pushBack(layer);
                 layer->addToScene(this);
-                layer->retain();
 
                 if (Camera* camera = layer->getCamera())
                 {
@@ -71,45 +61,22 @@ namespace ouzel
 
         void Scene::removeLayer(Layer* layer)
         {
-            std::vector<Layer*>::iterator i = std::find(layers.begin(), layers.end(), layer);
-
-            if (i != layers.end())
-            {
-                if (locked)
-                {
-                    layer->remove = true;
-                    layerRemoveList.insert(layer);
-                    layer->retain();
-                }
-                else
-                {
-                    layer->removeFromScene();
-                    layers.erase(i);
-                    layer->release();
-                }
-            }
+            layers.erase(layer);
+            layer->removeFromScene();
         }
 
         void Scene::removeAllLayers()
         {
-            if (locked)
-            {
-                for (Layer* layer : layers)
-                {
-                    layer->remove = true;
-                    layerRemoveList.insert(layer);
-                    layer->retain();
-                }
-            }
-            else
-            {
-                for (Layer* layer : layers)
-                {
-                    layer->release();
-                }
+            layers.lock();
 
-                layers.clear();
+            for (Layer* layer : layers)
+            {
+                layer->removeFromScene();
             }
+
+            layers.clear();
+
+            layers.unlock();
         }
 
         bool Scene::hasLayer(Layer* layer) const
@@ -133,37 +100,6 @@ namespace ouzel
         void Scene::reorderLayers()
         {
             reorder = true;
-        }
-
-        void Scene::lock()
-        {
-            ++locked;
-        }
-
-        void Scene::unlock()
-        {
-            if (--locked == 0)
-            {
-                if (!layerAddList.empty())
-                {
-                    for (Layer* layer : layerAddList)
-                    {
-                        addLayer(layer);
-                        layer->release();
-                    }
-                    layerAddList.clear();
-                }
-
-                if (!layerRemoveList.empty())
-                {
-                    for (Layer* layer : layerRemoveList)
-                    {
-                        removeLayer(layer);
-                        layer->release();
-                    }
-                    layerRemoveList.clear();
-                }
-            }
         }
 
         Node* Scene::pickNode(const Vector2& position) const

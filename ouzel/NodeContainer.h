@@ -7,6 +7,7 @@
 #include <set>
 #include "Noncopyable.h"
 #include "ReferenceCounted.h"
+#include "Array.h"
 
 namespace ouzel
 {
@@ -25,17 +26,10 @@ namespace ouzel
             virtual bool removeChild(Node* node);
             virtual void removeAllChildren();
             virtual bool hasChild(Node* node, bool recursive = false) const;
-            virtual const std::vector<Node*>& getChildren() const { return children; }
+            virtual const Array<Node>& getChildren() const { return children; }
 
         protected:
-            void lock();
-            void unlock();
-
-            std::vector<Node*> children;
-
-            std::set<Node*> nodeAddList;
-            std::set<Node*> nodeRemoveList;
-            int32_t locked = 0;
+            Array<Node> children;
         };
     } // namespace scene
 } // namespace ouzel

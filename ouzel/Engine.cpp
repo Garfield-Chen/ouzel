@@ -213,15 +213,15 @@ namespace ouzel
         input->update();
         eventDispatcher->update();
 
-        lock();
+        updateCallbacks.lock();
         for (UpdateCallback* updateCallback : updateCallbacks)
         {
-            if (!updateCallback->remove && updateCallback->callback)
+            if (updateCallback->callback)
             {
                 updateCallback->callback(delta);
             }
         }
-        unlock();
+        updateCallbacks.unlock();
 
         renderer->clear();
         sceneManager->draw();
@@ -232,72 +232,11 @@ namespace ouzel
 
     void Engine::scheduleUpdate(UpdateCallback* callback)
     {
-        if (locked)
-        {
-            updateCallbackAddList.insert(callback);
-            callback->retain();
-        }
-        else
-        {
-            std::vector<UpdateCallback*>::iterator i = std::find(updateCallbacks.begin(), updateCallbacks.end(), callback);
-
-            if (i == updateCallbacks.end())
-            {
-                callback->remove = false;
-                updateCallbacks.push_back(callback);
-                callback->retain();
-            }
-        }
+        updateCallbacks.pushBack(callback);
     }
 
     void Engine::unscheduleUpdate(UpdateCallback* callback)
     {
-        std::vector<UpdateCallback*>::iterator i = std::find(updateCallbacks.begin(), updateCallbacks.end(), callback);
-
-        if (i != updateCallbacks.end())
-        {
-            if (locked)
-            {
-                callback->remove = true;
-                updateCallbackRemoveList.insert(callback);
-                callback->retain();
-            }
-            else
-            {
-                updateCallbacks.erase(i);
-                callback->release();
-            }
-        }
-    }
-
-    void Engine::lock()
-    {
-        ++locked;
-    }
-
-    void Engine::unlock()
-    {
-        if (--locked == 0)
-        {
-            if (!updateCallbackAddList.empty())
-            {
-                for (UpdateCallback* updateCallback : updateCallbackAddList)
-                {
-                    scheduleUpdate(updateCallback);
-                    updateCallback->release();
-                }
-                updateCallbackAddList.clear();
-            }
-
-            if (!updateCallbackRemoveList.empty())
-            {
-                for (UpdateCallback* updateCallback : updateCallbackRemoveList)
-                {
-                    unscheduleUpdate(updateCallback);
-                    updateCallback->release();
-                }
-                updateCallbackRemoveList.clear();
-            }
-        }
+        updateCallbacks.erase(callback);
     }
 }

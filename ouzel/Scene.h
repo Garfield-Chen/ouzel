@@ -8,6 +8,7 @@
 #include <cstdint>
 #include "Noncopyable.h"
 #include "ReferenceCounted.h"
+#include "Array.h"
 #include "Rectangle.h"
 
 namespace ouzel
@@ -29,7 +30,7 @@ namespace ouzel
             void removeLayer(Layer* layer);
             void removeAllLayers();
             bool hasLayer(Layer* layer) const;
-            const std::vector<Layer*>& getLayers() const { return layers; }
+            const Array<Layer>& getLayers() const { return layers; }
 
             virtual void recalculateProjection();
 
@@ -39,15 +40,8 @@ namespace ouzel
             std::set<Node*> pickNodes(const std::vector<Vector2>& edges) const;
 
         protected:
-            void lock();
-            void unlock();
-
-            std::vector<Layer*> layers;
+            Array<Layer> layers;
             bool reorder = false;
-
-            std::set<Layer*> layerAddList;
-            std::set<Layer*> layerRemoveList;
-            int32_t locked = 0;
         };
     } // namespace scene
 } // namespace ouzel

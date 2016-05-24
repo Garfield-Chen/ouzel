@@ -6,6 +6,7 @@
 #include <vector>
 #include <set>
 #include "Noncopyable.h"
+#include "Array.h"
 #include "Renderer.h"
 #include "SceneManager.h"
 #include "FileSystem.h"
@@ -56,9 +57,6 @@ namespace ouzel
         void unscheduleUpdate(UpdateCallback* callback);
 
     protected:
-        void lock();
-        void unlock();
-
         Settings settings;
         
         EventDispatcher* eventDispatcher = nullptr;
@@ -74,9 +72,7 @@ namespace ouzel
         float currentFPS = 0.0f;
         uint64_t previousFrameTime;
 
-        std::vector<UpdateCallback*> updateCallbacks;
-        std::set<UpdateCallback*> updateCallbackAddList;
-        std::set<UpdateCallback*> updateCallbackRemoveList;
+        Array<UpdateCallback> updateCallbacks;
 
         int32_t locked = 0;
         bool running = false;
