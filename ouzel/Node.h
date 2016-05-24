@@ -4,6 +4,7 @@
 #pragma once
 
 #include "NodeContainer.h"
+#include "Array.h"
 #include "Vector2.h"
 #include "Matrix4.h"
 #include "Rectangle.h"
@@ -90,7 +91,7 @@ namespace ouzel
             void setReceiveInput(bool newReceiveInput) { receiveInput = newReceiveInput; }
             bool isReceivingInput() const { return receiveInput; }
 
-            const std::vector<Drawable*> getDrawables() const { return drawables; }
+            const Array<Drawable>& getDrawables() const { return drawables; }
             void addDrawable(Drawable* drawable);
             void removeDrawable(uint32_t index);
             void removeDrawable(Drawable* drawable);
@@ -140,7 +141,7 @@ namespace ouzel
 
             Animator* currentAnimator = nullptr;
 
-            std::vector<Drawable*> drawables;
+            Array<Drawable> drawables;
         };
     } // namespace scene
 } // namespace ouzel

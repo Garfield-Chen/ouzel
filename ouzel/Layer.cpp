@@ -44,9 +44,9 @@ namespace ouzel
             {
                 sharedEngine->getRenderer()->activateRenderTarget(renderTarget);
                 
-                children.lock();
+                Array<Node> childrenCopy = children;
 
-                for (Node* child : children)
+                for (Node* child : childrenCopy)
                 {
                     child->visit(Matrix4::IDENTITY, false);
                 }
@@ -59,8 +59,6 @@ namespace ouzel
                 {
                     node->process();
                 }
-
-                children.unlock();
             }
         }
 

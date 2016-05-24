@@ -26,8 +26,6 @@ namespace ouzel
 
         void Scene::draw()
         {
-            layers.lock();
-
             if (reorder)
             {
                 std::sort(layers.begin(), layers.end(), [](Layer* a, Layer* b) {
@@ -37,12 +35,12 @@ namespace ouzel
                 reorder = false;
             }
 
-            for (Layer* layer : layers)
+            Array<Layer> layersCopy = layers;
+
+            for (Layer* layer : layersCopy)
             {
                 layer->draw();
             }
-
-            layers.unlock();
         }
 
         void Scene::addLayer(Layer* layer)
@@ -67,16 +65,14 @@ namespace ouzel
 
         void Scene::removeAllLayers()
         {
-            layers.lock();
+            Array<Layer> layersCopy = layers;
 
-            for (Layer* layer : layers)
+            for (Layer* layer : layersCopy)
             {
                 layer->removeFromScene();
             }
 
             layers.clear();
-
-            layers.unlock();
         }
 
         bool Scene::hasLayer(Layer* layer) const

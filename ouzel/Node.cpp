@@ -61,15 +61,15 @@ namespace ouzel
                 }
                 else
                 {
-                    children.lock();
-
                     std::stable_sort(children.begin(), children.end(), [](Node* a, Node* b) {
                         return a->getZ() > b->getZ();
                     });
 
-                    auto i = children.begin();
+                    Array<Node> childrenCopy = children;
 
-                    for (; i != children.end(); ++i)
+                    auto i = childrenCopy.begin();
+
+                    for (; i != childrenCopy.end(); ++i)
                     {
                         Node* node = *i;
 
@@ -88,14 +88,12 @@ namespace ouzel
                         layer->addToDrawQueue(this);
                     }
 
-                    for (; i != children.end(); ++i)
+                    for (; i != childrenCopy.end(); ++i)
                     {
                         Node* node = *i;
 
                         node->visit(transform, updateChildrenTransform);
                     }
-
-                    children.unlock();
                 }
 
                 updateChildrenTransform = false;
@@ -110,12 +108,12 @@ namespace ouzel
             }
             else
             {
-                children.lock();
+                Array<Node> childrenCopy = children;
 
-                auto i = children.begin();
+                auto i = childrenCopy.begin();
                 Node* node;
 
-                for (; i != children.end(); ++i)
+                for (; i != childrenCopy.end(); ++i)
                 {
                     node = *i;
 
@@ -134,7 +132,7 @@ namespace ouzel
 
                 draw();
 
-                for (; i != children.end(); ++i)
+                for (; i != childrenCopy.end(); ++i)
                 {
                     node = *i;
 
@@ -143,8 +141,6 @@ namespace ouzel
                         node->draw();
                     }
                 }
-
-                children.unlock();
             }
         }
 
@@ -472,7 +468,7 @@ namespace ouzel
 
         void Node::addDrawable(Drawable* drawable)
         {
-            drawables.push_back(drawable);
+            drawables.pushBack(drawable);
             drawable->setParentNode(this);
             drawable->retain();
         }
@@ -485,25 +481,12 @@ namespace ouzel
             }
 
             Drawable* drawable = drawables[index];
-            drawable->release();
-
-            drawables.erase(drawables.begin() + index);
+            drawables.erase(drawable);
         }
 
         void Node::removeDrawable(Drawable* drawable)
         {
-            for (auto i = drawables.begin(); i != drawables.end();)
-            {
-                if (*i == drawable)
-                {
-                    i = drawables.erase(i);
-                    drawable->release();
-                }
-                else
-                {
-                    ++i;
-                }
-            }
+            drawables.erase(drawable);
         }
 
         void Node::removeAllDrawables()

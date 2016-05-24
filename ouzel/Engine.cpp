@@ -213,15 +213,15 @@ namespace ouzel
         input->update();
         eventDispatcher->update();
 
-        updateCallbacks.lock();
-        for (UpdateCallback* updateCallback : updateCallbacks)
+        Array<UpdateCallback> updateCallbacksCopy = updateCallbacks;
+
+        for (UpdateCallback* updateCallback : updateCallbacksCopy)
         {
             if (updateCallback->callback)
             {
                 updateCallback->callback(delta);
             }
         }
-        updateCallbacks.unlock();
 
         renderer->clear();
         sceneManager->draw();

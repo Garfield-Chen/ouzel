@@ -18,8 +18,6 @@ namespace ouzel
 
     void EventDispatcher::update()
     {
-        eventHandlers.lock();
-
         while (!eventQueue.empty())
         {
             mutex.lock();
@@ -77,8 +75,6 @@ namespace ouzel
 
             event->release();
         }
-
-        eventHandlers.unlock();
     }
 
     void EventDispatcher::addEventHandler(EventHandler* eventHandler)
@@ -101,9 +97,9 @@ namespace ouzel
 
     void EventDispatcher::dispatchKeyboardEvent(KeyboardEvent* event, void* sender)
     {
-        eventHandlers.lock();
+        Array<EventHandler> eventHandlersCopy = eventHandlers;
 
-        for (EventHandler* eventHandler : eventHandlers)
+        for (EventHandler* eventHandler : eventHandlersCopy)
         {
             if (eventHandler && eventHandler->keyboardHandler)
             {
@@ -113,15 +109,13 @@ namespace ouzel
                 }
             }
         }
-
-        eventHandlers.unlock();
     }
 
     void EventDispatcher::dispatchMouseEvent(MouseEvent* event, void* sender)
     {
-        eventHandlers.lock();
+        Array<EventHandler> eventHandlersCopy = eventHandlers;
 
-        for (EventHandler* eventHandler : eventHandlers)
+        for (EventHandler* eventHandler : eventHandlersCopy)
         {
             if (eventHandler && eventHandler->mouseHandler)
             {
@@ -131,15 +125,13 @@ namespace ouzel
                 }
             }
         }
-
-        eventHandlers.unlock();
     }
 
     void EventDispatcher::dispatchTouchEvent(TouchEvent* event, void* sender)
     {
-        eventHandlers.lock();
+        Array<EventHandler> eventHandlersCopy = eventHandlers;
 
-        for (EventHandler* eventHandler : eventHandlers)
+        for (EventHandler* eventHandler : eventHandlersCopy)
         {
             if (eventHandler && eventHandler->touchHandler)
             {
@@ -149,15 +141,13 @@ namespace ouzel
                 }
             }
         }
-
-        eventHandlers.unlock();
     }
 
     void EventDispatcher::dispatchGamepadEvent(GamepadEvent* event, void* sender)
     {
-        eventHandlers.lock();
+        Array<EventHandler> eventHandlersCopy = eventHandlers;
 
-        for (EventHandler* eventHandler : eventHandlers)
+        for (EventHandler* eventHandler : eventHandlersCopy)
         {
             if (eventHandler && eventHandler->gamepadHandler)
             {
@@ -167,15 +157,13 @@ namespace ouzel
                 }
             }
         }
-
-        eventHandlers.unlock();
     }
 
     void EventDispatcher::dispatchWindowEvent(WindowEvent* event, void* sender)
     {
-        eventHandlers.lock();
+        Array<EventHandler> eventHandlersCopy = eventHandlers;
 
-        for (EventHandler* eventHandler : eventHandlers)
+        for (EventHandler* eventHandler : eventHandlersCopy)
         {
             if (eventHandler && eventHandler->windowHandler)
             {
@@ -185,15 +173,13 @@ namespace ouzel
                 }
             }
         }
-
-        eventHandlers.unlock();
     }
 
     void EventDispatcher::dispatchSystemEvent(SystemEvent* event, void* sender)
     {
-        eventHandlers.lock();
+        Array<EventHandler> eventHandlersCopy = eventHandlers;
 
-        for (EventHandler* eventHandler : eventHandlers)
+        for (EventHandler* eventHandler : eventHandlersCopy)
         {
             if (eventHandler && eventHandler->systemHandler)
             {
@@ -203,15 +189,13 @@ namespace ouzel
                 }
             }
         }
-
-        eventHandlers.unlock();
     }
 
     void EventDispatcher::dispatchUIEvent(UIEvent* event, void* sender)
     {
-        eventHandlers.lock();
+        Array<EventHandler> eventHandlersCopy = eventHandlers;
 
-        for (EventHandler* eventHandler : eventHandlers)
+        for (EventHandler* eventHandler : eventHandlersCopy)
         {
             if (eventHandler && eventHandler->uiHandler)
             {
@@ -221,7 +205,5 @@ namespace ouzel
                 }
             }
         }
-
-        eventHandlers.unlock();
     }
 }
