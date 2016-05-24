@@ -1,6 +1,7 @@
 // Copyright (C) 2016 Elviss Strazdins
 // This file is part of the Ouzel engine.
 
+#include <memory>
 #include "RendererOGL.h"
 #include "TextureOGL.h"
 #include "RenderTargetOGL.h"

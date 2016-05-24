@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <string>
 #include "Widget.h"
 
 namespace ouzel
