@@ -19,7 +19,91 @@ namespace ouzel
         typedef typename std::vector<T*>::reverse_iterator reverse_iterator;
         typedef typename std::vector<T*>::const_reverse_iterator const_reverse_iterator;
 
-        virtual ~Array() {}
+        Array()
+        {
+        }
+
+        virtual ~Array()
+        {
+            this->free();
+        }
+
+        Array(const Array& other):
+            elements(other.elements)
+        {
+            for (T* element : addList)
+            {
+                elements.push_back(element);
+            }
+
+            for (T* element : removeList)
+            {
+                auto i = std::find(elements.begin(), elements.end(), element);
+
+                if (i != elements.end())
+                {
+                    elements.erase(i);
+                }
+            }
+
+            for (T* element : elements)
+            {
+                element->retain();
+            }
+        }
+
+        Array& operator=(const Array& other)
+        {
+            this->free();
+
+            elements = other.elements;
+
+            for (T* element : addList)
+            {
+                elements.push_back(element);
+            }
+
+            for (T* element : removeList)
+            {
+                auto i = std::find(elements.begin(), elements.end(), element);
+
+                if (i != elements.end())
+                {
+                    elements.erase(i);
+                }
+            }
+
+            for (T* element : elements)
+            {
+                element->retain();
+            }
+
+            return *this;
+        }
+
+        Array(const Array&& other):
+            elements(std::move(other.elements)),
+            addList(std::move(other.addList)),
+            removeList(std::move(other.removeList)),
+            locked(other.locked)
+        {
+            other.locked = 0;
+        }
+
+        Array& operator=(const Array&& other)
+        {
+            this->free();
+
+            elements = std::move(other.elements);
+            addList = std::move(other.addList);
+            removeList = std::move(other.removeList);
+            locked = other.locked;
+
+            other.locked = 0;
+
+            return *this;
+        }
+
 
         void pushBack(T* element)
         {
@@ -80,7 +164,6 @@ namespace ouzel
                 {
                     erase(element);
                 }
-
             }
         }
 
@@ -152,6 +235,30 @@ namespace ouzel
         }
 
     private:
+        void free()
+        {
+            for (T* element : elements)
+            {
+                element->release();
+            }
+
+            elements.clear();
+
+            for (T* element : addList)
+            {
+                element->release();
+            }
+
+            elements.clear();
+
+            for (T* element : removeList)
+            {
+                element->release();
+            }
+
+            elements.clear();
+        }
+
         std::vector<T*> elements;
         int32_t locked = 0;
         std::set<T*> addList;

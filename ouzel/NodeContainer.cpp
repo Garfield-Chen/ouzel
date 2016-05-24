@@ -21,7 +21,6 @@ namespace ouzel
             {
                 node->parent = nullptr;
                 node->layer = nullptr;
-                node->release();
             }
         }
 
